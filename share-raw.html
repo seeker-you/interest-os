@@ -45,6 +45,9 @@
           <div id="displayPersona" class="mono" style="font-size:1.5rem;font-weight:700;color:var(--accent)">--</div>
         </div>
         <div id="tagSec" style="position:absolute;bottom:120px;left:24px;right:24px"></div>
+        <div id="mbtiCardInner" style="position:absolute;bottom:210px;left:0;right:0;text-align:center">
+          <span id="mbtiBadge" class="mono" style="display:inline-block;padding:4px 14px;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);font-size:0.75rem;font-weight:700;color:var(--accent);letter-spacing:0.06em">----</span>
+        </div>
         <div class="sc-watermark">interest-os.vercel.app</div>
       </div>
     </div>
@@ -75,6 +78,7 @@
   <script src="js/personas.js?v=5"></script>
   <script src="js/router.js?v=5"></script>
   <script src="js/share.js?v=5"></script>
+  <script src="js/insights.js?v=5"></script>
   <script src="js/i18n.js?v=5"></script>
   <script>
     (function() {
@@ -90,6 +94,8 @@
       var topTags = profile.tags.slice().sort(function(a,b){return b.weight-a.weight}).slice(0,3);
 
       document.getElementById('displayPersona').textContent = persona.name;
+      var mbti = INTEREST_OS.insights.getMBTI(profile.tags);
+      document.getElementById('mbtiBadge').textContent = mbti.code + ' ' + mbti.emoji + ' ' + mbti.name;
 
       var mc = document.getElementById('miniCanvas');
       if (mc) {
