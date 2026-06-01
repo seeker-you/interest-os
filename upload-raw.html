@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -6,6 +6,7 @@
   <title>Upload — Interest OS</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/custom-raw.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
   <style>
     #langToggle {
       font-family: var(--font-mono);
@@ -155,8 +156,8 @@
     function showResult(result) {
       if (result.error) { alert(result.error); return; }
       parsedData = INTEREST_OS.analyzer.analyze(result.titles);
-      document.getElementById('resultCount').textContent = 'Records: ' + result.totalFound + (result.truncated ? ' (truncated to ' + result.titles.length + ')' : '');
-      document.getElementById('resultSource').textContent = 'Source: ' + result.source;
+      document.getElementById('resultCount').textContent = (INTEREST_OS.i18n.current === 'zh' ? '识别到 ' : 'Records: ') + result.totalFound + (result.truncated ? ' (truncated to ' + result.titles.length + ')' : '');
+      document.getElementById('resultSource').textContent = (INTEREST_OS.i18n.current === 'zh' ? '来源: ' : 'Source: ') + result.source;
       var preview = document.getElementById('resultPreview');
       preview.innerHTML = result.titles.slice(0, 10).map(function(t, i) {
         return (i+1) + '. ' + t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -167,7 +168,7 @@
     document.getElementById('analyzeBtn').addEventListener('click', function() {
       if (!parsedData) return;
       INTEREST_OS.router.setData(parsedData);
-      window.location.href = 'graph-raw.html';
+      window.location.href = 'analyze-raw.html';
     });
   </script>
 </body>

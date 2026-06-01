@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" data-i18n-title="home.title">
 <head>
   <meta charset="UTF-8">
@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/custom-raw.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
   <style>
     #langToggle {
       font-family: var(--font-mono);
@@ -44,8 +45,8 @@
   <nav class="nav">
     <a href="#" class="nav-brand">&gt; interest_<span>os</span></a>
     <div class="nav-links">
-      <a href="#" class="nav-link" data-i18n="nav.about">about</a>
-      <a href="#" class="nav-link" data-i18n="nav.github">github</a>
+      <a href="#features" class="nav-link" data-i18n="nav.about">about</a>
+      <a href="https://github.com/seeker-you/interest-os" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.github">github</a>
       <button id="langToggle">EN</button>
     </div>
   </nav>
@@ -82,7 +83,7 @@
 
     <div class="ascii-divider">&mdash; &mdash; &mdash; &mdash; &mdash;  &lowast;  &mdash; &mdash; &mdash; &mdash; &mdash;</div>
 
-    <div class="feature-grid">
+    <div class="feature-grid" id="features">
       <div class="feature-cell">
         <div class="feat-num">01</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-upload"/></svg>
@@ -128,7 +129,9 @@
       <div class="trust-item"><span class="trust-dot"></span> <span data-i18n="trust.4">100% free</span></div>
     </div>
 
-    <div class="ascii-divider" style="font-size:0.625rem">
+    <div style="text-align:center;margin-top:32px"><a href="upload-raw.html" class="btn btn-secondary btn-sm">
+<svg width="14" height="14"><use href="#icon-upload"/></svg> Upload Your Data</a></div>
+<div class="ascii-divider" style="font-size:0.625rem">
       [ interest_os ] — <span data-i18n="footer">see yourself through the algorithm</span>
     </div>
   </main>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -6,6 +6,7 @@
   <title>Share — Interest OS</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/custom-raw.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
   <style>
     #langToggle {
       font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
@@ -146,12 +147,12 @@
       });
 
       document.getElementById('copyBtn').addEventListener('click', function() {
-        navigator.clipboard.writeText(window.location.origin + '/index.html').then(function() {
+        navigator.clipboard.writeText(window.location.href.replace('share-raw.html','')).then(function() {
           alert(INTEREST_OS.i18n.t('share.copied'));
         });
       });
       document.getElementById('copyLinkBtn').addEventListener('click', function() {
-        navigator.clipboard.writeText(window.location.origin + '/index.html');
+        navigator.clipboard.writeText(window.location.href.replace('share-raw.html',''));
       });
     })();
   </script>

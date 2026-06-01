@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyzing — Interest OS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom-raw.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
+  <style>
+    .analyze-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 80vh; text-align: center;
+    }
+    .ring-container {
+      position: relative; width: 200px; height: 200px; margin-bottom: 40px;
+    }
+    .ring {
+      position: absolute; inset: 0;
+      border: 1px solid var(--border);
+      animation: spin 8s linear infinite;
+    }
+    .ring:nth-child(2) {
+      inset: 20px; animation-duration: 6s; animation-direction: reverse;
+    }
+    .ring:nth-child(3) {
+      inset: 40px; animation-duration: 4s;
+    }
+    .ring-center {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .ring-dot {
+      width: 20px; height: 20px; background: var(--accent);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+
+    .tag-reveal {
+      font-family: var(--font-mono);
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--accent);
+      min-height: 2rem; margin-bottom: 16px;
+      opacity: 0; transform: translateY(8px);
+      transition: all 0.3s ease;
+    }
+    .tag-reveal.show { opacity: 1; transform: translateY(0); }
+
+    .progress-wrap {
+      width: 260px; height: 2px;
+      background: var(--border);
+      margin: 0 auto;
+    }
+    .progress-bar {
+      height: 100%; background: var(--accent);
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .status-text {
+      font-family: var(--font-mono);
+      font-size: 0.75rem; color: var(--text-muted);
+      margin-top: 12px; min-height: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="grid-bg"></div>
+
+  <main class="container">
+    <div class="analyze-wrap">
+      <div class="ring-container">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring-center"><div class="ring-dot"></div></div>
+      </div>
+
+      <div class="tag-reveal" id="tagReveal">Initializing...</div>
+
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <p class="status-text" id="statusText" data-i18n="analyze.status_init">Initializing engine...</p>
+    </div>
+  </main>
+
+  <script src="js/utils.js"></script>
+  <script src="js/keywords.js"></script>
+  <script src="js/personas.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/i18n.js"></script>
+  <script>
+    var profile = INTEREST_OS.router.getData();
+    if (!profile || !profile.tags || profile.tags.length === 0) {
+      INTEREST_OS.router.loadDemo().then(function(d) {
+        if (d) { INTEREST_OS.router.setData(d); location.href = 'graph-raw.html'; }
+      });
+    } else {
+      runAnimation(profile);
+    }
+
+    function runAnimation(profile) {
+      var tags = profile.tags || [];
+      var steps = [
+        { key: 'analyze.status_parse', tags: tags.slice(0, 3) },
+        { key: 'analyze.status_weight', tags: tags.slice(0, 5) },
+        { key: 'analyze.status_relation', tags: tags.slice(0, 7) },
+        { key: 'analyze.status_echo', tags: [] },
+        { key: 'analyze.status_persona', tags: [] },
+        { key: 'analyze.status_galaxy', tags: [] }
+      ];
+
+      var bar = document.getElementById('progressBar');
+      var tagEl = document.getElementById('tagReveal');
+      var statusEl = document.getElementById('statusText');
+      var i = 0;
+      var total = steps.length;
+      var duration = 3500;
+      var stepTime = duration / total;
+
+      function next() {
+        if (i >= total) {
+          bar.style.width = '100%';
+          tagEl.textContent = INTEREST_OS.i18n.t('analyze.done');
+          tagEl.classList.add('show');
+          statusEl.textContent = INTEREST_OS.i18n.t('analyze.redirect');
+          setTimeout(function() { window.location.href = 'graph-raw.html'; }, 1000);
+          return;
+        }
+
+        bar.style.width = ((i + 1) / total * 100) + '%';
+        statusEl.textContent = INTEREST_OS.i18n.t(steps[i].key);
+
+        var showTags = steps[i].tags;
+        if (showTags.length > 0) {
+          tagEl.classList.remove('show');
+          setTimeout(function() {
+            tagEl.textContent = showTags.map(function(t) { return t.name; }).join(' · ');
+            tagEl.classList.add('show');
+          }, 150);
+        }
+
+        i++;
+        setTimeout(next, stepTime);
+      }
+
+      setTimeout(next, 300);
+    }
+  </script>
+</body>
+</html>
