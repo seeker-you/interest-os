@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -6,6 +6,15 @@
   <title>Share — Interest OS</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/custom-raw.css">
+  <style>
+    #langToggle {
+      font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+      color: var(--accent); background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.2);
+      padding: 4px 10px; cursor: pointer; transition: all 0.15s; margin-left: 8px;
+    }
+    #langToggle:hover { background: rgba(0,229,255,0.15); }
+  </style>
 </head>
 <body>
   <div class="noise"></div>
@@ -13,23 +22,25 @@
 
   <nav class="nav">
     <a href="graph-raw.html" class="nav-brand">&larr; interest_<span>os</span></a>
-    <button id="copyLinkBtn" class="btn btn-secondary btn-sm">
-      <svg width="14" height="14"><use href="#icon-copy"/></svg> Copy Link
-    </button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="copyLinkBtn" class="btn btn-secondary btn-sm">
+        <svg width="14" height="14"><use href="#icon-copy"/></svg> <span data-i18n="share.copy_link">Copy Link</span>
+      </button>
+      <button id="langToggle">EN</button>
+    </div>
   </nav>
 
   <main class="container" style="display:flex;flex-direction:column;align-items:center">
     <div class="hero-label">// share_card</div>
-    <h2 class="mono" style="font-size:1.5rem;margin-bottom:4px">Your Digital Persona</h2>
-    <p class="text-dim mono" style="font-size:0.75rem;margin-bottom:32px">Download image, share anywhere.</p>
+    <h2 class="mono" style="font-size:1.5rem;margin-bottom:4px" data-i18n="share.heading">Your Digital Persona</h2>
+    <p class="text-dim mono" style="font-size:0.75rem;margin-bottom:32px" data-i18n="share.subtitle">Download image, share anywhere.</p>
 
-    <!-- Share Card -->
     <div class="share-card" id="shareCard" style="margin-bottom:24px">
       <canvas id="shareCanvas" style="display:none"></canvas>
       <div id="cardInner" style="width:100%;height:100%;position:relative">
         <canvas id="miniCanvas" style="position:absolute;top:32px;left:50%;transform:translateX(-50%)" width="180" height="180"></canvas>
         <div id="personaSec" style="position:absolute;bottom:280px;left:0;right:0;text-align:center">
-          <div class="mono" style="font-size:0.625rem;color:var(--text-muted);letter-spacing:0.2em;margin-bottom:8px">YOUR ALGORITHM PERSONA</div>
+          <div class="mono" style="font-size:0.625rem;color:var(--text-muted);letter-spacing:0.2em;margin-bottom:8px" data-i18n="share.persona_label">YOUR ALGORITHM PERSONA</div>
           <div id="displayPersona" class="mono" style="font-size:1.5rem;font-weight:700;color:var(--accent)">--</div>
         </div>
         <div id="tagSec" style="position:absolute;bottom:120px;left:24px;right:24px"></div>
@@ -37,22 +48,18 @@
       </div>
     </div>
 
-    <!-- Actions -->
     <div style="display:flex;gap:12px;margin-bottom:48px">
       <button id="downloadBtn" class="btn btn-primary btn-lg">
-        <svg width="18" height="18"><use href="#icon-download"/></svg>
-        Save Image
+        <svg width="18" height="18"><use href="#icon-download"/></svg> <span data-i18n="share.download">Save Image</span>
       </button>
       <button id="copyBtn" class="btn btn-secondary btn-lg">
-        <svg width="18" height="18"><use href="#icon-copy"/></svg>
-        Copy Link
+        <svg width="18" height="18"><use href="#icon-copy"/></svg> <span data-i18n="share.copy">Copy Link</span>
       </button>
     </div>
 
-    <p class="mono" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px">No real data yet?</p>
+    <p class="mono" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px" data-i18n="share.no_data">No real data yet?</p>
     <a href="upload-raw.html" class="btn btn-primary">
-      <svg width="16" height="16"><use href="#icon-upload"/></svg>
-      Analyze Your Real Data
+      <svg width="16" height="16"><use href="#icon-upload"/></svg> <span data-i18n="share.analyze_real">Analyze Your Real Data</span>
     </a>
   </main>
 
@@ -67,6 +74,7 @@
   <script src="js/personas.js"></script>
   <script src="js/router.js"></script>
   <script src="js/share.js"></script>
+  <script src="js/i18n.js"></script>
   <script>
     (function() {
       var profile = INTEREST_OS.router.getData();
@@ -82,7 +90,6 @@
 
       document.getElementById('displayPersona').textContent = persona.name;
 
-      // Mini galaxy
       var mc = document.getElementById('miniCanvas');
       if (mc) {
         var ctx = mc.getContext('2d');
@@ -94,16 +101,13 @@
           var r = (tag.weight/maxW)*maxR*0.5 + 8;
           var x = cx+Math.cos(angle)*r, y = cy+Math.sin(angle)*r;
           var radius = 3 + (tag.weight/maxW)*12;
-
           ctx.fillStyle = tag.color;
           ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI*2); ctx.fill();
-
           ctx.strokeStyle = tag.color + '30';
           ctx.lineWidth = 0.5;
           ctx.beginPath(); ctx.arc(x, y, radius*2.5, 0, Math.PI*2); ctx.stroke();
         });
 
-        // Connections
         ctx.strokeStyle = 'rgba(255,255,255,0.04)';
         ctx.lineWidth = 0.3;
         profile.tags.forEach(function(tag) {
@@ -121,7 +125,6 @@
         });
       }
 
-      // Top tags
       var ts = document.getElementById('tagSec');
       ts.innerHTML = topTags.map(function(t, i) {
         var w = (t.weight/100)*180;
@@ -135,7 +138,6 @@
 
       function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-      // Download
       document.getElementById('downloadBtn').addEventListener('click', function() {
         var url = INTEREST_OS.share.generate(profile, '#shareCanvas');
         if (!url) return;
@@ -143,15 +145,13 @@
         a.href = url; a.download = 'interest-os-' + persona.name + '.png'; a.click();
       });
 
-      // Copy
       document.getElementById('copyBtn').addEventListener('click', function() {
-        var url = window.location.origin + '/index-raw.html';
-        navigator.clipboard.writeText(url).then(function() {
-          alert('Link copied!');
+        navigator.clipboard.writeText(window.location.origin + '/index.html').then(function() {
+          alert(INTEREST_OS.i18n.t('share.copied'));
         });
       });
       document.getElementById('copyLinkBtn').addEventListener('click', function() {
-        navigator.clipboard.writeText(window.location.origin + '/index-raw.html');
+        navigator.clipboard.writeText(window.location.origin + '/index.html');
       });
     })();
   </script>

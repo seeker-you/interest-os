@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-i18n-title="home.title">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,155 +11,125 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/custom-raw.css">
-  <!-- Inline SVG Icons (no emoji) -->
+  <style>
+    #langToggle {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.2);
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-left: 8px;
+    }
+    #langToggle:hover { background: rgba(0,229,255,0.15); }
+  </style>
   <svg style="display:none" aria-hidden="true">
-    <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-    </symbol>
-    <symbol id="icon-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 012.06-4.4A2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0012 4.5v15a2.5 2.5 0 004.96.44 2.5 2.5 0 012.96-3.08 3 3 0 01.34-5.58 2.5 2.5 0 00-2.06-4.4A2.5 2.5 0 0014.5 2z"/>
-    </symbol>
-    <symbol id="icon-galaxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
-    </symbol>
-    <symbol id="icon-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-    </symbol>
-    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </symbol>
-    <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-    </symbol>
-    <symbol id="icon-user-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/>
-    </symbol>
-    <symbol id="icon-hard-drive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/>
-    </symbol>
-    <symbol id="icon-dollar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-    </symbol>
-    <symbol id="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-    </symbol>
-    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-    </symbol>
-    <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/>
-    </symbol>
+    <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="icon-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 012.06-4.4A2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0012 4.5v15a2.5 2.5 0 004.96.44 2.5 2.5 0 012.96-3.08 3 3 0 01.34-5.58 2.5 2.5 0 00-2.06-4.4A2.5 2.5 0 0014.5 2z"/></symbol>
+    <symbol id="icon-galaxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
   </svg>
 </head>
 <body>
   <div class="noise"></div>
   <div class="grid-bg"></div>
 
-  <!-- Nav -->
   <nav class="nav">
     <a href="#" class="nav-brand">&gt; interest_<span>os</span></a>
     <div class="nav-links">
-      <a href="#" class="nav-link">about</a>
-      <a href="#" class="nav-link">github</a>
+      <a href="#" class="nav-link" data-i18n="nav.about">about</a>
+      <a href="#" class="nav-link" data-i18n="nav.github">github</a>
+      <button id="langToggle">EN</button>
     </div>
   </nav>
 
-  <!-- Hero -->
   <main class="container">
     <section class="hero-section">
-      <div class="hero-label">// v0.1.0 &mdash; interest visualization</div>
+      <div class="hero-label">// v0.2.0 — <span data-i18n="home.badge">interest visualization</span></div>
       <h1 class="hero-title">
-        Algorithm sees you.<br>
-        <span class="highlight">Do you see algorithm?</span>
+        <span data-i18n="home.title1">Algorithm sees you.</span><br>
+        <span class="highlight" data-i18n="home.title2">Do you see algorithm?</span>
       </h1>
       <div class="terminal-prompt hero-byline">
-        <span class="prompt">$</span> upload your watch history
+        <span class="prompt">$</span> <span data-i18n="home.terminal1">upload your watch history</span>
         <span class="cursor"></span><br>
-        <span style="color:var(--text-dim)">// AI parses your interest DNA</span><br>
-        <span style="color:var(--text-dim)">// Visualize as a galaxy map</span><br>
-        <span style="color:var(--text-dim)">// See yourself through the algorithm's eyes</span>
+        <span style="color:var(--text-dim)">// <span data-i18n="home.terminal2">AI parses your interest DNA</span></span><br>
+        <span style="color:var(--text-dim)">// <span data-i18n="home.terminal3">Visualize as a galaxy map</span></span><br>
+        <span style="color:var(--text-dim)">// <span data-i18n="home.terminal4">See yourself through algorithm's eyes</span></span>
       </div>
 
-      <!-- CTA -->
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
         <a href="upload-raw.html" class="btn btn-primary btn-lg">
           <svg width="18" height="18"><use href="#icon-search"/></svg>
-          Start Analysis
+          <span data-i18n="home.cta1">Start Analysis</span>
         </a>
         <button id="demoBtn" class="btn btn-secondary btn-lg">
           <svg width="18" height="18"><use href="#icon-arrow-right"/></svg>
-          Try Demo Data
+          <span data-i18n="home.cta2">Try Demo Data</span>
         </button>
       </div>
       <p class="mono" style="font-size:0.75rem;color:var(--text-muted);margin-top:8px">
-        // No upload to server &middot; No account &middot; No storage
+        // <span data-i18n="home.privacy">No upload · No account · No storage</span>
       </p>
     </section>
 
-    <!-- ASCII Divider -->
-    <div class="ascii-divider">
-      &mdash; &mdash; &mdash; &mdash; &mdash;  &lowast;  &mdash; &mdash; &mdash; &mdash; &mdash;
-    </div>
+    <div class="ascii-divider">&mdash; &mdash; &mdash; &mdash; &mdash;  &lowast;  &mdash; &mdash; &mdash; &mdash; &mdash;</div>
 
-    <!-- Feature Grid -->
     <div class="feature-grid">
       <div class="feature-cell">
         <div class="feat-num">01</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-upload"/></svg>
-        <h3>Upload History</h3>
-        <p>Drop your YouTube or Bilibili watch history. JSON, CSV, or plain text. Max 200 entries.</p>
+        <h3 data-i18n="feat1.title">Upload History</h3>
+        <p data-i18n="feat1.desc">Drop your YouTube, Bilibili, or TikTok history. JSON, CSV, or plain text. Max 200.</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">02</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-brain"/></svg>
-        <h3>AI Parsing</h3>
-        <p>Keyword engine extracts interest tags, weights, and categories. Runs locally in your browser.</p>
+        <h3 data-i18n="feat2.title">AI Parsing</h3>
+        <p data-i18n="feat2.desc">Keyword engine extracts tags, weights, and categories. Runs locally in your browser.</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">03</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-galaxy"/></svg>
-        <h3>Galaxy View</h3>
-        <p>Interactive force-directed graph. Each planet = one interest. Size = weight. Distance = relation.</p>
+        <h3 data-i18n="feat3.title">Galaxy View</h3>
+        <p data-i18n="feat3.desc">Interactive force graph. Planet = interest. Size = weight. Distance = relation.</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">04</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-edit"/></svg>
-        <h3>Edit &amp; Refine</h3>
-        <p>Disagree with the AI? Add, remove, or reweight tags. You have the final say.</p>
+        <h3 data-i18n="feat4.title">Edit & Refine</h3>
+        <p data-i18n="feat4.desc">Disagree with the AI? Add, remove, reweight. You decide.</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">05</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-search"/></svg>
-        <h3>Echo Chamber Score</h3>
-        <p>See your information diversity. Are you in a filter bubble? The numbers do not lie.</p>
+        <h3 data-i18n="feat5.title">Echo Chamber Score</h3>
+        <p data-i18n="feat5.desc">See your diversity score. Trapped in a filter bubble? Numbers don't lie.</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">06</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-share"/></svg>
-        <h3>Share Card</h3>
-        <p>Generate a persona card. Download as PNG. Post wherever. Let the world see your algorithm self.</p>
+        <h3 data-i18n="feat6.title">Share Card</h3>
+        <p data-i18n="feat6.desc">Generate a persona card. Download as PNG. Share anywhere.</p>
       </div>
     </div>
 
-    <!-- Trust Strip -->
     <div class="trust-strip">
-      <div class="trust-item">
-        <span class="trust-dot"></span> No server upload
-      </div>
-      <div class="trust-item">
-        <span class="trust-dot"></span> No account needed
-      </div>
-      <div class="trust-item">
-        <span class="trust-dot"></span> No data stored
-      </div>
-      <div class="trust-item">
-        <span class="trust-dot"></span> 100% free
-      </div>
+      <div class="trust-item"><span class="trust-dot"></span> <span data-i18n="trust.1">No server upload</span></div>
+      <div class="trust-item"><span class="trust-dot"></span> <span data-i18n="trust.2">No account needed</span></div>
+      <div class="trust-item"><span class="trust-dot"></span> <span data-i18n="trust.3">No data stored</span></div>
+      <div class="trust-item"><span class="trust-dot"></span> <span data-i18n="trust.4">100% free</span></div>
     </div>
 
-    <!-- Footer -->
     <div class="ascii-divider" style="font-size:0.625rem">
-      [ interest_os ] &mdash; see yourself through the algorithm
+      [ interest_os ] — <span data-i18n="footer">see yourself through the algorithm</span>
     </div>
   </main>
 
@@ -167,13 +137,14 @@
   <script src="js/keywords.js"></script>
   <script src="js/personas.js"></script>
   <script src="js/router.js"></script>
+  <script src="js/i18n.js"></script>
   <script>
     document.getElementById('demoBtn').addEventListener('click', function() {
-      this.textContent = 'Loading...';
+      this.querySelector('span').textContent = INTEREST_OS.i18n.t('misc.loading');
       this.disabled = true;
       INTEREST_OS.router.loadDemo().then(function(demo) {
         if (demo) { INTEREST_OS.router.setData(demo); window.location.href = 'graph-raw.html'; }
-        else { alert('Demo data failed to load.'); }
+        else { alert(INTEREST_OS.i18n.t('misc.error')); }
       });
     });
   </script>
