@@ -44,6 +44,7 @@
     <div class="tabs" id="methodTabs">
       <button class="tab-btn active" data-method="file">File Upload</button>
       <button class="tab-btn" data-method="paste">Paste Text</button>
+      <button class="tab-btn" data-method="help">How to Export?</button>
     </div>
 
     <!-- ===== FILE UPLOAD PANEL ===== -->
@@ -63,7 +64,27 @@
 
     <!-- ===== PASTE PANEL ===== -->
     <div id="panel-paste" style="display:none">
-      <textarea id="pasteArea" class="input" placeholder="Paste video titles here — one per line. Any platform works." style="min-height:200px"></textarea>
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <textarea id="pasteArea" class="input" placeholder="Paste video titles here — one per line. Any platform works." style="min-height:200px;width:100%;box-sizing:border-box"></textarea>
+        </div>
+        <div class="card" style="width:220px;flex-shrink:0;padding:12px">
+          <div class="mono" style="font-size:0.6875rem;color:var(--accent);margin-bottom:10px;font-weight:700">如何使用</div>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">
+            <button class="guide-btn active" data-platform="youtube" style="font-size:0.6875rem;padding:5px 8px;text-align:left;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:var(--text-dim);cursor:pointer;font-family:var(--font-mono)">YouTube</button>
+            <button class="guide-btn" data-platform="tiktok" style="font-size:0.6875rem;padding:5px 8px;text-align:left;background:transparent;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;font-family:var(--font-mono)">TikTok / Douyin</button>
+            <button class="guide-btn" data-platform="bilibili" style="font-size:0.6875rem;padding:5px 8px;text-align:left;background:transparent;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;font-family:var(--font-mono)">Bilibili</button>
+          </div>
+          <div id="guideContent" class="mono" style="font-size:0.6875rem;color:var(--text-dim);line-height:1.6">
+            <ol style="padding-left:14px;margin:0">
+              <li><span style="color:var(--accent)">takeout.google.com</span></li>
+              <li>Select YouTube &amp; YouTube Music</li>
+              <li>Check "history" → Export as JSON</li>
+              <li>Download and upload here</li>
+            </ol>
+          </div>
+        </div>
+      </div>
       <button id="pasteBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px">
         <span class="spinner" id="pasteSpinner" style="display:none"></span>
         Parse & Analyze
@@ -363,6 +384,26 @@
       document.getElementById('panel-help').style.display = 'none';
     });
   }
+
+  // ===== Import guide buttons =====
+  var guideData = {
+    youtube: '<ol style="padding-left:14px;margin:0"><li><span style="color:var(--accent)">takeout.google.com</span></li><li>Select YouTube &amp; YouTube Music</li><li>Check "history" → Export as JSON</li><li>Download and upload here</li></ol>',
+    tiktok: '<ol style="padding-left:14px;margin:0"><li>Settings → Privacy → Download your data → JSON</li><li>Douyin: Profile → Menu → Privacy → Download data</li><li>Upload JSON or paste titles</li></ol>',
+    bilibili: '<ol style="padding-left:14px;margin:0"><li>Open Bilibili → History page</li><li>Copy video titles</li><li>Paste in the left panel</li></ol>'
+  };
+  document.querySelectorAll('.guide-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.guide-btn').forEach(function(b) {
+        b.classList.remove('active');
+        b.style.background = 'transparent';
+        b.style.border = '1px solid var(--border)';
+      });
+      this.classList.add('active');
+      this.style.background = 'rgba(0,229,255,0.08)';
+      this.style.border = '1px solid rgba(0,229,255,0.2)';
+      document.getElementById('guideContent').innerHTML = guideData[this.dataset.platform];
+    });
+  });
 })();
   </script>
 </body>
