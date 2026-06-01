@@ -191,6 +191,8 @@ INTEREST_OS.i18n = {
 };
 
 // Auto-init when DOM ready
-document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() { INTEREST_OS.i18n.init(); });
+} else {
   INTEREST_OS.i18n.init();
-});
+}
