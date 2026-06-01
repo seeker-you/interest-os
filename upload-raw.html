@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -9,15 +9,29 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
   <style>
     #langToggle {
-      font-family: var(--font-mono);
-      font-size: 0.6875rem; font-weight: 700;
-      color: var(--accent);
-      background: rgba(0,229,255,0.08);
+      font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+      color: var(--accent); background: rgba(0,229,255,0.08);
       border: 1px solid rgba(0,229,255,0.2);
-      padding: 4px 10px; cursor: pointer;
-      transition: all 0.15s; margin-left: 8px;
+      padding: 4px 10px; cursor: pointer; transition: all 0.15s; margin-left: 8px;
     }
     #langToggle:hover { background: rgba(0,229,255,0.15); }
+    .tag-bar-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+    }
+    .tag-bar-name {
+      font-family: var(--font-mono); font-size: 0.8125rem;
+      color: var(--text-dim); width: 80px; text-align: right; flex-shrink: 0;
+    }
+    .tag-bar-track {
+      flex: 1; height: 6px; background: var(--border);
+    }
+    .tag-bar-fill {
+      height: 100%; transition: width 0.6s ease;
+    }
+    .tag-bar-pct {
+      font-family: var(--font-mono); font-size: 0.75rem;
+      color: var(--accent); width: 40px; flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -45,7 +59,7 @@
 
     <div id="tab-file" class="tab-content">
       <div class="upload-zone" id="uploadZone">
-        <svg width="40" height="40" class="dz-icon"><use href="#icon-upload" /></svg>
+        <svg width="40" height="40" class="dz-icon"><use href="#icon-upload"/></svg>
         <div class="dz-text" data-i18n="upload.drop_text">Drop file here</div>
         <div class="dz-hint" data-i18n="upload.drop_hint">.json .csv .txt (any platform) &middot; up to 200</div>
         <input type="file" id="fileInput" accept=".json,.csv,.txt" hidden>
@@ -53,7 +67,7 @@
     </div>
 
     <div id="tab-paste" class="tab-content" style="display:none">
-      <textarea id="pasteArea" class="input" data-i18n="upload.paste_placeholder" placeholder="One title per line..."></textarea>
+      <textarea id="pasteArea" class="input" placeholder="每行一个视频标题（任意平台均可）" style="min-height:180px"></textarea>
       <button id="pasteBtn" class="btn btn-primary" style="margin-top:12px;width:100%" data-i18n="upload.parse_btn">Parse Text</button>
     </div>
 
@@ -85,23 +99,34 @@
       </div>
     </div>
 
+    <!-- ===== ANALYSIS RESULT (shown after parse) ===== -->
     <div id="parseResult" style="display:none;margin-top:24px">
       <div class="card">
-        <div class="mono" style="color:var(--accent-green);margin-bottom:12px" data-i18n="upload.success">✓ Parse successful</div>
-        <div class="mono" style="font-size:0.8125rem;color:var(--text-dim);margin-bottom:4px" id="resultCount"></div>
-        <div class="mono" style="font-size:0.8125rem;color:var(--text-dim);margin-bottom:12px" id="resultSource"></div>
-        <div id="resultPreview" class="mono" style="font-size:0.75rem;color:var(--text-muted);max-height:120px;overflow-y:auto;line-height:1.8;margin-bottom:16px"></div>
-        <button id="analyzeBtn" class="btn btn-primary btn-lg" style="width:100%">
-          <svg width="18" height="18"><use href="#icon-brain" /></svg>
-          <span data-i18n="upload.analyze_btn">Start Analysis</span>
-        </button>
+        <div class="mono" style="color:var(--accent-green);margin-bottom:8px;font-size:0.875rem">
+          <span data-i18n="upload.success">Parse successful</span>
+        </div>
+        <div id="resultMeta" class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:16px"></div>
+
+        <!-- Top Tags Summary -->
+        <div style="margin-bottom:4px">
+          <div class="mono" style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px" data-i18n="upload.top_tags">Your Top Interests</div>
+          <div id="tagBars"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button id="viewGalaxyBtn" class="btn btn-primary btn-lg" style="flex:1">
+            <svg width="18" height="18"><use href="#icon-galaxy"/></svg>
+            <span data-i18n="upload.view_galaxy">View Galaxy Map</span>
+          </button>
+          <button id="newAnalysisBtn" class="btn btn-secondary btn-lg" style="flex:1" data-i18n="upload.new_analysis">New Analysis</button>
+        </div>
       </div>
     </div>
   </main>
 
   <svg style="display:none" aria-hidden="true">
     <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
-    <symbol id="icon-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 012.06-4.4A2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0012 4.5v15a2.5 2.5 0 004.96.44 2.5 2.5 0 012.96-3.08 3 3 0 01.34-5.58 2.5 2.5 0 00-2.06-4.4A2.5 2.5 0 0014.5 2z"/></symbol>
+    <symbol id="icon-galaxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   </svg>
 
   <script src="js/utils.js"></script>
@@ -110,10 +135,12 @@
   <script src="js/parser.js"></script>
   <script src="js/analyzer.js"></script>
   <script src="js/router.js"></script>
-  <script src="js/i18n.js"></script>
+  <script src="js/i18n.js?v=2"></script>
   <script>
     var parsedData = null;
+    var _ = window._i18n || { t: function(k){return k;} };
 
+    // Tabs
     document.querySelectorAll('.tab-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -123,6 +150,7 @@
       });
     });
 
+    // File upload
     var zone = document.getElementById('uploadZone');
     zone.addEventListener('click', function() { document.getElementById('fileInput').click(); });
     zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
@@ -155,20 +183,54 @@
 
     function showResult(result) {
       if (result.error) { alert(result.error); return; }
+
+      // Run analysis
       parsedData = INTEREST_OS.analyzer.analyze(result.titles);
-      document.getElementById('resultCount').textContent = (INTEREST_OS.i18n.current === 'zh' ? '识别到 ' : 'Records: ') + result.totalFound + (result.truncated ? ' (truncated to ' + result.titles.length + ')' : '');
-      document.getElementById('resultSource').textContent = (INTEREST_OS.i18n.current === 'zh' ? '来源: ' : 'Source: ') + result.source;
-      var preview = document.getElementById('resultPreview');
-      preview.innerHTML = result.titles.slice(0, 10).map(function(t, i) {
-        return (i+1) + '. ' + t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      }).join('<br>');
+
+      // Show meta info
+      var isZh = (window._i18n && window._i18n.current === "zh") ||
+                 (INTEREST_OS.i18n && INTEREST_OS.i18n.current === "zh");
+      var meta = document.getElementById('resultMeta');
+      meta.textContent = (isZh ? '识别到 ' : 'Records: ') + result.totalFound +
+        (result.truncated ? ' (truncated)' : '') +
+        ' | ' + (isZh ? '来源: ' : 'Source: ') + result.source;
+
+      // Show top tags as bars
+      var topTags = parsedData.tags.slice(0, 8);
+      var tagBars = document.getElementById('tagBars');
+      var colors = ['var(--accent)','var(--accent-green)','var(--accent-2)','var(--accent-3)',
+                    '#3B82F6','#A855F7','#EC4899','#14B8A6'];
+      tagBars.innerHTML = topTags.map(function(t, i) {
+        return '<div class="tag-bar-row">' +
+          '<span class="tag-bar-name">' + escHtml(t.name) + '</span>' +
+          '<span class="tag-bar-track"><span class="tag-bar-fill" style="width:' + t.weight + '%;background:' + colors[i%8] + '"></span></span>' +
+          '<span class="tag-bar-pct">' + t.weight + '%</span>' +
+          '</div>';
+      }).join('');
+
+      // Show result panel
       document.getElementById('parseResult').style.display = '';
+      document.getElementById('parseResult').scrollIntoView({ behavior: 'smooth' });
     }
 
-    document.getElementById('analyzeBtn').addEventListener('click', function() {
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // View Galaxy
+    document.getElementById('viewGalaxyBtn').addEventListener('click', function() {
       if (!parsedData) return;
       INTEREST_OS.router.setData(parsedData);
       window.location.href = 'analyze-raw.html';
+    });
+
+    // New Analysis (reset)
+    document.getElementById('newAnalysisBtn').addEventListener('click', function() {
+      document.getElementById('parseResult').style.display = 'none';
+      document.getElementById('pasteArea').value = '';
+      document.getElementById('fileInput').value = '';
+      parsedData = null;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
 </body>
