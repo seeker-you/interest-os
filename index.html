@@ -63,8 +63,8 @@
   <nav class="nav">
     <a href="#" class="nav-brand">&gt; interest_<span>os</span></a>
     <div style="display:flex;align-items:center;gap:8px">
-      <a href="#" class="nav-link">about</a>
-      <a href="#" class="nav-link">github</a>
+      <a href="#" class="nav-link" data-i18n="nav.about">关于</a>
+      <a href="#" class="nav-link" data-i18n="nav.github">github</a>
       <button id="langToggle">EN</button>
     </div>
   </nav>
@@ -72,32 +72,32 @@
   <!-- Hero -->
   <main class="container">
     <section class="hero-section">
-      <div class="hero-label">// v0.1.0 &mdash; interest visualization</div>
+      <div class="hero-label" data-i18n="home.badge">兴趣画像可视化平台 · v0.1.0</div>
       <h1 class="hero-title">
-        Algorithm sees you.<br>
-        <span class="highlight">Do you see algorithm?</span>
+        <span data-i18n="home.title1">算法认识你</span><br>
+        <span class="highlight" data-i18n="home.title2">你认识算法吗？</span>
       </h1>
       <div class="terminal-prompt hero-byline">
-        <span class="prompt">$</span> upload your watch history
+        <span class="prompt">$</span> <span data-i18n="home.terminal1">上传你的观看记录</span>
         <span class="cursor"></span><br>
-        <span style="color:var(--text-dim)">// AI parses your interest DNA</span><br>
-        <span style="color:var(--text-dim)">// Visualize as a galaxy map</span><br>
-        <span style="color:var(--text-dim)">// See yourself through the algorithm's eyes</span>
+        <span style="color:var(--text-dim)" data-i18n="home.terminal2">AI 解析你的兴趣基因</span><br>
+        <span style="color:var(--text-dim)" data-i18n="home.terminal3">星系图谱可视化呈现</span><br>
+        <span style="color:var(--text-dim)" data-i18n="home.terminal4">看见算法眼中的自己</span>
       </div>
 
       <!-- CTA -->
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
         <a href="upload.html" class="btn btn-primary btn-lg">
           <svg width="18" height="18"><use href="#icon-search"/></svg>
-          Start Analysis
+          <span data-i18n="home.cta1">开始分析</span>
         </a>
         <button id="demoBtn" class="btn btn-secondary btn-lg">
           <svg width="18" height="18"><use href="#icon-arrow-right"/></svg>
-          Try Demo Data
+          <span data-i18n="home.cta2">先用演示数据体验</span>
         </button>
       </div>
-      <p class="mono" style="font-size:0.75rem;color:var(--text-muted);margin-top:8px">
-        // No upload to server &middot; No account &middot; No storage
+      <p class="mono" style="font-size:0.75rem;color:var(--text-muted);margin-top:8px" data-i18n="home.privacy">
+        不上传服务器 · 不注册账号 · 不存储数据
       </p>
     </section>
 
@@ -111,63 +111,64 @@
       <div class="feature-cell">
         <div class="feat-num">01</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-upload"/></svg>
-        <h3>Upload History</h3>
-        <p>Drop your YouTube or Bilibili watch history. JSON, CSV, or plain text. Max 200 entries.</p>
+        <h3 data-i18n="feat1.title">上传观看记录</h3>
+        <p data-i18n="feat1.desc">支持 YouTube、B站、TikTok 等平台。JSON、CSV 或纯文本，最多 200 条。</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">02</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-brain"/></svg>
-        <h3>AI Parsing</h3>
-        <p>Keyword engine extracts interest tags, weights, and categories. Runs locally in your browser.</p>
+        <h3 data-i18n="feat2.title">AI 智能分析</h3>
+        <p data-i18n="feat2.desc">关键词引擎提取兴趣标签、权重和分类。完全在浏览器本地运行。</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">03</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-galaxy"/></svg>
-        <h3>Galaxy View</h3>
-        <p>Interactive force-directed graph. Each planet = one interest. Size = weight. Distance = relation.</p>
+        <h3 data-i18n="feat3.title">星系图谱</h3>
+        <p data-i18n="feat3.desc">交互式力导向图。每颗星球 = 一个兴趣。大小 = 权重。距离 = 关联度。</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">04</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-edit"/></svg>
-        <h3>Edit &amp; Refine</h3>
-        <p>Disagree with the AI? Add, remove, or reweight tags. You have the final say.</p>
+        <h3 data-i18n="feat4.title">编辑与调整</h3>
+        <p data-i18n="feat4.desc">不同意 AI 的判断？增删标签、调整权重。你说了算。</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">05</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-search"/></svg>
-        <h3>Echo Chamber Score</h3>
-        <p>See your information diversity. Are you in a filter bubble? The numbers do not lie.</p>
+        <h3 data-i18n="feat5.title">信息茧房指数</h3>
+        <p data-i18n="feat5.desc">查看你的信息多样性。是否困在过滤气泡里？数据不会说谎。</p>
       </div>
       <div class="feature-cell">
         <div class="feat-num">06</div>
         <svg class="feat-icon" width="32" height="32"><use href="#icon-share"/></svg>
-        <h3>Share Card</h3>
-        <p>Generate a persona card. Download as PNG. Post wherever. Let the world see your algorithm self.</p>
+        <h3 data-i18n="feat6.title">分享数字人格</h3>
+        <p data-i18n="feat6.desc">生成人格卡片。下载 PNG。发到朋友圈。让世界看到算法眼中的你。</p>
       </div>
     </div>
 
     <!-- Trust Strip -->
     <div class="trust-strip">
       <div class="trust-item">
-        <span class="trust-dot"></span> No server upload
+        <span class="trust-dot"></span> <span data-i18n="trust.1">不上传服务器</span>
       </div>
       <div class="trust-item">
-        <span class="trust-dot"></span> No account needed
+        <span class="trust-dot"></span> <span data-i18n="trust.2">不注册账号</span>
       </div>
       <div class="trust-item">
-        <span class="trust-dot"></span> No data stored
+        <span class="trust-dot"></span> <span data-i18n="trust.3">不存储数据</span>
       </div>
       <div class="trust-item">
-        <span class="trust-dot"></span> 100% free
+        <span class="trust-dot"></span> <span data-i18n="trust.4">完全免费</span>
       </div>
     </div>
 
     <!-- Footer -->
     <div class="ascii-divider" style="font-size:0.625rem">
-      [ interest_os ] &mdash; see yourself through the algorithm
+      [ interest_os ] — <span data-i18n="footer">看见算法眼中的自己</span>
     </div>
   </main>
 
+  <script src="data/demo.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/keywords.js"></script>
   <script src="js/personas.js"></script>
@@ -175,11 +176,12 @@
   <script src="js/i18n.js?v=5"></script>
   <script>
     document.getElementById('demoBtn').addEventListener('click', function() {
-      this.textContent = 'Loading...';
+      var span = this.querySelector('span[data-i18n]');
+      if (span) span.textContent = INTEREST_OS.i18n.t('misc.loading');
       this.disabled = true;
       INTEREST_OS.router.loadDemo().then(function(demo) {
         if (demo) { INTEREST_OS.router.setData(demo); window.location.href = 'graph-raw.html'; }
-        else { alert('Demo data failed to load.'); }
+        else { alert('Demo data failed to load.'); this.disabled = false; }
       });
     });
   </script>

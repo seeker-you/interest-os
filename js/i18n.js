@@ -11,7 +11,7 @@
     "nav.share": { zh: "分享", en: "Share" },
     "nav.step": { zh: "步骤", en: "step" },
 
-    "home.badge": { zh: "兴趣画像可视化平台 · v1.0", en: "interest visualization · v1.0" },
+    "home.badge": { zh: "兴趣画像可视化平台 · v0.1.0", en: "interest visualization · v0.1.0" },
     "home.title1": { zh: "算法认识你", en: "Algorithm sees you." },
     "home.title2": { zh: "你认识算法吗？", en: "Do you see algorithm?" },
     "home.terminal1": { zh: "上传你的观看记录", en: "upload your watch history" },

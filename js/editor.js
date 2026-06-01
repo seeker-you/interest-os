@@ -14,7 +14,7 @@ INTEREST_OS.editor = {
     if (document.querySelector('.edit-overlay')) return;
     const overlay = document.createElement('div');
     overlay.className = 'edit-overlay';
-    overlay.innerHTML = 
+    overlay.innerHTML = `
       <div class="edit-panel glass glass-xl">
         <h3>✏️ 编辑兴趣标签</h3>
         <div class="edit-list"></div>
@@ -28,7 +28,7 @@ INTEREST_OS.editor = {
           <button class="btn btn-secondary cancel-btn">取消</button>
         </div>
       </div>
-    ;
+    `;
     document.body.appendChild(overlay);
 
     overlay.querySelector('.cancel-btn').onclick = () => this.close();
@@ -55,16 +55,16 @@ INTEREST_OS.editor = {
     const list = this.overlay.querySelector('.edit-list');
     const colors = ['#6366F1','#8B5CF6','#EC4899','#3B82F6','#14B8A6',
                     '#F59E0B','#EF4444','#22C55E','#A855F7','#06B6D4'];
-    list.innerHTML = this.tags.map((t, i) => 
-      <div class="edit-row" data-id="">
-        <span class="edit-row-color" style="background:"></span>
-        <input class="edit-row-name" value="" data-field="name" />
+    list.innerHTML = this.tags.map((t, i) => `
+      <div class="edit-row" data-id="${t.id}">
+        <span class="edit-row-color" style="background:${t.color}"></span>
+        <input class="edit-row-name" value="${this._esc(t.name)}" data-field="name" />
         <span class="edit-row-weight">
-          <input type="number" value="" min="0" max="100" data-field="weight" />
+          <input type="number" value="${t.weight}" min="0" max="100" data-field="weight" />
         </span>
         <button class="edit-row-delete" title="删除">✕</button>
       </div>
-    ).join('');
+    `).join('');
 
     // Event listeners
     list.querySelectorAll('.edit-row-delete').forEach(btn => {

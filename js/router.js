@@ -33,8 +33,13 @@ INTEREST_OS.router = {
     return !!INTEREST_OS.utils.load(this.STORAGE_KEY);
   },
 
-  // Load demo data from JSON
+  // Load demo data — uses inline JS global for file:// compat, fetch as fallback
   async loadDemo() {
+    // 1) Try the global set by data/demo.js (works on file:// protocol)
+    if (window.INTEREST_OS_DEMO) {
+      return window.INTEREST_OS_DEMO;
+    }
+    // 2) Fallback: fetch from HTTP server (only works on http://)
     try {
       const resp = await fetch('data/demo.json');
       if (!resp.ok) throw new Error('Failed to load demo');

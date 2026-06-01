@@ -47,6 +47,27 @@
       <button class="tab-btn" data-method="help">How to Export?</button>
     </div>
 
+    <!-- AI Analysis Toggle -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;padding:8px 12px;background:var(--bg);border:1px solid var(--border)">
+      <label style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:0.75rem;color:var(--text-dim);cursor:pointer;user-select:none">
+        <input type="checkbox" id="aiToggle" checked style="accent-color:var(--accent)">
+        <span>🧠 AI 深度分析</span>
+        <span style="color:var(--text-muted);font-size:0.625rem">(更准确的标签提取)</span>
+      </label>
+      <button id="aiSettingsBtn" class="btn btn-ghost btn-sm" style="font-size:0.625rem;padding:2px 8px">⚙ API Key</button>
+    </div>
+    <div id="aiSettingsBox" style="display:none;margin-bottom:20px;padding:12px;background:var(--bg);border:1px solid var(--border)">
+      <p class="mono" style="font-size:0.6875rem;color:var(--text-dim);margin-bottom:8px">
+        输入你自己的 Anthropic API Key，即可使用真实 AI 分析。Key 仅存储在浏览器本地。
+      </p>
+      <div style="display:flex;gap:8px">
+        <input type="password" id="apiKeyInput" class="input" placeholder="sk-ant-api03-..." style="flex:1;font-size:0.75rem">
+        <button id="saveApiKeyBtn" class="btn btn-primary btn-sm">保存</button>
+        <button id="clearApiKeyBtn" class="btn btn-secondary btn-sm">清除</button>
+      </div>
+      <p id="apiKeyStatus" class="mono" style="font-size:0.625rem;color:var(--accent-green);margin-top:6px;display:none"></p>
+    </div>
+
     <!-- ===== FILE UPLOAD PANEL ===== -->
     <div id="panel-file">
       <div class="upload-zone" id="uploadZone">
@@ -136,7 +157,8 @@
     <div id="parseResult" style="display:none;margin-top:24px">
       <div class="card">
         <div class="mono" style="color:var(--accent-green);margin-bottom:8px;font-size:0.875rem">Analysis Complete</div>
-        <div id="resultMeta" class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:16px"></div>
+        <div id="resultMeta" class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:8px"></div>
+        <div id="aiSummary" class="mono" style="display:none;font-size:0.75rem;color:var(--accent);background:rgba(0,229,255,0.06);border-left:2px solid var(--accent);padding:8px 12px;margin-bottom:16px;line-height:1.6"></div>
 
         <div style="margin-bottom:6px">
           <div class="mono" style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">Your Top Interests</div>
@@ -164,6 +186,7 @@
   <script src="js/personas.js?v=5"></script>
   <script src="js/parser.js?v=5"></script>
   <script src="js/analyzer.js?v=5"></script>
+  <script src="js/ai-analyzer.js?v=1"></script>
   <script src="js/router.js?v=5"></script>
   <script src="js/i18n.js?v=5"></script>
   <script>
@@ -296,17 +319,32 @@
     }, 300);
   });
 
+  // ===== ANALYSIS ENGINE SELECTION =====
+  function runAnalysis(titles, callback) {
+    var useAI = document.getElementById("aiToggle") && document.getElementById("aiToggle").checked;
+    if (useAI) {
+      document.getElementById("loadingText").textContent = "AI 正在深度分析你的兴趣...";
+      INTEREST_OS.aiAnalyzer.analyze(titles, { lang: "zh" }).then(function(data) {
+        callback(data);
+      }).catch(function() {
+        callback(INTEREST_OS.analyzer.analyze(titles));
+      });
+    } else {
+      setTimeout(function() { callback(INTEREST_OS.analyzer.analyze(titles)); }, 100);
+    }
+  }
+
   // ===== SHOW RESULT =====
   function showResult(result) {
     document.getElementById('errorBox').style.display = 'none';
 
     // Run analysis
-    parsedData = INTEREST_OS.analyzer.analyze(result.titles);
+    runAnalysis(result.titles, function(parsedData_) { parsedData = parsedData_;
 
     // Meta info
     var meta = document.getElementById('resultMeta');
     var t = result.truncated ? ' (showing first ' + result.titles.length + ')' : '';
-    meta.textContent = result.totalFound + ' records found' + t + ' | Source: ' + result.source;
+    meta.innerHTML = result.totalFound + ' records found' + t + ' | Source: ' + result.source + (parsedData.meta && parsedData.meta.source === 'ai-analyzed' ? ' 🤖 AI' : '');
 
     // Top tags as bars
     var topTags = parsedData.tags.slice(0, 8);
@@ -321,6 +359,11 @@
     }).join('');
 
     // Show result panel
+        // AI summary
+    var summaryEl = document.getElementById('aiSummary');
+    if (parsedData.summary) { summaryEl.textContent = '💡 ' + parsedData.summary; summaryEl.style.display = ''; }
+    else { summaryEl.style.display = 'none'; }
+
     var resultPanel = document.getElementById('parseResult');
     resultPanel.style.display = '';
 
@@ -333,6 +376,7 @@
 
     // Scroll to result
     resultPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }); // end runAnalysis callback
   }
 
   function showError(msg) {
@@ -370,6 +414,38 @@
     parsedData = null;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  // ===== AI Settings =====
+  document.getElementById('aiSettingsBtn').addEventListener('click', function() {
+    var box = document.getElementById('aiSettingsBox');
+    box.style.display = box.style.display === 'none' ? '' : 'none';
+    // Load existing key
+    var existing = INTEREST_OS.aiAnalyzer.getUserKey();
+    if (existing) document.getElementById('apiKeyInput').value = existing;
+  });
+  document.getElementById('saveApiKeyBtn').addEventListener('click', function() {
+    var key = document.getElementById('apiKeyInput').value.trim();
+    if (key) {
+      INTEREST_OS.aiAnalyzer.setUserKey(key);
+      document.getElementById('apiKeyStatus').textContent = '✓ API Key 已保存';
+      document.getElementById('apiKeyStatus').style.display = '';
+    }
+  });
+  document.getElementById('clearApiKeyBtn').addEventListener('click', function() {
+    INTEREST_OS.aiAnalyzer.setUserKey('');
+    document.getElementById('apiKeyInput').value = '';
+    document.getElementById('apiKeyStatus').textContent = '✓ API Key 已清除';
+    document.getElementById('apiKeyStatus').style.display = '';
+  });
+  // Load key on init
+  (function() {
+    var existing = INTEREST_OS.aiAnalyzer.getUserKey();
+    if (existing) {
+      document.getElementById('apiKeyInput').value = existing;
+      document.getElementById('apiKeyStatus').textContent = '✓ 已加载保存的 API Key';
+      document.getElementById('apiKeyStatus').style.display = '';
+    }
+  })();
 
   // ===== Switch to paste from help =====
   var switchBtn = document.getElementById('switchToPaste');
