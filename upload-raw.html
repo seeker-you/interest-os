@@ -30,7 +30,7 @@
   <nav class="nav">
     <a href="index.html" class="nav-brand">&larr; interest_<span>os</span></a>
     <div style="display:flex;align-items:center;gap:8px">
-      <span class="mono" style="font-size:0.75rem;color:var(--text-muted)">step 1/3</span>
+      <span class="mono" style="font-size:0.75rem;color:var(--text-muted)">step 1/3</span><span style="font-family:var(--font-mono);font-size:0.625rem;color:#00FF88;background:rgba(0,255,136,0.1);padding:2px 8px;margin-left:6px">v4</span>
       <button id="langToggle">EN</button>
     </div>
   </nav>
@@ -53,7 +53,7 @@
         <div class="dz-text" id="dropText">Drop file here or click to browse</div>
         <div class="upload-hint">.json .csv .txt (any platform) · up to 200 records</div>
         <div class="file-name" id="selectedFile" style="display:none"></div>
-        <input type="file" id="fileInput" accept=".json,.csv,.txt" hidden>
+        <input type="file" id="fileInput" accept=".json,.csv,.txt" style="display:none">
       </div>
       <button id="fileAnalyzeBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px;display:none">
         <span class="spinner" id="fileSpinner" style="display:none"></span>
@@ -191,7 +191,7 @@
     if (file) handleFileSelect(file);
   });
 
-  function handleFileSelect(file) {
+  function handleFileSelect(file) { console.log("[DEBUG] handleFileSelect:", file.name, file.size);
     // Show filename
     selectedFile = file;
     selectedFileEl.textContent = 'Selected: ' + file.name + ' (' + formatSize(file.size) + ')';
