@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -8,30 +8,19 @@
   <link rel="stylesheet" href="css/custom-raw.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
   <style>
-    #langToggle {
-      font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
-      color: var(--accent); background: rgba(0,229,255,0.08);
-      border: 1px solid rgba(0,229,255,0.2);
-      padding: 4px 10px; cursor: pointer; transition: all 0.15s; margin-left: 8px;
-    }
-    #langToggle:hover { background: rgba(0,229,255,0.15); }
-    .tag-bar-row {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
-    }
-    .tag-bar-name {
-      font-family: var(--font-mono); font-size: 0.8125rem;
-      color: var(--text-dim); width: 80px; text-align: right; flex-shrink: 0;
-    }
-    .tag-bar-track {
-      flex: 1; height: 6px; background: var(--border);
-    }
-    .tag-bar-fill {
-      height: 100%; transition: width 0.6s ease;
-    }
-    .tag-bar-pct {
-      font-family: var(--font-mono); font-size: 0.75rem;
-      color: var(--accent); width: 40px; flex-shrink: 0;
-    }
+    #langToggle{font-family:var(--font-mono);font-size:0.6875rem;font-weight:700;color:var(--accent);background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);padding:4px 10px;cursor:pointer;transition:all 0.15s;margin-left:8px}
+    #langToggle:hover{background:rgba(0,229,255,0.15)}
+    .file-selected{background:rgba(0,229,255,0.04)!important;border-color:var(--accent)!important}
+    .file-name{font-family:var(--font-mono);font-size:0.875rem;color:var(--accent);margin-top:8px;word-break:break-all}
+    .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .tag-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .tag-bar-name{font-family:var(--font-mono);font-size:0.8125rem;color:var(--text-dim);width:80px;text-align:right;flex-shrink:0}
+    .tag-bar-track{flex:1;height:6px;background:var(--border)}
+    .tag-bar-fill{height:100%;transition:width 0.8s ease}
+    .tag-bar-pct{font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);width:42px;flex-shrink:0}
+    .error-box{border:1px solid var(--accent-3);background:rgba(255,77,106,0.06);padding:16px;margin-top:16px}
+    .error-box .mono{color:var(--accent-3)}
   </style>
 </head>
 <body>
@@ -41,84 +30,104 @@
   <nav class="nav">
     <a href="index.html" class="nav-brand">&larr; interest_<span>os</span></a>
     <div style="display:flex;align-items:center;gap:8px">
-      <span class="mono" style="font-size:0.75rem;color:var(--text-muted)"><span data-i18n="nav.step">step</span> 1/3</span>
+      <span class="mono" style="font-size:0.75rem;color:var(--text-muted)">step 1/3</span>
       <button id="langToggle">EN</button>
     </div>
   </nav>
 
   <main class="container" style="max-width:720px">
     <div class="hero-label">// import_watch_history</div>
-    <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:8px" data-i18n="upload.heading">Upload Your Data</h2>
-    <p class="text-dim mono" style="font-size:0.8125rem;margin-bottom:32px" data-i18n="upload.subtitle">Any platform: YouTube, Bilibili, TikTok, Douyin.</p>
+    <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:8px">Upload Your Data</h2>
+    <p class="text-dim mono" style="font-size:0.8125rem;margin-bottom:32px">Any platform: YouTube, Bilibili, TikTok, Douyin. Drop a file or paste titles.</p>
 
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="file" data-i18n="upload.tab1">File Upload</button>
-      <button class="tab-btn" data-tab="paste" data-i18n="upload.tab2">Paste Text</button>
-      <button class="tab-btn" data-tab="help" data-i18n="upload.tab3">How to Export?</button>
+    <!-- ===== METHOD SWITCHER ===== -->
+    <div class="tabs" id="methodTabs">
+      <button class="tab-btn active" data-method="file">File Upload</button>
+      <button class="tab-btn" data-method="paste">Paste Text</button>
     </div>
 
-    <div id="tab-file" class="tab-content">
+    <!-- ===== FILE UPLOAD PANEL ===== -->
+    <div id="panel-file">
       <div class="upload-zone" id="uploadZone">
-        <svg width="40" height="40" class="dz-icon"><use href="#icon-upload"/></svg>
-        <div class="dz-text" data-i18n="upload.drop_text">Drop file here</div>
-        <div class="dz-hint" data-i18n="upload.drop_hint">.json .csv .txt (any platform) &middot; up to 200</div>
+        <svg width="48" height="48" style="color:var(--text-dim);margin-bottom:12px"><use href="#icon-upload"/></svg>
+        <div class="dz-text" id="dropText">Drop file here or click to browse</div>
+        <div class="upload-hint">.json .csv .txt (any platform) · up to 200 records</div>
+        <div class="file-name" id="selectedFile" style="display:none"></div>
         <input type="file" id="fileInput" accept=".json,.csv,.txt" hidden>
       </div>
+      <button id="fileAnalyzeBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px;display:none">
+        <span class="spinner" id="fileSpinner" style="display:none"></span>
+        Analyze This File
+      </button>
     </div>
 
-    <div id="tab-paste" class="tab-content" style="display:none">
-      <textarea id="pasteArea" class="input" placeholder="每行一个视频标题（任意平台均可）" style="min-height:180px"></textarea>
-      <button id="pasteBtn" class="btn btn-primary" style="margin-top:12px;width:100%" data-i18n="upload.parse_btn">Parse Text</button>
+    <!-- ===== PASTE PANEL ===== -->
+    <div id="panel-paste" style="display:none">
+      <textarea id="pasteArea" class="input" placeholder="Paste video titles here — one per line. Any platform works." style="min-height:200px"></textarea>
+      <button id="pasteBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px">
+        <span class="spinner" id="pasteSpinner" style="display:none"></span>
+        Parse & Analyze
+      </button>
     </div>
 
-    <div id="tab-help" class="tab-content" style="display:none">
+    <!-- ===== HELP PANEL ===== -->
+    <div id="panel-help" style="display:none">
       <div class="card" style="margin-bottom:12px">
-        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px" data-i18n="help.yt_title">YouTube Takeout</h3>
+        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px;color:var(--accent)">YouTube Takeout</h3>
         <ol class="mono" style="font-size:0.75rem;color:var(--text-dim);padding-left:16px;line-height:1.8">
-          <li><span style="color:var(--accent)">takeout.google.com</span> — <span data-i18n="help.yt_1">Visit Google Takeout</span></li>
-          <li data-i18n="help.yt_2">Select YouTube and YouTube Music</li>
-          <li data-i18n="help.yt_3">Check history → Export as JSON</li>
-          <li data-i18n="help.yt_4">Download and upload here</li>
+          <li>Go to <span style="color:var(--accent)">takeout.google.com</span></li>
+          <li>Select "YouTube and YouTube Music"</li>
+          <li>Check "history" → Export as JSON</li>
+          <li>Download and upload the JSON file here</li>
         </ol>
       </div>
       <div class="card" style="margin-bottom:12px">
-        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px" data-i18n="help.tt_title">TikTok / Douyin</h3>
+        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px;color:var(--accent)">TikTok / Douyin</h3>
         <ol class="mono" style="font-size:0.75rem;color:var(--text-dim);padding-left:16px;line-height:1.8">
-          <li data-i18n="help.tt_1">TikTok: Settings → Privacy → Download data → JSON</li>
-          <li data-i18n="help.tt_2">Douyin: Profile → Menu → Privacy → Download data</li>
-          <li data-i18n="help.tt_3">Upload JSON, or paste titles</li>
+          <li>TikTok: Settings → Privacy → Download your data → JSON</li>
+          <li>Douyin: Profile → Menu → Privacy → Download data</li>
+          <li>Upload the JSON file, or paste titles in Paste tab</li>
         </ol>
       </div>
       <div class="card" style="margin-bottom:12px">
-        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px" data-i18n="help.bl_title">Bilibili</h3>
+        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px;color:var(--accent)">Bilibili</h3>
         <ol class="mono" style="font-size:0.75rem;color:var(--text-dim);padding-left:16px;line-height:1.8">
-          <li data-i18n="help.bl_1">Go to History page</li>
-          <li data-i18n="help.bl_2">Copy titles manually</li>
-          <li data-i18n="help.bl_3">Paste in Paste Text tab</li>
+          <li>Open Bilibili → History page</li>
+          <li>Copy video titles</li>
+          <li>Paste in the Paste Text tab</li>
         </ol>
       </div>
+      <a href="#" id="switchToPaste" class="btn btn-secondary" style="width:100%;margin-top:8px">Switch to Paste Tab</a>
     </div>
 
-    <!-- ===== ANALYSIS RESULT (shown after parse) ===== -->
+    <!-- ===== ERROR BOX ===== -->
+    <div id="errorBox" class="error-box" style="display:none">
+      <div class="mono" style="font-size:0.8125rem" id="errorText"></div>
+    </div>
+
+    <!-- ===== LOADING ===== -->
+    <div id="loadingBox" style="display:none;text-align:center;padding:40px 0;margin-top:24px">
+      <div class="spinner" style="width:32px;height:32px;border-width:3px"></div>
+      <p class="mono" style="font-size:0.8125rem;color:var(--text-dim);margin-top:16px" id="loadingText">Analyzing your data...</p>
+    </div>
+
+    <!-- ===== ANALYSIS RESULT ===== -->
     <div id="parseResult" style="display:none;margin-top:24px">
       <div class="card">
-        <div class="mono" style="color:var(--accent-green);margin-bottom:8px;font-size:0.875rem">
-          <span data-i18n="upload.success">Parse successful</span>
-        </div>
+        <div class="mono" style="color:var(--accent-green);margin-bottom:8px;font-size:0.875rem">Analysis Complete</div>
         <div id="resultMeta" class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:16px"></div>
 
-        <!-- Top Tags Summary -->
-        <div style="margin-bottom:4px">
-          <div class="mono" style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px" data-i18n="upload.top_tags">Your Top Interests</div>
+        <div style="margin-bottom:6px">
+          <div class="mono" style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">Your Top Interests</div>
           <div id="tagBars"></div>
         </div>
 
         <div style="display:flex;gap:10px;margin-top:20px">
           <button id="viewGalaxyBtn" class="btn btn-primary btn-lg" style="flex:1">
             <svg width="18" height="18"><use href="#icon-galaxy"/></svg>
-            <span data-i18n="upload.view_galaxy">View Galaxy Map</span>
+            View Galaxy Map
           </button>
-          <button id="newAnalysisBtn" class="btn btn-secondary btn-lg" style="flex:1" data-i18n="upload.new_analysis">New Analysis</button>
+          <button id="newAnalysisBtn" class="btn btn-secondary btn-lg" style="flex:1">New Analysis</button>
         </div>
       </div>
     </div>
@@ -137,101 +146,224 @@
   <script src="js/router.js"></script>
   <script src="js/i18n.js?v=2"></script>
   <script>
-    var parsedData = null;
-    var _ = window._i18n || { t: function(k){return k;} };
+(function() {
+  var parsedData = null;
+  var currentMethod = 'file';
+  var selectedFile = null;
 
-    // Tabs
-    document.querySelectorAll('.tab-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        document.querySelectorAll('.tab-content').forEach(function(c) { c.style.display = 'none'; });
-        document.getElementById('tab-' + btn.dataset.tab).style.display = '';
-      });
+  // ===== Method tabs =====
+  document.querySelectorAll('#methodTabs .tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#methodTabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentMethod = btn.dataset.method;
+      document.getElementById('panel-file').style.display = (currentMethod === 'file') ? '' : 'none';
+      document.getElementById('panel-paste').style.display = (currentMethod === 'paste') ? '' : 'none';
+      document.getElementById('panel-help').style.display = (currentMethod === 'help') ? '' : 'none';
     });
+  });
 
-    // File upload
-    var zone = document.getElementById('uploadZone');
-    zone.addEventListener('click', function() { document.getElementById('fileInput').click(); });
-    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
-    zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
-    zone.addEventListener('drop', function(e) {
-      e.preventDefault(); zone.classList.remove('drag-over');
-      var file = e.dataTransfer.files[0];
-      if (file) processFile(file);
-    });
-    document.getElementById('fileInput').addEventListener('change', function(e) {
-      var file = e.target.files[0];
-      if (file) processFile(file);
-    });
+  // ===== FILE UPLOAD =====
+  var zone = document.getElementById('uploadZone');
+  var fileInput = document.getElementById('fileInput');
+  var fileAnalyzeBtn = document.getElementById('fileAnalyzeBtn');
+  var selectedFileEl = document.getElementById('selectedFile');
+  var dropText = document.getElementById('dropText');
 
-    function processFile(file) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var result = INTEREST_OS.parser.autoParse(e.target.result, file.name);
+  zone.addEventListener('click', function() { fileInput.click(); });
+
+  zone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', function() {
+    zone.classList.remove('drag-over');
+  });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    var file = e.dataTransfer.files[0];
+    if (file) handleFileSelect(file);
+  });
+
+  fileInput.addEventListener('change', function() {
+    var file = fileInput.files[0];
+    if (file) handleFileSelect(file);
+  });
+
+  function handleFileSelect(file) {
+    // Show filename
+    selectedFile = file;
+    selectedFileEl.textContent = 'Selected: ' + file.name + ' (' + formatSize(file.size) + ')';
+    selectedFileEl.style.display = '';
+    zone.classList.add('file-selected');
+    dropText.textContent = 'File selected';
+
+    // Show analyze button
+    fileAnalyzeBtn.style.display = '';
+    fileAnalyzeBtn.querySelector('#fileSpinner').style.display = 'none';
+
+    // Hide previous results
+    document.getElementById('parseResult').style.display = 'none';
+    document.getElementById('errorBox').style.display = 'none';
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1048576).toFixed(1) + ' MB';
+  }
+
+  fileAnalyzeBtn.addEventListener('click', function() {
+    if (!selectedFile) return;
+    // Show spinner
+    fileAnalyzeBtn.querySelector('#fileSpinner').style.display = 'inline-block';
+    fileAnalyzeBtn.disabled = true;
+    showLoading(true);
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      showLoading(false);
+      fileAnalyzeBtn.querySelector('#fileSpinner').style.display = 'none';
+      fileAnalyzeBtn.disabled = false;
+
+      try {
+        var text = e.target.result;
+        var result = INTEREST_OS.parser.autoParse(text, selectedFile.name);
+        if (result.error) {
+          showError(result.error);
+          return;
+        }
         showResult(result);
-      };
-      reader.readAsText(file);
-    }
+      } catch(err) {
+        showError('Failed to parse file: ' + err.message);
+      }
+    };
+    reader.onerror = function() {
+      showLoading(false);
+      fileAnalyzeBtn.querySelector('#fileSpinner').style.display = 'none';
+      fileAnalyzeBtn.disabled = false;
+      showError('Failed to read file. Try again.');
+    };
+    reader.readAsText(selectedFile);
+  });
 
-    document.getElementById('pasteBtn').addEventListener('click', function() {
-      var text = document.getElementById('pasteArea').value.trim();
-      if (!text) return;
-      var result = INTEREST_OS.parser.parseText(text);
-      showResult(result);
+  // ===== PASTE TEXT =====
+  document.getElementById('pasteBtn').addEventListener('click', function() {
+    var text = document.getElementById('pasteArea').value.trim();
+    if (!text) { showError('Please paste some video titles first.'); return; }
+
+    document.getElementById('pasteSpinner').style.display = 'inline-block';
+    this.disabled = true;
+    showLoading(true);
+
+    // Small delay so spinner renders
+    setTimeout(function() {
+      try {
+        var result = INTEREST_OS.parser.parseText(text);
+        if (result.error) {
+          showError(result.error);
+        } else {
+          showResult(result);
+        }
+      } catch(err) {
+        showError('Parse failed: ' + err.message);
+      }
+      document.getElementById('pasteSpinner').style.display = 'none';
+      document.getElementById('pasteBtn').disabled = false;
+      showLoading(false);
+    }, 300);
+  });
+
+  // ===== SHOW RESULT =====
+  function showResult(result) {
+    document.getElementById('errorBox').style.display = 'none';
+
+    // Run analysis
+    parsedData = INTEREST_OS.analyzer.analyze(result.titles);
+
+    // Meta info
+    var meta = document.getElementById('resultMeta');
+    var t = result.truncated ? ' (showing first ' + result.titles.length + ')' : '';
+    meta.textContent = result.totalFound + ' records found' + t + ' | Source: ' + result.source;
+
+    // Top tags as bars
+    var topTags = parsedData.tags.slice(0, 8);
+    var tagBars = document.getElementById('tagBars');
+    var colors = ['#00E5FF','#00FF88','#FFB800','#FF4D6A','#3B82F6','#A855F7','#EC4899','#14B8A6'];
+    tagBars.innerHTML = topTags.map(function(tag, i) {
+      return '<div class="tag-bar-row">' +
+        '<span class="tag-bar-name">' + esc(tag.name) + '</span>' +
+        '<span class="tag-bar-track"><span class="tag-bar-fill" style="width:0%;background:' + colors[i%8] + '" data-target="' + tag.weight + '"></span></span>' +
+        '<span class="tag-bar-pct">' + tag.weight + '%</span>' +
+        '</div>';
+    }).join('');
+
+    // Show result panel
+    var resultPanel = document.getElementById('parseResult');
+    resultPanel.style.display = '';
+
+    // Animate bars
+    setTimeout(function() {
+      document.querySelectorAll('.tag-bar-fill').forEach(function(bar) {
+        bar.style.width = bar.dataset.target + '%';
+      });
+    }, 100);
+
+    // Scroll to result
+    resultPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function showError(msg) {
+    document.getElementById('errorText').textContent = msg;
+    document.getElementById('errorBox').style.display = '';
+    document.getElementById('errorBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function showLoading(show) {
+    document.getElementById('loadingBox').style.display = show ? '' : 'none';
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ===== VIEW GALAXY =====
+  document.getElementById('viewGalaxyBtn').addEventListener('click', function() {
+    if (!parsedData) return;
+    INTEREST_OS.router.setData(parsedData);
+    window.location.href = 'analyze-raw.html';
+  });
+
+  // ===== NEW ANALYSIS =====
+  document.getElementById('newAnalysisBtn').addEventListener('click', function() {
+    document.getElementById('parseResult').style.display = 'none';
+    document.getElementById('errorBox').style.display = 'none';
+    document.getElementById('pasteArea').value = '';
+    fileInput.value = '';
+    selectedFile = null;
+    selectedFileEl.style.display = 'none';
+    zone.classList.remove('file-selected');
+    dropText.textContent = 'Drop file here or click to browse';
+    fileAnalyzeBtn.style.display = 'none';
+    parsedData = null;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ===== Switch to paste from help =====
+  var switchBtn = document.getElementById('switchToPaste');
+  if (switchBtn) {
+    switchBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('#methodTabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelector('#methodTabs .tab-btn[data-method="paste"]').classList.add('active');
+      currentMethod = 'paste';
+      document.getElementById('panel-file').style.display = 'none';
+      document.getElementById('panel-paste').style.display = '';
+      document.getElementById('panel-help').style.display = 'none';
     });
-
-    function showResult(result) {
-      if (result.error) { alert(result.error); return; }
-
-      // Run analysis
-      parsedData = INTEREST_OS.analyzer.analyze(result.titles);
-
-      // Show meta info
-      var isZh = (window._i18n && window._i18n.current === "zh") ||
-                 (INTEREST_OS.i18n && INTEREST_OS.i18n.current === "zh");
-      var meta = document.getElementById('resultMeta');
-      meta.textContent = (isZh ? '识别到 ' : 'Records: ') + result.totalFound +
-        (result.truncated ? ' (truncated)' : '') +
-        ' | ' + (isZh ? '来源: ' : 'Source: ') + result.source;
-
-      // Show top tags as bars
-      var topTags = parsedData.tags.slice(0, 8);
-      var tagBars = document.getElementById('tagBars');
-      var colors = ['var(--accent)','var(--accent-green)','var(--accent-2)','var(--accent-3)',
-                    '#3B82F6','#A855F7','#EC4899','#14B8A6'];
-      tagBars.innerHTML = topTags.map(function(t, i) {
-        return '<div class="tag-bar-row">' +
-          '<span class="tag-bar-name">' + escHtml(t.name) + '</span>' +
-          '<span class="tag-bar-track"><span class="tag-bar-fill" style="width:' + t.weight + '%;background:' + colors[i%8] + '"></span></span>' +
-          '<span class="tag-bar-pct">' + t.weight + '%</span>' +
-          '</div>';
-      }).join('');
-
-      // Show result panel
-      document.getElementById('parseResult').style.display = '';
-      document.getElementById('parseResult').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function escHtml(s) {
-      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    // View Galaxy
-    document.getElementById('viewGalaxyBtn').addEventListener('click', function() {
-      if (!parsedData) return;
-      INTEREST_OS.router.setData(parsedData);
-      window.location.href = 'analyze-raw.html';
-    });
-
-    // New Analysis (reset)
-    document.getElementById('newAnalysisBtn').addEventListener('click', function() {
-      document.getElementById('parseResult').style.display = 'none';
-      document.getElementById('pasteArea').value = '';
-      document.getElementById('fileInput').value = '';
-      parsedData = null;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+  }
+})();
   </script>
 </body>
 </html>
