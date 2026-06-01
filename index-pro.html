@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interest OS Pro — 看见算法眼中的自己</title>
+  <meta name="description" content="上传你的观看记录，AI 自动分析生成兴趣画像，以星系图谱形式可视化呈现你的数字人格。">
+  <meta property="og:title" content="Interest OS — 看见算法眼中的自己">
+  <meta property="og:description" content="让算法认识你，你也认识算法。">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom-pro.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%236366F1'/><stop offset='100%' stop-color='%23EC4899'/></linearGradient></defs><circle cx='16' cy='16' r='14' fill='url(%23g)'/><circle cx='16' cy='16' r='10' fill='%23030308'/></svg>">
+</head>
+<body>
+  <!-- Cursor Glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Background Layers -->
+  <div class="starfield"></div>
+  <div class="grid-pattern"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <span class="nav-logo">✦ Interest OS</span>
+    <div class="nav-links">
+      <a href="#" class="nav-link">设计理念</a>
+      <a href="https://github.com" target="_blank" rel="noopener" class="nav-link">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <main class="page-container flex flex-col items-center justify-center min-h-screen">
+    <div class="hero">
+      <!-- Badge -->
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        兴趣画像可视化平台 · v1.0
+      </div>
+
+      <!-- Title -->
+      <h1 class="hero-title">
+        算法认识你<br>
+        <em>你认识算法吗？</em>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="hero-subtitle">
+        上传观看记录，AI 解析你的兴趣基因。<br>
+        星系图谱呈现，第一次看见算法眼中的自己。
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="hero-actions">
+        <a href="upload.html" class="btn btn-primary btn-lg magnetic-btn" data-magnetic>
+          <span>✦</span> 开始分析
+        </a>
+        <button id="demoBtn" class="btn btn-secondary magnetic-btn" data-magnetic>
+          先用演示数据体验 →
+        </button>
+      </div>
+    </div>
+
+    <!-- Trust Bar -->
+    <div class="trust-bar w-full max-w-2xl">
+      <span class="trust-item">
+        <span class="trust-dot"></span> 不上传服务器
+      </span>
+      <span class="trust-item">
+        <span class="trust-dot"></span> 不注册账号
+      </span>
+      <span class="trust-item">
+        <span class="trust-dot"></span> 不存储数据
+      </span>
+      <span class="trust-item">
+        <span class="trust-dot"></span> 完全免费
+      </span>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps-container">
+      <div class="step-card tilt-container" data-tilt>
+        <span class="step-icon">📤</span>
+        <span class="step-label">上传观看记录</span>
+      </div>
+      <span class="step-arrow">→</span>
+      <div class="step-card tilt-container" data-tilt>
+        <span class="step-icon">🤖</span>
+        <span class="step-label">AI 智能分析</span>
+      </div>
+      <span class="step-arrow">→</span>
+      <div class="step-card tilt-container" data-tilt>
+        <span class="step-icon">🌌</span>
+        <span class="step-label">星系图谱呈现</span>
+      </div>
+      <span class="step-arrow">→</span>
+      <div class="step-card tilt-container" data-tilt>
+        <span class="step-icon">📤</span>
+        <span class="step-label">分享数字人格</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="position:relative;z-index:1;text-align:center;padding-bottom:32px;font-size:0.8125rem;color:rgba(255,255,255,0.15);letter-spacing:0.05em;">
+    Interest OS · 看见算法眼中的自己
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/utils.js?v=5"></script>
+  <script src="js/keywords.js?v=5"></script>
+  <script src="js/personas.js?v=5"></script>
+  <script src="js/router.js?v=5"></script>
+  <script>
+    // ── Cursor Glow ──
+    const glow = document.getElementById('cursorGlow');
+    let mouseX = -200, mouseY = -200;
+    let currentX = -200, currentY = -200;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateGlow() {
+      currentX += (mouseX - currentX) * 0.08;
+      currentY += (mouseY - currentY) * 0.08;
+      glow.style.left = currentX + 'px';
+      glow.style.top = currentY + 'px';
+      requestAnimationFrame(animateGlow);
+    }
+    animateGlow();
+
+    // ── Magnetic Buttons ──
+    document.querySelectorAll('.magnetic-btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translate(0, 0)';
+      });
+    });
+
+    // ── 3D Tilt ──
+    document.querySelectorAll('[data-tilt]').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        el.style.transform = `perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'perspective(800px) rotateY(0) rotateX(0)';
+      });
+    });
+
+    // ── Demo Mode ──
+    document.getElementById('demoBtn').addEventListener('click', function() {
+      this.textContent = '正在生成星系...';
+      this.disabled = true;
+      INTEREST_OS.router.loadDemo().then(function(demo) {
+        if (demo) { INTEREST_OS.router.setData(demo); window.location.href = 'graph-pro.html'; }
+        else { alert('演示数据加载失败'); }
+      });
+    });
+
+    // ── Scroll-triggered parallax on glow orbs ──
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      document.querySelectorAll('.glow-orb').forEach((orb, i) => {
+        orb.style.transform = `translateY(${scrolled * (0.05 + i * 0.02)}px)`;
+      });
+    });
+  </script>
+</body>
+</html>
