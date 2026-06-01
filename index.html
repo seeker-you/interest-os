@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interest OS — 看见算法眼中的自己</title>
+  <meta name="description" content="上传你的观看记录，AI 自动分析生成兴趣画像，以星系图谱形式可视化呈现你的数字人格。">
+  <meta property="og:title" content="Interest OS — 看见算法眼中的自己">
+  <meta property="og:description" content="让算法认识你，你也认识算法。">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%236366F1'/><circle cx='16' cy='16' r='10' fill='%2305050A'/></svg>">
+</head>
+<body class="bg-[#05050A] text-[#FAFAFA]">
+  <!-- Background Layers -->
+  <div class="starfield"></div>
+  <div class="grid-pattern"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <span class="nav-logo">Interest OS</span>
+    <div class="nav-links">
+      <a href="compare.html" class="nav-link">版本对比</a>
+      <a href="https://github.com" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="page-container flex flex-col items-center justify-center min-h-screen">
+    <div class="hero animate-in">
+      <h1 class="hero-title">算法认识你<br>你认识算法吗？</h1>
+      <p class="hero-subtitle">
+        上传你的观看记录，AI 自动解析兴趣画像，以星系图谱呈现你的数字人格。
+      </p>
+      <div class="flex flex-col items-center gap-3">
+        <a href="upload.html" class="btn btn-primary btn-lg text-lg px-10 py-4">
+          ✦ 开始分析
+        </a>
+        <button id="demoBtn" class="btn btn-ghost text-[#A1A1AA] hover:text-white">
+          先用演示数据体验 ▸
+        </button>
+      </div>
+    </div>
+
+    <!-- Trust Bar -->
+    <div class="trust-bar w-full max-w-2xl animate-in animate-in-delay-2">
+      <span class="trust-item"><span class="trust-dot"></span> 不上传服务器</span>
+      <span class="trust-item"><span class="trust-dot"></span> 不注册账号</span>
+      <span class="trust-item"><span class="trust-dot"></span> 不存储数据</span>
+      <span class="trust-item"><span class="trust-dot"></span> 完全免费</span>
+    </div>
+
+    <!-- Steps -->
+    <div class="flex items-center gap-4 mt-16 animate-in animate-in-delay-3">
+      <div class="glass glass-sm px-6 py-3 flex items-center gap-3">
+        <span class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-sm">📤</span>
+        <span class="text-sm text-[#A1A1AA]">上传观看记录</span>
+      </div>
+      <span class="text-[#52525B] text-xl">→</span>
+      <div class="glass glass-sm px-6 py-3 flex items-center gap-3">
+        <span class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-sm">🤖</span>
+        <span class="text-sm text-[#A1A1AA]">AI 分析兴趣</span>
+      </div>
+      <span class="text-[#52525B] text-xl">→</span>
+      <div class="glass glass-sm px-6 py-3 flex items-center gap-3">
+        <span class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-sm">🌌</span>
+        <span class="text-sm text-[#A1A1AA]">星系图谱展示</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 text-center pb-8 text-sm text-[#52525B]">
+    © 2025 Interest OS · 看见算法眼中的自己
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/keywords.js"></script>
+  <script src="js/personas.js"></script>
+  <script src="js/router.js"></script>
+  <script>
+    document.getElementById('demoBtn').addEventListener('click', () => {
+      const btn = document.getElementById('demoBtn');
+      btn.textContent = '加载中...';
+      btn.disabled = true;
+      INTEREST_OS.router.startDemo();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分析中 — Interest OS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body class="bg-[#05050A] text-[#FAFAFA]">
+  <div class="starfield"></div>
+  <div class="grid-pattern"></div>
+
+  <div class="page-container flex items-center justify-center min-h-screen">
+    <div class="analysis-container text-center">
+      <!-- Animated galaxy ring -->
+      <div class="relative w-72 h-72 mb-12" id="galaxyRing">
+        <!-- Rotating ring -->
+        <div class="absolute inset-0 rounded-full border border-white/5 animate-spin" style="animation-duration: 12s;"></div>
+        <div class="absolute inset-8 rounded-full border border-white/5 animate-spin" style="animation-duration: 8s; animation-direction: reverse;"></div>
+        <div class="absolute inset-16 rounded-full border border-white/5 animate-spin" style="animation-duration: 6s;"></div>
+
+        <!-- Central glow -->
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 opacity-60 animate-pulse"></div>
+        </div>
+
+        <!-- Orbiting dots -->
+        <div id="orbitDots" class="absolute inset-0"></div>
+      </div>
+
+      <!-- Tag reveal area -->
+      <div id="tagDisplay" class="mb-8 min-h-[3rem]">
+        <div id="currentTag" class="analysis-tag" style="animation-delay: 0s;">正在分析你的兴趣结构...</div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="analysis-progress mx-auto">
+        <div id="progressBar" class="analysis-progress-bar" style="width: 0%;"></div>
+      </div>
+      <p class="text-sm text-[#71717A] mt-3" id="statusText">初始化分析引擎...</p>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/router.js"></script>
+  <script>
+    // Analysis animation sequence
+    (function() {
+      const profile = INTEREST_OS.router.getData();
+      if (!profile) {
+        // No data? Go back to upload
+        setTimeout(() => { window.location.href = 'upload.html'; }, 500);
+        return;
+      }
+
+      const tags = profile.tags || [];
+      const totalSteps = Math.min(tags.length, 8);
+      const totalDuration = 4000; // 4 seconds
+      const stepDuration = totalDuration / totalSteps;
+
+      const progressBar = document.getElementById('progressBar');
+      const currentTag = document.getElementById('currentTag');
+      const statusText = document.getElementById('statusText');
+
+      // Create orbiting dots
+      const orbitContainer = document.getElementById('orbitDots');
+      const colors = ['#6366F1','#8B5CF6','#EC4899','#3B82F6','#14B8A6','#F59E0B'];
+
+      for (let i = 0; i < 8; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'absolute w-2 h-2 rounded-full';
+        dot.style.backgroundColor = colors[i % colors.length];
+        dot.style.opacity = '0';
+        dot.style.transition = 'opacity 0.3s ease';
+        const angle = (i / 8) * Math.PI * 2;
+        const r = 108 + Math.random() * 24;
+        dot.style.left = (144 + Math.cos(angle) * r - 4) + 'px';
+        dot.style.top = (144 + Math.sin(angle) * r - 4) + 'px';
+        dot.dataset.index = i;
+        orbitContainer.appendChild(dot);
+      }
+
+      const dots = orbitContainer.querySelectorAll('div');
+
+      // Status messages
+      const statusMessages = [
+        '解析兴趣标签...',
+        '计算兴趣权重...',
+        '分析兴趣关联...',
+        '评估信息茧房...',
+        '生成数字人格...',
+        '构建星系图谱...'
+      ];
+
+      let step = 0;
+      function nextStep() {
+        if (step >= totalSteps) {
+          // Done! Navigate to graph page
+          currentTag.textContent = '你的兴趣星系已形成';
+          currentTag.style.animation = 'none';
+          currentTag.offsetHeight;
+          currentTag.style.animation = 'tagReveal 0.6s ease-out forwards';
+          statusText.textContent = '即将进入星系图谱...';
+          progressBar.style.width = '100%';
+
+          setTimeout(() => {
+            window.location.href = 'graph.html';
+          }, 1200);
+          return;
+        }
+
+        // Update progress
+        const progress = ((step + 1) / totalSteps) * 100;
+        progressBar.style.width = progress + '%';
+
+        // Show tag
+        const tag = tags[step];
+        currentTag.textContent = (tag ? tag.name : '...');
+        currentTag.style.animation = 'none';
+        currentTag.offsetHeight; // reflow
+        currentTag.style.animation = 'tagReveal 0.6s ease-out forwards';
+
+        // Light up dot
+        if (dots[step]) {
+          dots[step].style.opacity = '0.9';
+          dots[step].style.boxShadow = '0 0 8px ' + (tag ? tag.color : '#6366F1');
+        }
+
+        // Status text
+        statusText.textContent = statusMessages[step % statusMessages.length];
+
+        step++;
+        setTimeout(nextStep, stepDuration);
+      }
+
+      // Start after a brief delay
+      setTimeout(nextStep, 600);
+    })();
+  </script>
+</body>
+</html>

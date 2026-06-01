@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaxy — Interest OS</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom-raw.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="grid-bg"></div>
+
+  <nav class="nav">
+    <a href="index-raw.html" class="nav-brand">&gt; interest_<span>os</span></a>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="mono" style="font-size:0.6875rem;color:var(--text-muted)">// galaxy view</span>
+      <a href="share-raw.html" class="btn btn-secondary btn-sm">
+        <svg width="14" height="14"><use href="#icon-share"/></svg> Share
+      </a>
+    </div>
+  </nav>
+
+  <main class="container" style="max-width:1280px;padding-top:80px">
+    <div class="graph-grid">
+      <!-- Main Canvas -->
+      <div class="graph-canvas" id="graphMain">
+        <div class="view-switch">
+          <button class="active" data-view="galaxy">
+            <svg width="18" height="18"><use href="#icon-galaxy"/></svg>
+          </button>
+          <button data-view="tagcloud">
+            <svg width="18" height="18"><use href="#icon-tag"/></svg>
+          </button>
+          <button data-view="radar">
+            <svg width="18" height="18"><use href="#icon-radar"/></svg>
+          </button>
+        </div>
+        <div id="vizContainer" style="width:100%;height:100%;min-height:500px"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="graph-side">
+        <!-- Tag Detail -->
+        <div class="card" id="tagDetail" style="flex:1">
+          <p class="mono" style="font-size:0.75rem;color:var(--text-muted);text-align:center;padding:40px 0">
+            &gt; Click a planet<br>to see details
+          </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-cell">
+            <div class="stat-val" id="echoIndex">--</div>
+            <div class="stat-lbl">Echo Chamber</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-val" id="diversityScore">--</div>
+            <div class="stat-lbl">Diversity</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-val" id="personaName">--</div>
+            <div class="stat-lbl">Persona</div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <button id="editBtn" class="btn btn-secondary" style="width:100%">
+          <svg width="16" height="16"><use href="#icon-edit"/></svg> Edit Tags
+        </button>
+        <a href="share-raw.html" class="btn btn-primary" style="width:100%">
+          <svg width="16" height="16"><use href="#icon-share"/></svg> Generate Card
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Edit Overlay -->
+  <div class="edit-overlay" id="editOverlay">
+    <div class="edit-panel">
+      <h3>&gt; edit_tags</h3>
+      <div id="editList"></div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <input type="text" class="input" id="addTagName" placeholder="new tag name" style="flex:1">
+        <input type="number" class="input" id="addTagWeight" placeholder="wt" min="1" max="100" style="width:70px">
+        <button id="addTagBtn" class="btn btn-secondary btn-sm">Add</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button id="saveEditBtn" class="btn btn-primary" style="flex:1">Save</button>
+        <button id="cancelEditBtn" class="btn btn-secondary" style="flex:1">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG Icons -->
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="icon-galaxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+    <symbol id="icon-radar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 2 22 12 12 22 2 12"/></symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+  </svg>
+
+  <script src="js/utils.js"></script>
+  <script src="js/keywords.js"></script>
+  <script src="js/personas.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/galaxy.js"></script>
+  <script src="js/tagcloud.js"></script>
+  <script src="js/radar.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/graph-init.js"></script>
+</body>
+</html>

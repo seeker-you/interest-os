@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Share — Interest OS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom-raw.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="grid-bg"></div>
+
+  <nav class="nav">
+    <a href="graph-raw.html" class="nav-brand">&larr; interest_<span>os</span></a>
+    <button id="copyLinkBtn" class="btn btn-secondary btn-sm">
+      <svg width="14" height="14"><use href="#icon-copy"/></svg> Copy Link
+    </button>
+  </nav>
+
+  <main class="container" style="display:flex;flex-direction:column;align-items:center">
+    <div class="hero-label">// share_card</div>
+    <h2 class="mono" style="font-size:1.5rem;margin-bottom:4px">Your Digital Persona</h2>
+    <p class="text-dim mono" style="font-size:0.75rem;margin-bottom:32px">Download image, share anywhere.</p>
+
+    <!-- Share Card -->
+    <div class="share-card" id="shareCard" style="margin-bottom:24px">
+      <canvas id="shareCanvas" style="display:none"></canvas>
+      <div id="cardInner" style="width:100%;height:100%;position:relative">
+        <canvas id="miniCanvas" style="position:absolute;top:32px;left:50%;transform:translateX(-50%)" width="180" height="180"></canvas>
+        <div id="personaSec" style="position:absolute;bottom:280px;left:0;right:0;text-align:center">
+          <div class="mono" style="font-size:0.625rem;color:var(--text-muted);letter-spacing:0.2em;margin-bottom:8px">YOUR ALGORITHM PERSONA</div>
+          <div id="displayPersona" class="mono" style="font-size:1.5rem;font-weight:700;color:var(--accent)">--</div>
+        </div>
+        <div id="tagSec" style="position:absolute;bottom:120px;left:24px;right:24px"></div>
+        <div class="sc-watermark">interest-os.vercel.app</div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:12px;margin-bottom:48px">
+      <button id="downloadBtn" class="btn btn-primary btn-lg">
+        <svg width="18" height="18"><use href="#icon-download"/></svg>
+        Save Image
+      </button>
+      <button id="copyBtn" class="btn btn-secondary btn-lg">
+        <svg width="18" height="18"><use href="#icon-copy"/></svg>
+        Copy Link
+      </button>
+    </div>
+
+    <p class="mono" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px">No real data yet?</p>
+    <a href="upload-raw.html" class="btn btn-primary">
+      <svg width="16" height="16"><use href="#icon-upload"/></svg>
+      Analyze Your Real Data
+    </a>
+  </main>
+
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></symbol>
+    <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+  </svg>
+
+  <script src="js/utils.js"></script>
+  <script src="js/keywords.js"></script>
+  <script src="js/personas.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/share.js"></script>
+  <script>
+    (function() {
+      var profile = INTEREST_OS.router.getData();
+      if (!profile || !profile.tags) {
+        INTEREST_OS.router.loadDemo().then(function(d) {
+          if (d) { INTEREST_OS.router.setData(d); location.reload(); }
+        });
+        return;
+      }
+
+      var persona = INTEREST_OS.personas.determine(profile.tags);
+      var topTags = profile.tags.slice().sort(function(a,b){return b.weight-a.weight}).slice(0,3);
+
+      document.getElementById('displayPersona').textContent = persona.name;
+
+      // Mini galaxy
+      var mc = document.getElementById('miniCanvas');
+      if (mc) {
+        var ctx = mc.getContext('2d');
+        var cx = 90, cy = 90, maxR = 75;
+        var maxW = Math.max.apply(null, profile.tags.map(function(t){return t.weight})) || 1;
+
+        profile.tags.forEach(function(tag, i) {
+          var angle = (i / profile.tags.length) * Math.PI * 2 + (Math.random()-0.5)*0.3;
+          var r = (tag.weight/maxW)*maxR*0.5 + 8;
+          var x = cx+Math.cos(angle)*r, y = cy+Math.sin(angle)*r;
+          var radius = 3 + (tag.weight/maxW)*12;
+
+          ctx.fillStyle = tag.color;
+          ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI*2); ctx.fill();
+
+          ctx.strokeStyle = tag.color + '30';
+          ctx.lineWidth = 0.5;
+          ctx.beginPath(); ctx.arc(x, y, radius*2.5, 0, Math.PI*2); ctx.stroke();
+        });
+
+        // Connections
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 0.3;
+        profile.tags.forEach(function(tag) {
+          (tag.relatedTags || []).forEach(function(rid) {
+            var o = profile.tags.find(function(t){return t.id===rid});
+            if (!o) return;
+            var ai = profile.tags.indexOf(tag), oi = profile.tags.indexOf(o);
+            var a1 = (ai/profile.tags.length)*Math.PI*2, a2 = (oi/profile.tags.length)*Math.PI*2;
+            var r1 = (tag.weight/maxW)*maxR*0.5+8, r2 = (o.weight/maxW)*maxR*0.5+8;
+            ctx.beginPath();
+            ctx.moveTo(cx+Math.cos(a1)*r1, cy+Math.sin(a1)*r1);
+            ctx.lineTo(cx+Math.cos(a2)*r2, cy+Math.sin(a2)*r2);
+            ctx.stroke();
+          });
+        });
+      }
+
+      // Top tags
+      var ts = document.getElementById('tagSec');
+      ts.innerHTML = topTags.map(function(t, i) {
+        var w = (t.weight/100)*180;
+        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+          '<span class="mono" style="font-size:0.625rem;color:var(--text-muted);width:16px">0'+(i+1)+'</span>' +
+          '<span class="mono" style="font-size:0.75rem;color:var(--text-dim);flex:1">'+esc(t.name)+'</span>' +
+          '<span style="display:block;height:3px;width:'+w+'px;background:'+(i===0?'var(--accent)':'var(--border-active)')+'"></span>' +
+          '<span class="mono" style="font-size:0.625rem;color:var(--text-muted);width:32px;text-align:right">'+t.weight+'%</span>' +
+          '</div>';
+      }).join('');
+
+      function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+      // Download
+      document.getElementById('downloadBtn').addEventListener('click', function() {
+        var url = INTEREST_OS.share.generate(profile, '#shareCanvas');
+        if (!url) return;
+        var a = document.createElement('a');
+        a.href = url; a.download = 'interest-os-' + persona.name + '.png'; a.click();
+      });
+
+      // Copy
+      document.getElementById('copyBtn').addEventListener('click', function() {
+        var url = window.location.origin + '/index-raw.html';
+        navigator.clipboard.writeText(url).then(function() {
+          alert('Link copied!');
+        });
+      });
+      document.getElementById('copyLinkBtn').addEventListener('click', function() {
+        navigator.clipboard.writeText(window.location.origin + '/index-raw.html');
+      });
+    })();
+  </script>
+</body>
+</html>

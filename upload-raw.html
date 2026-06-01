@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload — Interest OS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/custom-raw.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="grid-bg"></div>
+
+  <nav class="nav">
+    <a href="index-raw.html" class="nav-brand">&larr; interest_<span>os</span></a>
+    <span class="mono" style="font-size:0.75rem;color:var(--text-muted)">step 1/3</span>
+  </nav>
+
+  <main class="container" style="max-width:720px">
+    <div class="hero-label">// import_watch_history</div>
+    <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:8px">Upload Your Data</h2>
+    <p class="text-dim mono" style="font-size:0.8125rem;margin-bottom:32px">Any platform: YouTube, Bilibili, TikTok, Douyin. File upload or paste titles.</p>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="file">File Upload</button>
+      <button class="tab-btn" data-tab="paste">Paste Text</button>
+      <button class="tab-btn" data-tab="help">How to Export?</button>
+    </div>
+
+    <!-- File Tab -->
+    <div id="tab-file" class="tab-content">
+      <div class="upload-zone" id="uploadZone">
+        <svg width="40" height="40" class="dz-icon"><use href="#icon-upload" /></svg>
+        <div class="dz-text">Drop file here</div>
+        <div class="dz-hint">.json .csv .txt (any platform) &middot; up to 200 records</div>
+        <input type="file" id="fileInput" accept=".json,.csv,.txt" hidden>
+      </div>
+    </div>
+
+    <!-- Paste Tab -->
+    <div id="tab-paste" class="tab-content" style="display:none">
+      <textarea id="pasteArea" class="input" placeholder="One title per line (any platform), e.g.:
+ChatGPT Complete Guide
+TikTok trending dance tutorial
+Genshin Impact 5.0 Lore
+..."></textarea>
+      <button id="pasteBtn" class="btn btn-primary" style="margin-top:12px;width:100%">
+        Parse Text
+      </button>
+    </div>
+
+    <!-- Help Tab -->
+    <div id="tab-help" class="tab-content" style="display:none">
+      <div class="card" style="margin-bottom:12px">
+        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px">YouTube Takeout</h3>
+        <ol class="mono" style="font-size:0.75rem;color:var(--text-dim);padding-left:16px;line-height:1.8">
+          <li>Visit <span style="color:var(--accent)">takeout.google.com</span></li>
+          <li>Select "YouTube and YouTube Music"</li>
+          <li>Check "history" &rarr; Export as JSON</li>
+          <li>Download and upload here</li>
+        </ol>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px">TikTok / Douyin</h3>
+        <ol class="mono" style="font-size:0.75rem;color:var(--text-dim);padding-left:16px;line-height:1.8">
+          <li>TikTok: Settings &rarr; Privacy &rarr; Download your data &rarr; JSON</li>
+          <li>Douyin: Profile &rarr; Menu &rarr; Privacy &rarr; Download data</li>
+          <li>Upload JSON file, or paste titles in "Paste Text" tab</li>
+        </ol>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <h3 class="mono" style="font-size:0.875rem;margin-bottom:8px">Bilibili</h3>
+        <p class="mono" style="font-size:0.75rem;color:var(--text-dim)">Go to History page, copy titles manually, paste in the "Paste Text" tab.</p>
+      </div>
+    </div>
+
+    <!-- Parse Result (hidden) -->
+    <div id="parseResult" style="display:none;margin-top:24px">
+      <div class="card">
+        <div class="mono" style="color:var(--accent-green);margin-bottom:12px">&check; Parse successful</div>
+        <div class="mono" style="font-size:0.8125rem;color:var(--text-dim);margin-bottom:4px" id="resultCount"></div>
+        <div class="mono" style="font-size:0.8125rem;color:var(--text-dim);margin-bottom:12px" id="resultSource"></div>
+        <div id="resultPreview" class="mono" style="font-size:0.75rem;color:var(--text-muted);max-height:120px;overflow-y:auto;line-height:1.8;margin-bottom:16px"></div>
+        <button id="analyzeBtn" class="btn btn-primary btn-lg" style="width:100%">
+          <svg width="18" height="18"><use href="#icon-brain" /></svg>
+          Start Analysis
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- SVG Icons -->
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+    </symbol>
+    <symbol id="icon-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 012.06-4.4A2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0012 4.5v15a2.5 2.5 0 004.96.44 2.5 2.5 0 012.96-3.08 3 3 0 01.34-5.58 2.5 2.5 0 00-2.06-4.4A2.5 2.5 0 0014.5 2z"/>
+    </symbol>
+  </svg>
+
+  <script src="js/utils.js"></script>
+  <script src="js/keywords.js"></script>
+  <script src="js/personas.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/analyzer.js"></script>
+  <script src="js/router.js"></script>
+  <script>
+    var parsedData = null;
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(function(c) { c.style.display = 'none'; });
+        document.getElementById('tab-' + btn.dataset.tab).style.display = '';
+      });
+    });
+
+    // File upload
+    var zone = document.getElementById('uploadZone');
+    zone.addEventListener('click', function() { document.getElementById('fileInput').click(); });
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      var file = e.dataTransfer.files[0];
+      if (file) processFile(file);
+    });
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (file) processFile(file);
+    });
+
+    function processFile(file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var result = INTEREST_OS.parser.autoParse(e.target.result, file.name);
+        showResult(result);
+      };
+      reader.readAsText(file);
+    }
+
+    // Paste
+    document.getElementById('pasteBtn').addEventListener('click', function() {
+      var text = document.getElementById('pasteArea').value.trim();
+      if (!text) return;
+      var result = INTEREST_OS.parser.parseText(text);
+      showResult(result);
+    });
+
+    function showResult(result) {
+      if (result.error) { alert(result.error); return; }
+      parsedData = INTEREST_OS.analyzer.analyze(result.titles);
+      document.getElementById('resultCount').textContent = 'Records: ' + result.totalFound + (result.truncated ? ' (truncated to ' + result.titles.length + ')' : '');
+      document.getElementById('resultSource').textContent = 'Source: ' + result.source;
+      var preview = document.getElementById('resultPreview');
+      preview.innerHTML = result.titles.slice(0, 10).map(function(t, i) {
+        return (i+1) + '. ' + t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }).join('<br>');
+      document.getElementById('parseResult').style.display = '';
+    }
+
+    // Analyze
+    document.getElementById('analyzeBtn').addEventListener('click', function() {
+      if (!parsedData) return;
+      INTEREST_OS.router.setData(parsedData);
+      window.location.href = 'graph-raw.html';
+    });
+  </script>
+</body>
+</html>
