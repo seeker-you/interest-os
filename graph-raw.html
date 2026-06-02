@@ -365,17 +365,20 @@
       renderInsights(profile);
 
       function renderInsights(profile) {
+        try {
         var tags = profile.tags || [];
         var analysis = profile.analysis || {};
         var isZh = (window._i18n && window._i18n.current === 'zh');
         var echoIdx = analysis.echoChamberIndex || 50;
         var persona = INTEREST_OS.personas.determine(tags);
         var stages = profile.stages; // pipeline stages, may be undefined for legacy data
+        } catch(e) { console.warn('[AM] init error:', e); }
 
         // ── Section 0: Pipeline Chain ──
-        renderPipelineChain(stages);
+        try { renderPipelineChain(stages); } catch(e) { console.warn('[AM] Section 0 error:', e); }
 
         // ── Section 1: 算法眼中的你 ──
+        try {
         var personaEl = document.getElementById('personaInsightContent');
 
         if (stages) {
@@ -394,7 +397,8 @@
           }
         } else {
           // Legacy fallback
-          var personaDesc = INTEREST_OS.personas.getEnhancedDescription(persona.id, isZh ? 'zh' : 'en') || '';
+          var personaDesc = '';
+          try { personaDesc = INTEREST_OS.personas.getEnhancedDescription(persona.id, isZh ? 'zh' : 'en') || ''; } catch(e) {}
           personaEl.innerHTML =
             '<div class="persona-highlight-name" style="background:linear-gradient(135deg,' + persona.colorStart + ',' + persona.colorEnd + ');-webkit-background-clip:text;-webkit-text-fill-color:transparent">' +
             escHtml(persona.name) + '</div>' +
@@ -409,7 +413,8 @@
 
         // Algorithm observations
         var obsEl = document.getElementById('algorithmObservations');
-        var observations = INTEREST_OS.personas.getAlgorithmObservations(tags, analysis);
+        var observations = [];
+        try { observations = INTEREST_OS.personas.getAlgorithmObservations(tags, analysis); } catch(e) {}
         obsEl.innerHTML = observations.map(function(o) {
           return '<div class="obs-item">' +
             '<div class="obs-icon">' + o.icon + '</div>' +
@@ -417,8 +422,10 @@
             '<div class="obs-detail">' + escHtml(o.detail) + '</div>' +
             '</div>';
         }).join('');
+        } catch(e) { console.warn('[AM] Section 1 error:', e); }
 
         // ── Section 2: 算法为什么这样判断 ──
+        try {
         var stepsEl = document.getElementById('explanationSteps');
 
         if (stages) {
@@ -488,7 +495,10 @@
           summaryEl.textContent = '';
         }
 
+        } catch(e) { console.warn('[AM] Section 2 error:', e); }
+
         // ── Section 3: 信息茧房指数 ──
+        try {
         var echoEl = document.getElementById('echoMeter');
         var echoColor = echoIdx < 30 ? 'var(--accent-green)' : echoIdx < 55 ? 'var(--accent-2)' : echoIdx < 80 ? 'var(--accent-3)' : 'var(--accent-3)';
         var echoLabel = echoIdx < 30 ? (isZh ? '低风险' : 'Low') : echoIdx < 55 ? (isZh ? '中等' : 'Medium') : echoIdx < 80 ? (isZh ? '较高' : 'High') : (isZh ? '极高' : 'Very High');
@@ -522,7 +532,10 @@
           '<strong style="color:' + echoColor + '">' + echoLabel + '</strong> — ' + echoDesc +
           '</div>' + extraEchoNote;
 
+        } catch(e) { console.warn('[AM] Section 3 error:', e); }
+
         // ── Section 4: 兴趣权重模型 ──
+        try {
         var catColors = ['#00E5FF','#00FF88','#FFB800','#FF4D6A','#3B82F6','#A855F7','#EC4899','#14B8A6','#F97316','#84CC16'];
 
         if (stages) {
@@ -574,7 +587,10 @@
             '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + (isZh ? '集中度' : 'Concentration') + '</div></div>';
         }
 
+        } catch(e) { console.warn('[AM] Section 4 error:', e); }
+
         // ── Section 5: 算法未来推荐预测 ──
+        try {
         var predEl = document.getElementById('predictedTags');
         var contentEl = document.getElementById('recommendedContent');
 
@@ -647,7 +663,10 @@
           }
         }
 
+        } catch(e) { console.warn('[AM] Section 5 error:', e); }
+
         // ── Section 6: 成长建议 ──
+        try {
         var advice = INTEREST_OS.predictions.getGrowthAdvice(tags, analysis);
         var growthEl = document.getElementById('growthAdvice');
         growthEl.innerHTML = advice.map(function(a) {
@@ -659,6 +678,7 @@
             '<div class="growth-suggestion">' + escHtml(a.suggestion) + '</div>' +
             '</div></div>';
         }).join('');
+        } catch(e) { console.warn('[AM] Section 6 error:', e); }
       }
 
       // ─── Pipeline Chain Renderer ───
