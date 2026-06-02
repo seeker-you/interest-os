@@ -46,6 +46,11 @@
       </div>
 
       <div class="graph-side">
+        <div class="persona-mini" id="personaMini">
+          <div class="persona-mini-name" id="personaMiniName" style="background:linear-gradient(135deg,var(--accent),#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">--</div>
+          <div class="persona-mini-tagline" id="personaMiniTagline">--</div>
+          <div class="persona-mini-detail" id="personaMiniDesc"></div>
+        </div>
         <div class="card" id="tagDetail" style="flex:1;overflow-y:auto;max-height:360px">
           <p class="mono" style="font-size:0.75rem;color:var(--text-muted);text-align:center;padding:20px 0">Click a planet to see details</p>
         </div>
@@ -90,6 +95,92 @@
     </div>
   </main>
 
+  <!-- === ALGORITHM MIRROR — INSIGHT DRAWER === -->
+  <div class="insight-drawer" id="insightDrawer" style="max-width:1280px;margin-left:auto;margin-right:auto;padding:0 24px">
+
+    <div class="insight-drawer-title">算法透视镜 · 深度分析</div>
+
+    <!-- 1. 算法眼中的你 -->
+    <div class="insight-section" id="sectionPersona">
+      <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="insight-section-icon">👁</span>
+        <span class="insight-section-title">算法眼中的你</span>
+        <span class="insight-section-sub">点击收起</span>
+      </div>
+      <div class="insight-section-body">
+        <div id="personaInsightContent" class="persona-highlight"></div>
+        <div id="algorithmObservations" class="obs-grid" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- 2. 算法为什么这样判断 -->
+    <div class="insight-section" id="sectionExplanation">
+      <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="insight-section-icon">🔍</span>
+        <span class="insight-section-title">算法为什么这样判断你</span>
+        <span class="insight-section-sub">点击收起</span>
+      </div>
+      <div class="insight-section-body">
+        <div id="keyFindings" class="key-findings"></div>
+        <div id="explanationSteps" class="explanation-steps"></div>
+        <div id="explanationSummary" class="explanation-summary"></div>
+      </div>
+    </div>
+
+    <!-- 3. 信息茧房指数 -->
+    <div class="insight-section" id="sectionEcho">
+      <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="insight-section-icon">📡</span>
+        <span class="insight-section-title">信息茧房指数</span>
+        <span class="insight-section-sub">点击收起</span>
+      </div>
+      <div class="insight-section-body">
+        <div id="echoMeter" class="echo-meter"></div>
+      </div>
+    </div>
+
+    <!-- 4. 兴趣权重模型 -->
+    <div class="insight-section" id="sectionWeight">
+      <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="insight-section-icon">📊</span>
+        <span class="insight-section-title">兴趣权重模型</span>
+        <span class="insight-section-sub">点击收起</span>
+      </div>
+      <div class="insight-section-body">
+        <div id="weightCategories" class="weight-cat-list"></div>
+        <div id="weightDistribution" class="weight-model-grid"></div>
+      </div>
+    </div>
+
+    <!-- 5. 算法未来推荐预测 -->
+    <div class="insight-section" id="sectionPredictions">
+      <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="insight-section-icon">🔮</span>
+        <span class="insight-section-title">算法未来推荐预测</span>
+        <span class="insight-section-sub">点击收起</span>
+      </div>
+      <div class="insight-section-body">
+        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px">基于你的兴趣分布，算法预测你接下来可能会关注的内容：</p>
+        <div id="predictedTags" class="prediction-list" style="margin-bottom:16px"></div>
+        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px">算法推荐内容：</p>
+        <div id="recommendedContent" class="content-prediction"></div>
+      </div>
+    </div>
+
+    <!-- 6. 成长建议 -->
+    <div class="insight-section" id="sectionGrowth">
+      <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="insight-section-icon">🌱</span>
+        <span class="insight-section-title">成长建议</span>
+        <span class="insight-section-sub">点击收起</span>
+      </div>
+      <div class="insight-section-body">
+        <div id="growthAdvice" class="growth-list"></div>
+      </div>
+    </div>
+
+  </div>
+
   <div class="edit-overlay" id="editOverlay">
     <div class="edit-panel">
       <h3>&gt; <span data-i18n="graph.edit_title">edit_tags</span></h3>
@@ -124,6 +215,8 @@
   <script src="js/radar.js?v=5"></script>
   <script src="js/editor.js?v=5"></script>
   <script src="js/insights.js?v=5"></script>
+  <script src="js/personas-enhanced.js?v=1"></script>
+  <script src="js/predictions.js?v=1"></script>
   <script src="js/i18n.js?v=5"></script>
   <script>
     document.addEventListener('i18n:changed', function() {
@@ -148,6 +241,23 @@
       document.getElementById('echoIndex').textContent = (analysis.echoChamberIndex || '--') + '%';
       document.getElementById('diversityScore').textContent = (analysis.diversityScore || '--') + '%';
       document.getElementById('personaName').textContent = analysis.personaType || '--';
+
+      // Persona mini card in side panel
+      var personaMiniName = document.getElementById('personaMiniName');
+      var personaMiniTagline = document.getElementById('personaMiniTagline');
+      var personaMiniDesc = document.getElementById('personaMiniDesc');
+      if (personaMiniName) {
+        personaMiniName.textContent = analysis.personaType || '--';
+      }
+      if (personaMiniTagline) {
+        var p = INTEREST_OS.personas.determine(tags);
+        personaMiniTagline.textContent = '"' + p.tagline + '"';
+      }
+      if (personaMiniDesc) {
+        personaMiniDesc.textContent = isZh
+          ? '算法基于 ' + tags.length + ' 个兴趣标签计算出的算法人格'
+          : 'Algorithm persona based on ' + tags.length + ' interest tags';
+      }
 
       // Init MBTI and insights
       var mbti = INTEREST_OS.insights.getMBTI(tags);
@@ -234,6 +344,169 @@
 
       document.getElementById('editBtn').addEventListener('click', function() { editor.open(tags); });
       renderView('galaxy');
+
+      // ===== ALGORITHM MIRROR — Render Insight Drawer =====
+      renderInsights(profile);
+
+      function renderInsights(profile) {
+        var tags = profile.tags || [];
+        var analysis = profile.analysis || {};
+        var isZh = (window._i18n && window._i18n.current === 'zh');
+        var echoIdx = analysis.echoChamberIndex || 50;
+        var persona = INTEREST_OS.personas.determine(tags);
+
+        // ── Section 1: 算法眼中的你 ──
+        var personaEl = document.getElementById('personaInsightContent');
+        var personaDesc = INTEREST_OS.personas.getEnhancedDescription(persona.id, isZh ? 'zh' : 'en') || '';
+
+        personaEl.innerHTML =
+          '<div class="persona-highlight-name" style="background:linear-gradient(135deg,' + persona.colorStart + ',' + persona.colorEnd + ');-webkit-background-clip:text;-webkit-text-fill-color:transparent">' +
+          escHtml(persona.name) + '</div>' +
+          '<div class="persona-highlight-tagline">"' + escHtml(persona.tagline) + '"</div>' +
+          '<div class="persona-highlight-desc">' + personaDesc + '</div>' +
+          '<div class="persona-badge-row">' +
+          '<span class="persona-badge">' + (isZh ? '算法人格' : 'Persona') + '</span>' +
+          '<span class="persona-badge">' + (isZh ? '置信度: 高' : 'Confidence: High') + '</span>' +
+          '<span class="persona-badge">' + tags.length + ' ' + (isZh ? '个兴趣标签' : 'tags') + '</span>' +
+          '</div>';
+
+        // Algorithm observations
+        var obsEl = document.getElementById('algorithmObservations');
+        var observations = INTEREST_OS.personas.getAlgorithmObservations(tags, analysis);
+        obsEl.innerHTML = observations.map(function(o) {
+          return '<div class="obs-item">' +
+            '<div class="obs-icon">' + o.icon + '</div>' +
+            '<div class="obs-label">' + escHtml(o.label) + '</div>' +
+            '<div class="obs-detail">' + escHtml(o.detail) + '</div>' +
+            '</div>';
+        }).join('');
+
+        // ── Section 2: 算法为什么这样判断 ──
+        var explanation = INTEREST_OS.predictions.getAlgorithmExplanation(tags, analysis);
+
+        var findingsEl = document.getElementById('keyFindings');
+        findingsEl.innerHTML = explanation.keyFindings.map(function(f) {
+          return '<div class="key-finding">' +
+            '<div class="key-finding-label">' + escHtml(f.label) + '</div>' +
+            '<div class="key-finding-value">' + escHtml(f.value) + '</div>' +
+            '</div>';
+        }).join('');
+
+        var stepsEl = document.getElementById('explanationSteps');
+        stepsEl.innerHTML = explanation.steps.map(function(s) {
+          return '<div class="exp-step" data-step="' + s.step + '">' +
+            '<span class="exp-step-icon">' + s.icon + '</span>' +
+            '<div class="exp-step-body">' +
+            '<div class="exp-step-title">' + escHtml(s.title) + '</div>' +
+            '<div class="exp-step-detail">' + escHtml(s.detail) + '</div>' +
+            '</div></div>';
+        }).join('');
+
+        document.getElementById('explanationSummary').textContent = explanation.summary;
+
+        // ── Section 3: 信息茧房指数 ──
+        var echoEl = document.getElementById('echoMeter');
+        var echoColor = echoIdx < 30 ? 'var(--accent-green)' : echoIdx < 55 ? 'var(--accent-2)' : echoIdx < 80 ? 'var(--accent-3)' : 'var(--accent-3)';
+        var echoLabel = echoIdx < 30 ? (isZh ? '低风险' : 'Low') : echoIdx < 55 ? (isZh ? '中等' : 'Medium') : echoIdx < 80 ? (isZh ? '较高' : 'High') : (isZh ? '极高' : 'Very High');
+        var echoDesc = INTEREST_OS.insights.getEchoChamberDesc(echoIdx, isZh);
+
+        echoEl.innerHTML =
+          '<div class="echo-meter-visual">' +
+          '<div class="echo-meter-bar-wrap">' +
+          '<div class="echo-meter-bar" style="width:' + echoIdx + '%;background:' + echoColor + '"></div>' +
+          '</div>' +
+          '<div class="echo-meter-label" style="color:' + echoColor + '">' + echoIdx + '%</div>' +
+          '</div>' +
+          '<div class="echo-meter-scale">' +
+          '<span>' + (isZh ? '多元' : 'Diverse') + '</span>' +
+          '<span>' + (isZh ? '适中' : 'Balanced') + '</span>' +
+          '<span>' + (isZh ? '集中' : 'Focused') + '</span>' +
+          '<span>' + (isZh ? '茧房' : 'Echo') + '</span>' +
+          '</div>' +
+          '<div class="echo-meter-desc">' +
+          '<strong style="color:' + echoColor + '">' + echoLabel + '</strong> — ' + echoDesc +
+          '</div>';
+
+        // ── Section 4: 兴趣权重模型 ──
+        var weightModel = INTEREST_OS.predictions.getWeightModel(tags);
+        var catColors = ['#00E5FF','#00FF88','#FFB800','#FF4D6A','#3B82F6','#A855F7','#EC4899','#14B8A6','#F97316','#84CC16'];
+
+        var catEl = document.getElementById('weightCategories');
+        catEl.innerHTML = weightModel.categories.map(function(c, i) {
+          var pct = Math.round(c.totalWeight / weightModel.totalWeight * 100);
+          return '<div class="weight-cat-row">' +
+            '<span class="weight-cat-name">' + escHtml(c.name) + '</span>' +
+            '<span class="weight-cat-track"><span class="weight-cat-fill" style="width:' + pct + '%;background:' + (catColors[i % catColors.length]) + '"></span></span>' +
+            '<span class="weight-cat-pct">' + pct + '%</span>' +
+            '<span class="weight-cat-count">' + c.tagCount + '</span>' +
+            '</div>';
+        }).join('');
+
+        var distEl = document.getElementById('weightDistribution');
+        var dist = weightModel.distribution;
+        distEl.innerHTML =
+          '<div class="weight-model-cell"><div class="weight-model-val">' + dist.span + '</div><div class="weight-model-lbl">' + (isZh ? '覆盖分类' : 'Categories') + '</div></div>' +
+          '<div class="weight-model-cell"><div class="weight-model-val">' + dist.evenness + '%</div><div class="weight-model-lbl">' + (isZh ? '分布均匀度' : 'Evenness') + '</div></div>' +
+          '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + (isZh ? '集中度' : 'Concentration') + '</div></div>';
+
+        // ── Section 5: 算法未来推荐预测 ──
+        var predictions = INTEREST_OS.predictions.getRecommendations(tags);
+        var predEl = document.getElementById('predictedTags');
+
+        if (predictions.predictedTags && predictions.predictedTags.length > 0) {
+          predEl.innerHTML = predictions.predictedTags.map(function(p, i) {
+            var badgeColor = p.probability === '高' ? 'var(--accent-green)' : p.probability === '中高' ? 'var(--accent-2)' : 'var(--text-muted)';
+            return '<div class="prediction-item">' +
+              '<span class="prediction-rank">' + (i + 1) + '</span>' +
+              '<div class="prediction-body">' +
+              '<div class="prediction-name">' + escHtml(p.name) + '</div>' +
+              '<div class="prediction-reason">' + escHtml(p.reason) + '</div>' +
+              '</div>' +
+              '<span class="prediction-badge" style="border-color:' + badgeColor + ';color:' + badgeColor + '">' + p.probability + '</span>' +
+              '</div>';
+          }).join('');
+        } else {
+          predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
+            (isZh ? '数据不足以生成预测，建议增加更多观看记录。' : 'Not enough data for predictions. Add more watch history.') +
+            '</div>';
+        }
+
+        var contentEl = document.getElementById('recommendedContent');
+        if (predictions.recommendedContent && predictions.recommendedContent.length > 0) {
+          contentEl.innerHTML = predictions.recommendedContent.map(function(c) {
+            return '<div class="content-card">' +
+              '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
+              '<div class="content-card-type">' + escHtml(c.type) + '</div>' +
+              '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
+              '<div class="content-card-platform">' + escHtml(c.platform) + '</div>' +
+              '<div class="content-card-reason">' + escHtml(c.reason) + '</div>' +
+              '</div>';
+          }).join('');
+        } else {
+          contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
+            (isZh ? '暂无推荐内容。' : 'No recommendations yet.') +
+            '</div>';
+        }
+
+        // ── Section 6: 成长建议 ──
+        var advice = INTEREST_OS.predictions.getGrowthAdvice(tags, analysis);
+        var growthEl = document.getElementById('growthAdvice');
+        growthEl.innerHTML = advice.map(function(a) {
+          return '<div class="growth-item">' +
+            '<span class="growth-icon">' + a.icon + '</span>' +
+            '<div class="growth-body">' +
+            '<div class="growth-title">' + escHtml(a.title) + '</div>' +
+            '<div class="growth-desc">' + escHtml(a.desc) + '</div>' +
+            '<div class="growth-suggestion">' + escHtml(a.suggestion) + '</div>' +
+            '</div></div>';
+        }).join('');
+      }
+
+      function escHtml(s) {
+        if (typeof s !== 'string') return '';
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
       window.addEventListener('resize', INTEREST_OS.utils.debounce(function() { renderView(currentView); }, 400));
     })();
   </script>

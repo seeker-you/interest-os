@@ -40,10 +40,21 @@
     <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:8px">Upload Your Data</h2>
     <p class="text-dim mono" style="font-size:0.8125rem;margin-bottom:32px">Any platform: YouTube, Bilibili, TikTok, Douyin. Drop a file or paste titles.</p>
 
+    <!-- ===== DEMO BANNER ===== -->
+    <div class="demo-banner" id="demoBanner">
+      <div class="demo-banner-icon">🚀</div>
+      <div class="demo-banner-body">
+        <div class="demo-banner-title">先试试演示数据?</div>
+        <div class="demo-banner-desc">一键加载 10 个兴趣标签的示例数据，立刻体验算法透视镜</div>
+      </div>
+      <span class="demo-banner-arrow">→</span>
+    </div>
+
     <!-- ===== METHOD SWITCHER ===== -->
     <div class="tabs" id="methodTabs">
       <button class="tab-btn active" data-method="file">File Upload</button>
       <button class="tab-btn" data-method="paste">Paste Text</button>
+      <button class="tab-btn" data-method="screenshot">Screenshot</button>
       <button class="tab-btn" data-method="help">How to Export?</button>
     </div>
 
@@ -112,6 +123,32 @@
       </button>
     </div>
 
+    <!-- ===== SCREENSHOT PANEL ===== -->
+    <div id="panel-screenshot" style="display:none">
+      <div class="screenshot-zone" id="screenshotZone">
+        <svg width="40" height="40" style="color:var(--text-dim);margin-bottom:10px"><use href="#icon-upload"/></svg>
+        <div class="dz-text" id="screenshotDropText">上传观看历史截图</div>
+        <div class="upload-hint">.png .jpg (支持任意平台截图)</div>
+        <img id="screenshotPreview" class="screenshot-preview" style="display:none">
+        <input type="file" id="screenshotInput" accept="image/png,image/jpeg,image/jpg" style="display:none">
+      </div>
+      <div class="screenshot-actions">
+        <button id="screenshotOcrBtn" class="btn btn-primary" style="flex:1;display:none">
+          <span class="spinner" id="ocrSpinner" style="display:none"></span>
+          提取图片中的文字
+        </button>
+        <button id="screenshotManualBtn" class="btn btn-secondary" style="flex:1;display:none">手动输入</button>
+      </div>
+      <div id="screenshotManualArea" style="display:none;margin-top:12px">
+        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:8px">将截图中的视频标题手动输入，一行一个：</p>
+        <textarea id="screenshotTextarea" class="input" placeholder="粘贴你从截图中看到的标题..." style="min-height:120px;width:100%;box-sizing:border-box"></textarea>
+        <button id="screenshotAnalyzeBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px">
+          <span class="spinner" id="screenshotSpinner" style="display:none"></span>
+          Parse & Analyze
+        </button>
+      </div>
+    </div>
+
     <!-- ===== HELP PANEL ===== -->
     <div id="panel-help" style="display:none">
       <div class="card" style="margin-bottom:12px">
@@ -176,6 +213,19 @@
     </div>
   </main>
 
+  <!-- ===== PRIVACY NOTICE ===== -->
+  <div class="privacy-notice">
+    <div class="privacy-notice-title">
+      <span>🔒</span> 隐私说明：你的数据只属于你
+    </div>
+    <div class="privacy-notice-body">
+      <p><strong>不上传服务器：</strong>所有上传的文件和文本仅在浏览器本地处理，不会被发送到任何服务器。</p>
+      <p><strong>不存储数据：</strong>分析完成后，原始数据不会持久化存储。兴趣画像仅保存在你的浏览器 localStorage 中，用于在页面间展示。</p>
+      <p><strong>AI 分析可选：</strong>若启用 AI 深度分析，标题文本将被发送到 Anthropic API（需自备 Key 或使用服务器端代理）。关键词引擎分析则完全在本地运行。</p>
+      <p><strong>可随时清除：</strong>关闭页面、清除浏览器数据或点击"New Analysis"都会清除你的数据。</p>
+    </div>
+  </div>
+
   <svg style="display:none" aria-hidden="true">
     <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
     <symbol id="icon-galaxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
@@ -203,6 +253,7 @@
       currentMethod = btn.dataset.method;
       document.getElementById('panel-file').style.display = (currentMethod === 'file') ? '' : 'none';
       document.getElementById('panel-paste').style.display = (currentMethod === 'paste') ? '' : 'none';
+      document.getElementById('panel-screenshot').style.display = (currentMethod === 'screenshot') ? '' : 'none';
       document.getElementById('panel-help').style.display = (currentMethod === 'help') ? '' : 'none';
     });
   });
@@ -415,6 +466,145 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
+  // ===== DEMO BANNER =====
+  document.getElementById('demoBanner').addEventListener('click', function() {
+    var span = this.querySelector('.demo-banner-title');
+    span.textContent = '加载中...';
+    INTEREST_OS.router.loadDemo().then(function(demo) {
+      if (demo) {
+        INTEREST_OS.router.setData(demo);
+        window.location.href = 'graph-raw.html';
+      } else {
+        span.textContent = '先试试演示数据?';
+        alert('演示数据加载失败，请重试');
+      }
+    });
+  });
+
+  // ===== SCREENSHOT =====
+  var screenshotZone = document.getElementById('screenshotZone');
+  var screenshotInput = document.getElementById('screenshotInput');
+  var screenshotPreview = document.getElementById('screenshotPreview');
+  var screenshotOcrBtn = document.getElementById('screenshotOcrBtn');
+  var screenshotManualBtn = document.getElementById('screenshotManualBtn');
+  var screenshotManualArea = document.getElementById('screenshotManualArea');
+  var screenshotTextarea = document.getElementById('screenshotTextarea');
+  var screenshotAnalyzeBtn = document.getElementById('screenshotAnalyzeBtn');
+  var selectedScreenshot = null;
+
+  screenshotZone.addEventListener('click', function() { screenshotInput.click(); });
+  screenshotZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    screenshotZone.classList.add('drag-over');
+  });
+  screenshotZone.addEventListener('dragleave', function() {
+    screenshotZone.classList.remove('drag-over');
+  });
+  screenshotZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    screenshotZone.classList.remove('drag-over');
+    var file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) handleScreenshot(file);
+  });
+  screenshotInput.addEventListener('change', function() {
+    if (screenshotInput.files[0]) handleScreenshot(screenshotInput.files[0]);
+  });
+
+  function handleScreenshot(file) {
+    selectedScreenshot = file;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      screenshotPreview.src = e.target.result;
+      screenshotPreview.style.display = '';
+      document.getElementById('screenshotDropText').textContent = '截图已加载';
+      screenshotOcrBtn.style.display = '';
+      screenshotManualBtn.style.display = '';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  screenshotOcrBtn.addEventListener('click', function() {
+    // Load Tesseract.js on demand
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    script.onload = function() {
+      document.getElementById('ocrSpinner').style.display = 'inline-block';
+      screenshotOcrBtn.disabled = true;
+      Tesseract.recognize(screenshotPreview.src, 'chi_sim+eng')
+        .then(function(result) {
+          document.getElementById('ocrSpinner').style.display = 'none';
+          screenshotOcrBtn.disabled = false;
+          var text = result.data.text || '';
+          // Try to extract lines of text
+          var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 2; });
+          if (lines.length >= 3) {
+            screenshotTextarea.value = lines.join('\n');
+            screenshotManualArea.style.display = '';
+            screenshotTextarea.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            screenshotManualArea.style.display = '';
+            screenshotTextarea.placeholder = 'OCR 未提取到足够标题，请手动输入...';
+          }
+        })
+        .catch(function() {
+          document.getElementById('ocrSpinner').style.display = 'none';
+          screenshotOcrBtn.disabled = false;
+          screenshotManualArea.style.display = '';
+          screenshotTextarea.placeholder = 'OCR 识别失败，请手动输入标题...';
+        });
+    };
+    script.onerror = function() {
+      screenshotManualArea.style.display = '';
+      screenshotTextarea.placeholder = 'OCR 库加载失败，请手动输入标题...';
+    };
+    document.head.appendChild(script);
+  });
+
+  screenshotManualBtn.addEventListener('click', function() {
+    screenshotManualArea.style.display = '';
+    screenshotTextarea.focus();
+  });
+
+  screenshotAnalyzeBtn.addEventListener('click', function() {
+    var text = screenshotTextarea.value.trim();
+    if (!text) { showError('请先输入标题文本'); return; }
+
+    document.getElementById('screenshotSpinner').style.display = 'inline-block';
+    screenshotAnalyzeBtn.disabled = true;
+    showLoading(true);
+
+    setTimeout(function() {
+      try {
+        var result = INTEREST_OS.parser.parseText(text);
+        if (result.error) {
+          showError(result.error);
+        } else {
+          showResult(result);
+        }
+      } catch(err) {
+        showError('Parse failed: ' + err.message);
+      }
+      document.getElementById('screenshotSpinner').style.display = 'none';
+      screenshotAnalyzeBtn.disabled = false;
+      showLoading(false);
+    }, 300);
+  });
+
+  // Also handle "switch to paste" in help to include screenshot
+  var switchBtn = document.getElementById('switchToPaste');
+  if (switchBtn) {
+    switchBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('#methodTabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelector('#methodTabs .tab-btn[data-method="paste"]').classList.add('active');
+      currentMethod = 'paste';
+      document.getElementById('panel-file').style.display = 'none';
+      document.getElementById('panel-paste').style.display = '';
+      document.getElementById('panel-screenshot').style.display = 'none';
+      document.getElementById('panel-help').style.display = 'none';
+    });
+  }
+
   // ===== AI Settings =====
   document.getElementById('aiSettingsBtn').addEventListener('click', function() {
     var box = document.getElementById('aiSettingsBox');
@@ -446,20 +636,6 @@
       document.getElementById('apiKeyStatus').style.display = '';
     }
   })();
-
-  // ===== Switch to paste from help =====
-  var switchBtn = document.getElementById('switchToPaste');
-  if (switchBtn) {
-    switchBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelectorAll('#methodTabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      document.querySelector('#methodTabs .tab-btn[data-method="paste"]').classList.add('active');
-      currentMethod = 'paste';
-      document.getElementById('panel-file').style.display = 'none';
-      document.getElementById('panel-paste').style.display = '';
-      document.getElementById('panel-help').style.display = 'none';
-    });
-  }
 
   // ===== Import guide buttons =====
   var guideData = {
