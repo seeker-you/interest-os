@@ -3,7 +3,7 @@
 
 INTEREST_OS.aiAnalyzer = {
   // Configurable API endpoint (deploy api/analyze.js to Vercel, set this URL)
-  API_URL: 'https://YOUR_VERCEL_PROJECT.vercel.app/api/analyze',
+  API_URL: '',  // Set to your Vercel URL to enable server-side AI analysis
 
   // Or use a user-provided API key directly (stored in localStorage)
   getUserKey: function() {
@@ -18,20 +18,22 @@ INTEREST_OS.aiAnalyzer = {
     options = options || {};
     var lang = options.lang || 'zh';
 
-    // Try serverless backend first
-    try {
-      var result = await this._callBackend(titles, lang);
-      if (result && result.tags && result.tags.length > 0) {
-        result.meta = {
-          source: 'ai-analyzed',
-          recordCount: titles.length,
-          generatedAt: new Date().toISOString()
-        };
-        result.rawTitles = titles;
-        return result;
+    // Try serverless backend first (only if URL is configured)
+    if (this.API_URL) {
+      try {
+        var result = await this._callBackend(titles, lang);
+        if (result && result.tags && result.tags.length > 0) {
+          result.meta = {
+            source: 'ai-analyzed',
+            recordCount: titles.length,
+            generatedAt: new Date().toISOString()
+          };
+          result.rawTitles = titles;
+          return result;
+        }
+      } catch(e) {
+        console.info('[AI] Backend unavailable, trying direct API...');
       }
-    } catch(e) {
-      console.warn('AI backend unavailable, trying direct API...', e.message);
     }
 
     // Try direct Anthropic API with user-provided key
@@ -49,12 +51,11 @@ INTEREST_OS.aiAnalyzer = {
           return result;
         }
       } catch(e) {
-        console.warn('Direct AI call failed, falling back to keyword engine...', e.message);
+        console.info('[AI] Direct API call failed, using keyword engine fallback.');
       }
     }
 
     // Fallback to keyword engine
-    console.log('Using keyword engine fallback');
     return INTEREST_OS.analyzer.analyze(titles);
   },
 
