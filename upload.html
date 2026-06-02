@@ -48,7 +48,7 @@
     </div>
 
     <!-- AI Analysis Toggle -->
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;padding:8px 12px;background:var(--bg);border:1px solid var(--border)">
+    <div class="ai-settings-toggle" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;padding:8px 12px;background:var(--bg);border:1px solid var(--border)">
       <label style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:0.75rem;color:var(--text-dim);cursor:pointer;user-select:none">
         <input type="checkbox" id="aiToggle" checked style="accent-color:var(--accent)">
         <span>🧠 AI 深度分析</span>
@@ -60,7 +60,7 @@
       <p class="mono" style="font-size:0.6875rem;color:var(--text-dim);margin-bottom:8px">
         输入你自己的 Anthropic API Key，即可使用真实 AI 分析。Key 仅存储在浏览器本地。
       </p>
-      <div style="display:flex;gap:8px">
+      <div class="ai-settings-row" style="display:flex;gap:8px">
         <input type="password" id="apiKeyInput" class="input" placeholder="sk-ant-api03-..." style="flex:1;font-size:0.75rem">
         <button id="saveApiKeyBtn" class="btn btn-primary btn-sm">保存</button>
         <button id="clearApiKeyBtn" class="btn btn-secondary btn-sm">清除</button>
