@@ -44,8 +44,8 @@
     <div class="demo-banner" id="demoBanner">
       <div class="demo-banner-icon">🚀</div>
       <div class="demo-banner-body">
-        <div class="demo-banner-title">先试试演示数据?</div>
-        <div class="demo-banner-desc">一键加载 10 个兴趣标签的示例数据，立刻体验算法透视镜</div>
+        <div class="demo-banner-title">Try Demo Data First?</div>
+        <div class="demo-banner-desc">Load 10 sample interest tags instantly and experience the Algorithm Mirror</div>
       </div>
       <span class="demo-banner-arrow">→</span>
     </div>
@@ -62,19 +62,19 @@
     <div class="ai-settings-toggle" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:20px;padding:8px 12px;background:var(--bg);border:1px solid var(--border)">
       <label style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:0.75rem;color:var(--text-dim);cursor:pointer;user-select:none">
         <input type="checkbox" id="aiToggle" checked style="accent-color:var(--accent)">
-        <span>🧠 AI 深度分析</span>
-        <span style="color:var(--text-muted);font-size:0.625rem">(更准确的标签提取)</span>
+        <span>🧠 AI Deep Analysis</span>
+        <span style="color:var(--text-muted);font-size:0.625rem">(more accurate tag extraction)</span>
       </label>
       <button id="aiSettingsBtn" class="btn btn-ghost btn-sm" style="font-size:0.625rem;padding:2px 8px">⚙ API Key</button>
     </div>
     <div id="aiSettingsBox" style="display:none;margin-bottom:20px;padding:12px;background:var(--bg);border:1px solid var(--border)">
       <p class="mono" style="font-size:0.6875rem;color:var(--text-dim);margin-bottom:8px">
-        输入你自己的 Anthropic API Key，即可使用真实 AI 分析。Key 仅存储在浏览器本地。
+        Enter your own Anthropic API Key to use real AI analysis. Key is stored in your browser locally.
       </p>
       <div class="ai-settings-row" style="display:flex;gap:8px">
         <input type="password" id="apiKeyInput" class="input" placeholder="sk-ant-api03-..." style="flex:1;font-size:0.75rem">
-        <button id="saveApiKeyBtn" class="btn btn-primary btn-sm">保存</button>
-        <button id="clearApiKeyBtn" class="btn btn-secondary btn-sm">清除</button>
+        <button id="saveApiKeyBtn" class="btn btn-primary btn-sm">Save</button>
+        <button id="clearApiKeyBtn" class="btn btn-secondary btn-sm">Clear</button>
       </div>
       <p id="apiKeyStatus" class="mono" style="font-size:0.625rem;color:var(--accent-green);margin-top:6px;display:none"></p>
     </div>
@@ -101,7 +101,7 @@
           <textarea id="pasteArea" class="input" placeholder="Paste video titles here — one per line. Any platform works." style="min-height:200px;width:100%;box-sizing:border-box"></textarea>
         </div>
         <div class="card" style="width:220px;flex-shrink:0;padding:12px">
-          <div class="mono" style="font-size:0.6875rem;color:var(--accent);margin-bottom:10px;font-weight:700">如何使用</div>
+          <div class="mono" style="font-size:0.6875rem;color:var(--accent);margin-bottom:10px;font-weight:700">How to Use</div>
           <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">
             <button class="guide-btn active" data-platform="youtube" style="font-size:0.6875rem;padding:5px 8px;text-align:left;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:var(--text-dim);cursor:pointer;font-family:var(--font-mono)">YouTube</button>
             <button class="guide-btn" data-platform="tiktok" style="font-size:0.6875rem;padding:5px 8px;text-align:left;background:transparent;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;font-family:var(--font-mono)">TikTok / Douyin</button>
@@ -127,21 +127,21 @@
     <div id="panel-screenshot" style="display:none">
       <div class="screenshot-zone" id="screenshotZone">
         <svg width="40" height="40" style="color:var(--text-dim);margin-bottom:10px"><use href="#icon-upload"/></svg>
-        <div class="dz-text" id="screenshotDropText">上传观看历史截图</div>
-        <div class="upload-hint">.png .jpg (支持任意平台截图)</div>
+        <div class="dz-text" id="screenshotDropText">Upload watch history screenshot</div>
+        <div class="upload-hint">.png .jpg (any platform screenshot)</div>
         <img id="screenshotPreview" class="screenshot-preview" style="display:none">
         <input type="file" id="screenshotInput" accept="image/png,image/jpeg,image/jpg" style="display:none">
       </div>
       <div class="screenshot-actions">
         <button id="screenshotOcrBtn" class="btn btn-primary" style="flex:1;display:none">
           <span class="spinner" id="ocrSpinner" style="display:none"></span>
-          提取图片中的文字
+          Extract text from image
         </button>
-        <button id="screenshotManualBtn" class="btn btn-secondary" style="flex:1;display:none">手动输入</button>
+        <button id="screenshotManualBtn" class="btn btn-secondary" style="flex:1;display:none">Manual Input</button>
       </div>
       <div id="screenshotManualArea" style="display:none;margin-top:12px">
-        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:8px">将截图中的视频标题手动输入，一行一个：</p>
-        <textarea id="screenshotTextarea" class="input" placeholder="粘贴你从截图中看到的标题..." style="min-height:120px;width:100%;box-sizing:border-box"></textarea>
+        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:8px">Enter video titles from the screenshot, one per line:</p>
+        <textarea id="screenshotTextarea" class="input" placeholder="Paste titles you see in the screenshot..." style="min-height:120px;width:100%;box-sizing:border-box"></textarea>
         <button id="screenshotAnalyzeBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px">
           <span class="spinner" id="screenshotSpinner" style="display:none"></span>
           Parse & Analyze
@@ -216,13 +216,13 @@
   <!-- ===== PRIVACY NOTICE ===== -->
   <div class="privacy-notice">
     <div class="privacy-notice-title">
-      <span>🔒</span> 隐私说明：你的数据只属于你
+      <span>🔒</span> Privacy: Your Data Belongs to You
     </div>
     <div class="privacy-notice-body">
-      <p><strong>不上传服务器：</strong>所有上传的文件和文本仅在浏览器本地处理，不会被发送到任何服务器。</p>
-      <p><strong>不存储数据：</strong>分析完成后，原始数据不会持久化存储。兴趣画像仅保存在你的浏览器 localStorage 中，用于在页面间展示。</p>
-      <p><strong>AI 分析可选：</strong>若启用 AI 深度分析，标题文本将被发送到 Anthropic API（需自备 Key 或使用服务器端代理）。关键词引擎分析则完全在本地运行。</p>
-      <p><strong>可随时清除：</strong>关闭页面、清除浏览器数据或点击"New Analysis"都会清除你的数据。</p>
+      <p><strong>No server upload:</strong> All files and text are processed locally in your browser, never sent to any server.</p>
+      <p><strong>No data storage:</strong> Raw data is not persisted after analysis. Interest profiles are saved only in your browser localStorage for cross-page display.</p>
+      <p><strong>AI analysis optional:</strong> If enabled, titles are sent to Anthropic API (requires your own Key or server proxy). Keyword engine analysis runs entirely locally.</p>
+      <p><strong>Clear anytime:</strong> Closing the page, clearing browser data, or clicking "New Analysis" removes your data.</p>
     </div>
   </div>
 
@@ -374,7 +374,7 @@
   // ===== DYNAMIC ANALYSIS PIPELINE (6 stages) =====
   function runAnalysis(titles, callback) {
     var useAI = document.getElementById("aiToggle") && document.getElementById("aiToggle").checked;
-    document.getElementById("loadingText").textContent = "运行分析链路...";
+    document.getElementById("loadingText").textContent = "Running analysis pipeline...";
 
     INTEREST_OS.pipeline.run(titles, { useAI: useAI, lang: "zh" }).then(function(profile) {
       callback(profile);
@@ -468,14 +468,14 @@
   // ===== DEMO BANNER =====
   document.getElementById('demoBanner').addEventListener('click', function() {
     var span = this.querySelector('.demo-banner-title');
-    span.textContent = '加载中...';
+    span.textContent = 'Loading...';
     INTEREST_OS.router.loadDemo().then(function(demo) {
       if (demo) {
         INTEREST_OS.router.setData(demo);
         window.location.href = 'graph-raw.html';
       } else {
-        span.textContent = '先试试演示数据?';
-        alert('演示数据加载失败，请重试');
+        span.textContent = 'Try demo data first?';
+        alert('Failed to load demo data. Please try again.');
       }
     });
   });
@@ -515,7 +515,7 @@
     reader.onload = function(e) {
       screenshotPreview.src = e.target.result;
       screenshotPreview.style.display = '';
-      document.getElementById('screenshotDropText').textContent = '截图已加载';
+      document.getElementById('screenshotDropText').textContent = 'Screenshot loaded';
       screenshotOcrBtn.style.display = '';
       screenshotManualBtn.style.display = '';
     };
@@ -542,19 +542,19 @@
             screenshotTextarea.scrollIntoView({ behavior: 'smooth' });
           } else {
             screenshotManualArea.style.display = '';
-            screenshotTextarea.placeholder = 'OCR 未提取到足够标题，请手动输入...';
+            screenshotTextarea.placeholder = 'OCR did not extract enough titles. Please enter manually...';
           }
         })
         .catch(function() {
           document.getElementById('ocrSpinner').style.display = 'none';
           screenshotOcrBtn.disabled = false;
           screenshotManualArea.style.display = '';
-          screenshotTextarea.placeholder = 'OCR 识别失败，请手动输入标题...';
+          screenshotTextarea.placeholder = 'OCR recognition failed. Please enter titles manually...';
         });
     };
     script.onerror = function() {
       screenshotManualArea.style.display = '';
-      screenshotTextarea.placeholder = 'OCR 库加载失败，请手动输入标题...';
+      screenshotTextarea.placeholder = 'OCR library failed to load. Please enter titles manually...';
     };
     document.head.appendChild(script);
   });
@@ -566,7 +566,7 @@
 
   screenshotAnalyzeBtn.addEventListener('click', function() {
     var text = screenshotTextarea.value.trim();
-    if (!text) { showError('请先输入标题文本'); return; }
+    if (!text) { showError('Please enter title text first'); return; }
 
     document.getElementById('screenshotSpinner').style.display = 'inline-block';
     screenshotAnalyzeBtn.disabled = true;
@@ -616,14 +616,14 @@
     var key = document.getElementById('apiKeyInput').value.trim();
     if (key) {
       INTEREST_OS.aiAnalyzer.setUserKey(key);
-      document.getElementById('apiKeyStatus').textContent = '✓ API Key 已保存';
+      document.getElementById('apiKeyStatus').textContent = '✓ API Key saved';
       document.getElementById('apiKeyStatus').style.display = '';
     }
   });
   document.getElementById('clearApiKeyBtn').addEventListener('click', function() {
     INTEREST_OS.aiAnalyzer.setUserKey('');
     document.getElementById('apiKeyInput').value = '';
-    document.getElementById('apiKeyStatus').textContent = '✓ API Key 已清除';
+    document.getElementById('apiKeyStatus').textContent = '✓ API Key cleared';
     document.getElementById('apiKeyStatus').style.display = '';
   });
   // Load key on init
@@ -631,7 +631,7 @@
     var existing = INTEREST_OS.aiAnalyzer.getUserKey();
     if (existing) {
       document.getElementById('apiKeyInput').value = existing;
-      document.getElementById('apiKeyStatus').textContent = '✓ 已加载保存的 API Key';
+      document.getElementById('apiKeyStatus').textContent = '✓ Saved API Key loaded';
       document.getElementById('apiKeyStatus').style.display = '';
     }
   })();

@@ -113,7 +113,7 @@
     "misc.error": { zh: "加载失败，请重试", en: "Failed. Try again." }
   };
 
-  var current = "zh";
+  var current = "en";
 
   function t(key) {
     var entry = dict[key];

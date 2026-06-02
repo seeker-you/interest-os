@@ -107,7 +107,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; }
 .nav-links { display: flex; align-items: center; gap: 4px; }
 .nav-link {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
   text-decoration: none;
   padding: 6px 12px;
@@ -260,7 +260,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; }
 }
 .feature-cell p {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
   line-height: 1.6;
 }
@@ -273,7 +273,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; }
   border-bottom: 1px solid var(--border);
   margin-top: 56px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
 }
 .trust-item {
@@ -307,7 +307,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; }
 }
 .upload-zone .dz-hint {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
@@ -321,7 +321,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; }
   flex: 1;
   padding: 12px 20px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
   background: transparent;
   border: none;
@@ -487,7 +487,7 @@ textarea.input {
 }
 .edit-row-wt input {
   width: 100%; text-align: center;
-  font-family: var(--font-mono); font-size: 0.75rem;
+  font-family: var(--font-mono); font-size: 0.8125rem;
   color: var(--text); background: none;
   border: 1px solid var(--border); padding: 4px 6px;
   outline: none;
@@ -544,7 +544,7 @@ textarea.input {
   .hero-label { font-size: 0.625rem; margin-bottom: 12px; }
   .hero-byline { font-size: 0.75rem !important; max-width: 100%; margin-bottom: 24px; }
 
-  .btn { padding: 10px 20px; font-size: 0.75rem; }
+  .btn { padding: 10px 20px; font-size: 0.8125rem; }
   .btn-lg { padding: 12px 24px; font-size: 0.875rem; }
   .btn-sm { padding: 6px 14px; font-size: 0.625rem; }
 
@@ -582,7 +582,7 @@ textarea.input {
 
   .edit-panel { width: 100%; max-width: 100%; margin: 0 12px; padding: 20px; }
   .edit-row { padding: 6px 10px; gap: 8px; }
-  .edit-row-name { font-size: 0.75rem; }
+  .edit-row-name { font-size: 0.8125rem; }
 
   .ring-container { width: 140px; height: 140px; }
   .ring:nth-child(2) { inset: 14px; }
@@ -614,7 +614,7 @@ textarea.input {
 @media (max-width: 480px) {
   .container { padding: 64px 10px 24px; }
   .nav { padding: 8px 10px; }
-  .nav-brand { font-size: 0.75rem; }
+  .nav-brand { font-size: 0.8125rem; }
 
   .hero-section { padding: 28px 0 16px; }
   .hero-title { font-size: clamp(1.25rem, 8vw, 1.625rem) !important; }
@@ -731,14 +731,14 @@ textarea.input {
 }
 .persona-highlight-tagline {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
   margin-bottom: 16px;
   font-style: italic;
 }
 .persona-highlight-desc {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   line-height: 1.7;
   text-align: left;
@@ -791,7 +791,7 @@ textarea.input {
 }
 .explanation-summary {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
   line-height: 1.7;
   padding: 14px 16px;
@@ -856,7 +856,7 @@ textarea.input {
 }
 .echo-meter-desc {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
   line-height: 1.6;
   padding: 12px 16px;
@@ -872,7 +872,7 @@ textarea.input {
 }
 .weight-cat-name {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-dim);
   width: 100px; flex-shrink: 0;
   text-align: right;
@@ -887,7 +887,7 @@ textarea.input {
 }
 .weight-cat-pct {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   width: 48px; flex-shrink: 0;
 }
@@ -982,7 +982,7 @@ textarea.input {
 }
 .content-card-title {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 4px;
@@ -1137,7 +1137,7 @@ textarea.input {
 }
 .privacy-notice-title {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--accent-green);
   margin-bottom: 12px;
@@ -1181,7 +1181,7 @@ textarea.input {
   display: block; width: 100%;
   padding: 16px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--accent);
   background: var(--bg-elevated);
@@ -1210,7 +1210,7 @@ textarea.input {
   .obs-grid { grid-template-columns: 1fr; }
   .exp-step { padding: 12px 12px; gap: 12px; }
   .exp-step::before { left: -12px; top: 12px; }
-  .exp-step-title { font-size: 0.75rem; }
+  .exp-step-title { font-size: 0.8125rem; }
   .weight-cat-name { width: 70px; font-size: 0.6875rem; }
   .echo-meter-label { font-size: 1.5rem; width: 56px; }
   .echo-meter-visual { gap: 10px; }
@@ -1227,7 +1227,7 @@ textarea.input {
 
 @media (max-width: 480px) {
   .insight-section { padding: 12px; }
-  .insight-section-title { font-size: 0.75rem; }
+  .insight-section-title { font-size: 0.8125rem; }
   .persona-highlight-name { font-size: 1.125rem; }
   .exp-step { padding: 10px 8px; gap: 8px; }
   .exp-step::before { display: none; }
@@ -1275,7 +1275,7 @@ textarea.input {
 }
 .pipe-stage-name {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 1px;
@@ -1366,7 +1366,7 @@ textarea.input {
 }
 .flow-arrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   padding: 0 2px;
   flex-shrink: 0;
@@ -1414,4 +1414,30 @@ textarea.input {
 @media (max-width: 480px) {
   .behavior-metrics { grid-template-columns: repeat(2, 1fr); }
   .behavior-metric-value { font-size: 0.875rem; }
+}
+
+/* Result page larger font */
+.graph-grid .mono,
+.graph-grid .text-xs,
+.graph-side .mono,
+#tagDetail .mono,
+#echoInsight {
+  font-size: 0.8125rem !important;
+}
+.insight-section-body {
+  font-size: 0.8125rem !important;
+}
+.persona-highlight-desc {
+  font-size: 0.8125rem !important;
+}
+.exp-step-detail,
+.growth-desc,
+.growth-suggestion {
+  font-size: 0.8125rem !important;
+}
+.obs-detail {
+  font-size: 0.8125rem !important;
+}
+.prediction-reason {
+  font-size: 0.8125rem !important;
 }
