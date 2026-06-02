@@ -100,6 +100,21 @@
 
     <div class="insight-drawer-title">算法透视镜 · 深度分析</div>
 
+    <!-- 0. Pipeline Chain -->
+    <div class="insight-section" id="sectionPipeline">
+      <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span class="insight-section-icon">⚡</span>
+        <span class="insight-section-title">分析链路</span>
+        <span class="insight-section-sub" id="pipelineStatus">6 stages</span>
+      </div>
+      <div class="insight-section-body">
+        <div id="pipelineChain" class="pipeline-chain"></div>
+        <div id="pipelineSummary" class="pipeline-summary" style="margin-top:12px;padding:12px 16px;border:1px solid var(--border);background:var(--bg)">
+          <p class="mono" style="font-size:0.6875rem;color:var(--text-muted)" id="pipelineSummaryText"></p>
+        </div>
+      </div>
+    </div>
+
     <!-- 1. 算法眼中的你 -->
     <div class="insight-section" id="sectionPersona">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -217,6 +232,7 @@
   <script src="js/insights.js?v=5"></script>
   <script src="js/personas-enhanced.js?v=1"></script>
   <script src="js/predictions.js?v=1"></script>
+  <script src="js/pipeline.js?v=1"></script>
   <script src="js/i18n.js?v=5"></script>
   <script>
     document.addEventListener('i18n:changed', function() {
@@ -354,21 +370,42 @@
         var isZh = (window._i18n && window._i18n.current === 'zh');
         var echoIdx = analysis.echoChamberIndex || 50;
         var persona = INTEREST_OS.personas.determine(tags);
+        var stages = profile.stages; // pipeline stages, may be undefined for legacy data
+
+        // ── Section 0: Pipeline Chain ──
+        renderPipelineChain(stages);
 
         // ── Section 1: 算法眼中的你 ──
         var personaEl = document.getElementById('personaInsightContent');
-        var personaDesc = INTEREST_OS.personas.getEnhancedDescription(persona.id, isZh ? 'zh' : 'en') || '';
 
-        personaEl.innerHTML =
-          '<div class="persona-highlight-name" style="background:linear-gradient(135deg,' + persona.colorStart + ',' + persona.colorEnd + ');-webkit-background-clip:text;-webkit-text-fill-color:transparent">' +
-          escHtml(persona.name) + '</div>' +
-          '<div class="persona-highlight-tagline">"' + escHtml(persona.tagline) + '"</div>' +
-          '<div class="persona-highlight-desc">' + personaDesc + '</div>' +
-          '<div class="persona-badge-row">' +
-          '<span class="persona-badge">' + (isZh ? '算法人格' : 'Persona') + '</span>' +
-          '<span class="persona-badge">' + (isZh ? '置信度: 高' : 'Confidence: High') + '</span>' +
-          '<span class="persona-badge">' + tags.length + ' ' + (isZh ? '个兴趣标签' : 'tags') + '</span>' +
-          '</div>';
+        if (stages) {
+          // Use pipeline-generated persona stage
+          var pStage = stages.find(function(s) { return s.stage === 3; });
+          if (pStage) {
+            var po = pStage.output;
+            personaEl.innerHTML =
+              '<div class="persona-highlight-name" style="background:linear-gradient(135deg,' + (persona.colorStart||'#6366F1') + ',' + (persona.colorEnd||'#8B5CF6') + ');-webkit-background-clip:text;-webkit-text-fill-color:transparent">' +
+              escHtml(po.variant || po.name) + '</div>' +
+              '<div class="persona-highlight-tagline">"' + escHtml(po.tagline) + '"</div>' +
+              '<div class="persona-highlight-desc">' + escHtml(po.description) + '</div>' +
+              (po.evidence ? '<div class="persona-badge-row">' + po.evidence.map(function(e) {
+                return '<span class="persona-badge">' + escHtml(e.factor) + ': ' + escHtml(e.value) + '</span>';
+              }).join('') + '</div>' : '');
+          }
+        } else {
+          // Legacy fallback
+          var personaDesc = INTEREST_OS.personas.getEnhancedDescription(persona.id, isZh ? 'zh' : 'en') || '';
+          personaEl.innerHTML =
+            '<div class="persona-highlight-name" style="background:linear-gradient(135deg,' + persona.colorStart + ',' + persona.colorEnd + ');-webkit-background-clip:text;-webkit-text-fill-color:transparent">' +
+            escHtml(persona.name) + '</div>' +
+            '<div class="persona-highlight-tagline">"' + escHtml(persona.tagline) + '"</div>' +
+            '<div class="persona-highlight-desc">' + personaDesc + '</div>' +
+            '<div class="persona-badge-row">' +
+            '<span class="persona-badge">' + (isZh ? '算法人格' : 'Persona') + '</span>' +
+            '<span class="persona-badge">' + (isZh ? '置信度: 高' : 'Confidence: High') + '</span>' +
+            '<span class="persona-badge">' + tags.length + ' ' + (isZh ? '个兴趣标签' : 'tags') + '</span>' +
+            '</div>';
+        }
 
         // Algorithm observations
         var obsEl = document.getElementById('algorithmObservations');
@@ -382,33 +419,91 @@
         }).join('');
 
         // ── Section 2: 算法为什么这样判断 ──
-        var explanation = INTEREST_OS.predictions.getAlgorithmExplanation(tags, analysis);
-
-        var findingsEl = document.getElementById('keyFindings');
-        findingsEl.innerHTML = explanation.keyFindings.map(function(f) {
-          return '<div class="key-finding">' +
-            '<div class="key-finding-label">' + escHtml(f.label) + '</div>' +
-            '<div class="key-finding-value">' + escHtml(f.value) + '</div>' +
-            '</div>';
-        }).join('');
-
         var stepsEl = document.getElementById('explanationSteps');
-        stepsEl.innerHTML = explanation.steps.map(function(s) {
-          return '<div class="exp-step" data-step="' + s.step + '">' +
-            '<span class="exp-step-icon">' + s.icon + '</span>' +
-            '<div class="exp-step-body">' +
-            '<div class="exp-step-title">' + escHtml(s.title) + '</div>' +
-            '<div class="exp-step-detail">' + escHtml(s.detail) + '</div>' +
-            '</div></div>';
-        }).join('');
 
-        document.getElementById('explanationSummary').textContent = explanation.summary;
+        if (stages) {
+          // Use pipeline stages for steps
+          var stageLabels = [
+            { stage: 1, icon: '🏷️', title: '兴趣分类', desc: '关键词匹配 + 分类映射' },
+            { stage: 2, icon: '📊', title: '兴趣权重', desc: '频率统计 + 共现分析' },
+            { stage: 3, icon: '👤', title: '人格生成', desc: '分布分析 + 画像构建' },
+            { stage: 4, icon: '🔮', title: '预测生成', desc: '关联挖掘 + 趋势预测' }
+          ];
+          stepsEl.innerHTML = stageLabels.map(function(sl) {
+            var s = stages.find(function(s) { return s.stage === sl.stage; });
+            var confidence = s ? (s.confidence || 0) : 0;
+            var confLabel = confidence > 70 ? '高置信度' : confidence > 40 ? '中等置信度' : '低置信度';
+            return '<div class="exp-step" data-step="' + sl.stage + '">' +
+              '<span class="exp-step-icon">' + sl.icon + '</span>' +
+              '<div class="exp-step-body">' +
+              '<div class="exp-step-title">' + sl.title + '</div>' +
+              '<div class="exp-step-detail">' + sl.desc + ' · ' + confLabel + ' (' + confidence + '%)</div>' +
+              '</div></div>';
+          }).join('');
+
+          var findingsEl = document.getElementById('keyFindings');
+          var s2 = stages.find(function(s) { return s.stage === 2; });
+          if (s2 && s2.output.analysis) {
+            var a2 = s2.output.analysis;
+            var s3 = stages.find(function(s) { return s.stage === 3; });
+            var personaName = s3 ? s3.output.name : '--';
+            findingsEl.innerHTML =
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '兴趣标签' : 'Tags') + '</div><div class="key-finding-value">' + tags.length + '</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '算法人格' : 'Persona') + '</div><div class="key-finding-value">' + escHtml(personaName) + '</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '茧房指数' : 'Echo') + '</div><div class="key-finding-value">' + (a2.echoChamberIndex || 0) + '%</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '多样性' : 'Diversity') + '</div><div class="key-finding-value">' + (a2.diversityScore || 0) + '%</div></div>';
+          }
+        } else {
+          // Legacy fallback
+          var explanation = INTEREST_OS.predictions.getAlgorithmExplanation(tags, analysis);
+          stepsEl.innerHTML = explanation.steps.map(function(s) {
+            return '<div class="exp-step" data-step="' + s.step + '">' +
+              '<span class="exp-step-icon">' + s.icon + '</span>' +
+              '<div class="exp-step-body">' +
+              '<div class="exp-step-title">' + escHtml(s.title) + '</div>' +
+              '<div class="exp-step-detail">' + escHtml(s.detail) + '</div>' +
+              '</div></div>';
+          }).join('');
+
+          var findingsEl = document.getElementById('keyFindings');
+          findingsEl.innerHTML = explanation.keyFindings.map(function(f) {
+            return '<div class="key-finding">' +
+              '<div class="key-finding-label">' + escHtml(f.label) + '</div>' +
+              '<div class="key-finding-value">' + escHtml(f.value) + '</div>' +
+              '</div>';
+          }).join('');
+        }
+
+        // Explanation summary — use pipeline summary if available
+        var summaryEl = document.getElementById('explanationSummary');
+        if (stages) {
+          var s2 = stages.find(function(s) { return s.stage === 2; });
+          var s3 = stages.find(function(s) { return s.stage === 3; });
+          var topTag = tags.sort(function(a,b){return b.weight-a.weight})[0];
+          var sumText = '算法通过 ' + (analysis.recordCount || tags.length * 3) + ' 条记录，经过 ' + stages.length + ' 级分析链路处理。';
+          if (topTag) sumText += ' 最强信号「' + topTag.name + '」(' + topTag.weight + '%)。';
+          if (s3 && s3.output.name) sumText += ' 判定算法人格为「' + s3.output.name + '」。';
+          summaryEl.textContent = sumText;
+        } else {
+          summaryEl.textContent = '';
+        }
 
         // ── Section 3: 信息茧房指数 ──
         var echoEl = document.getElementById('echoMeter');
         var echoColor = echoIdx < 30 ? 'var(--accent-green)' : echoIdx < 55 ? 'var(--accent-2)' : echoIdx < 80 ? 'var(--accent-3)' : 'var(--accent-3)';
         var echoLabel = echoIdx < 30 ? (isZh ? '低风险' : 'Low') : echoIdx < 55 ? (isZh ? '中等' : 'Medium') : echoIdx < 80 ? (isZh ? '较高' : 'High') : (isZh ? '极高' : 'Very High');
         var echoDesc = INTEREST_OS.insights.getEchoChamberDesc(echoIdx, isZh);
+
+        // Use pipeline stage 2 insights for richer echo description
+        var stage2 = stages && stages.find(function(s) { return s.stage === 2; });
+        var extraEchoNote = '';
+        if (stage2 && stage2.output.distribution) {
+          var d = stage2.output.distribution;
+          extraEchoNote = '<div class="echo-meter-desc" style="margin-top:8px;border-left-color:var(--accent-2);background:var(--bg-elevated)">' +
+            (isZh ? '权重分布: ' : 'Weight dist: ') + d.weightCount + (isZh ? ' 个标签, ' : ' tags, ') +
+            (d.spreadType === 'polarized' ? (isZh ? '集中度较高' : 'highly concentrated') : d.spreadType === 'moderate' ? (isZh ? '分布适中' : 'moderately spread') : (isZh ? '分布均衡' : 'evenly spread')) +
+            '</div>';
+        }
 
         echoEl.innerHTML =
           '<div class="echo-meter-visual">' +
@@ -425,67 +520,131 @@
           '</div>' +
           '<div class="echo-meter-desc">' +
           '<strong style="color:' + echoColor + '">' + echoLabel + '</strong> — ' + echoDesc +
-          '</div>';
+          '</div>' + extraEchoNote;
 
         // ── Section 4: 兴趣权重模型 ──
-        var weightModel = INTEREST_OS.predictions.getWeightModel(tags);
         var catColors = ['#00E5FF','#00FF88','#FFB800','#FF4D6A','#3B82F6','#A855F7','#EC4899','#14B8A6','#F97316','#84CC16'];
 
-        var catEl = document.getElementById('weightCategories');
-        catEl.innerHTML = weightModel.categories.map(function(c, i) {
-          var pct = Math.round(c.totalWeight / weightModel.totalWeight * 100);
-          return '<div class="weight-cat-row">' +
-            '<span class="weight-cat-name">' + escHtml(c.name) + '</span>' +
-            '<span class="weight-cat-track"><span class="weight-cat-fill" style="width:' + pct + '%;background:' + (catColors[i % catColors.length]) + '"></span></span>' +
-            '<span class="weight-cat-pct">' + pct + '%</span>' +
-            '<span class="weight-cat-count">' + c.tagCount + '</span>' +
-            '</div>';
-        }).join('');
+        if (stages) {
+          // Use pipeline stage 1 categories + stage 2 distribution
+          var s1 = stages.find(function(s) { return s.stage === 1; });
+          var s2 = stages.find(function(s) { return s.stage === 2; });
 
-        var distEl = document.getElementById('weightDistribution');
-        var dist = weightModel.distribution;
-        distEl.innerHTML =
-          '<div class="weight-model-cell"><div class="weight-model-val">' + dist.span + '</div><div class="weight-model-lbl">' + (isZh ? '覆盖分类' : 'Categories') + '</div></div>' +
-          '<div class="weight-model-cell"><div class="weight-model-val">' + dist.evenness + '%</div><div class="weight-model-lbl">' + (isZh ? '分布均匀度' : 'Evenness') + '</div></div>' +
-          '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + (isZh ? '集中度' : 'Concentration') + '</div></div>';
+          if (s1 && s1.output.categories) {
+            var catEl = document.getElementById('weightCategories');
+            var totalWeight = s1.output.categories.reduce(function(s, c) { return s + c.matchCount; }, 0) || 1;
+            catEl.innerHTML = s1.output.categories.map(function(c, i) {
+              var pct = Math.round(c.matchCount / totalWeight * 100);
+              return '<div class="weight-cat-row">' +
+                '<span class="weight-cat-name">' + escHtml(c.name) + '</span>' +
+                '<span class="weight-cat-track"><span class="weight-cat-fill" style="width:' + pct + '%;background:' + (catColors[i % catColors.length]) + '"></span></span>' +
+                '<span class="weight-cat-pct">' + pct + '%</span>' +
+                '<span class="weight-cat-count">' + c.keywordCount + '</span>' +
+                '</div>';
+            }).join('');
+          }
 
-        // ── Section 5: 算法未来推荐预测 ──
-        var predictions = INTEREST_OS.predictions.getRecommendations(tags);
-        var predEl = document.getElementById('predictedTags');
-
-        if (predictions.predictedTags && predictions.predictedTags.length > 0) {
-          predEl.innerHTML = predictions.predictedTags.map(function(p, i) {
-            var badgeColor = p.probability === '高' ? 'var(--accent-green)' : p.probability === '中高' ? 'var(--accent-2)' : 'var(--text-muted)';
-            return '<div class="prediction-item">' +
-              '<span class="prediction-rank">' + (i + 1) + '</span>' +
-              '<div class="prediction-body">' +
-              '<div class="prediction-name">' + escHtml(p.name) + '</div>' +
-              '<div class="prediction-reason">' + escHtml(p.reason) + '</div>' +
-              '</div>' +
-              '<span class="prediction-badge" style="border-color:' + badgeColor + ';color:' + badgeColor + '">' + p.probability + '</span>' +
+          if (s2 && s2.output.distribution) {
+            var d = s2.output.distribution;
+            var distEl = document.getElementById('weightDistribution');
+            distEl.innerHTML =
+              '<div class="weight-model-cell"><div class="weight-model-val">' + d.weightCount + '</div><div class="weight-model-lbl">' + (isZh ? '标签数' : 'Tags') + '</div></div>' +
+              '<div class="weight-model-cell"><div class="weight-model-val">' + d.avgWeight + '%</div><div class="weight-model-lbl">' + (isZh ? '平均权重' : 'Avg Weight') + '</div></div>' +
+              '<div class="weight-model-cell"><div class="weight-model-val">' + (d.spreadType === 'polarized' ? (isZh ? '集中' : 'Focused') : d.spreadType === 'moderate' ? (isZh ? '均衡' : 'Balanced') : (isZh ? '分散' : 'Spread')) + '</div><div class="weight-model-lbl">' + (isZh ? '分布类型' : 'Pattern') + '</div></div>';
+          }
+        } else {
+          // Legacy fallback
+          var weightModel = INTEREST_OS.predictions.getWeightModel(tags);
+          var catEl = document.getElementById('weightCategories');
+          catEl.innerHTML = weightModel.categories.map(function(c, i) {
+            var pct = Math.round(c.totalWeight / weightModel.totalWeight * 100);
+            return '<div class="weight-cat-row">' +
+              '<span class="weight-cat-name">' + escHtml(c.name) + '</span>' +
+              '<span class="weight-cat-track"><span class="weight-cat-fill" style="width:' + pct + '%;background:' + (catColors[i % catColors.length]) + '"></span></span>' +
+              '<span class="weight-cat-pct">' + pct + '%</span>' +
+              '<span class="weight-cat-count">' + c.tagCount + '</span>' +
               '</div>';
           }).join('');
-        } else {
-          predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-            (isZh ? '数据不足以生成预测，建议增加更多观看记录。' : 'Not enough data for predictions. Add more watch history.') +
-            '</div>';
+
+          var distEl = document.getElementById('weightDistribution');
+          var dist = weightModel.distribution;
+          distEl.innerHTML =
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.span + '</div><div class="weight-model-lbl">' + (isZh ? '覆盖分类' : 'Categories') + '</div></div>' +
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.evenness + '%</div><div class="weight-model-lbl">' + (isZh ? '分布均匀度' : 'Evenness') + '</div></div>' +
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + (isZh ? '集中度' : 'Concentration') + '</div></div>';
         }
 
+        // ── Section 5: 算法未来推荐预测 ──
+        var predEl = document.getElementById('predictedTags');
         var contentEl = document.getElementById('recommendedContent');
-        if (predictions.recommendedContent && predictions.recommendedContent.length > 0) {
-          contentEl.innerHTML = predictions.recommendedContent.map(function(c) {
-            return '<div class="content-card">' +
-              '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
-              '<div class="content-card-type">' + escHtml(c.type) + '</div>' +
-              '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
-              '<div class="content-card-platform">' + escHtml(c.platform) + '</div>' +
-              '<div class="content-card-reason">' + escHtml(c.reason) + '</div>' +
-              '</div>';
-          }).join('');
+
+        if (stages) {
+          // Use pipeline stage 4 predictions
+          var s4 = stages.find(function(s) { return s.stage === 4; });
+          if (s4 && s4.output.predictedTags && s4.output.predictedTags.length > 0) {
+            predEl.innerHTML = s4.output.predictedTags.map(function(p, i) {
+              var badgeColor = p.probability === '高' ? 'var(--accent-green)' : p.probability === '中高' ? 'var(--accent-2)' : 'var(--text-muted)';
+              return '<div class="prediction-item">' +
+                '<span class="prediction-rank">' + (i + 1) + '</span>' +
+                '<div class="prediction-body">' +
+                '<div class="prediction-name">' + escHtml(p.name) + '</div>' +
+                '<div class="prediction-reason">' + escHtml(p.reason) + '</div>' +
+                '</div>' +
+                '<span class="prediction-badge" style="border-color:' + badgeColor + ';color:' + badgeColor + '">' + p.probability + '</span>' +
+                '</div>';
+            }).join('');
+          } else {
+            predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
+              (isZh ? '数据不足以生成预测，建议增加更多观看记录。' : 'Not enough data for predictions.') + '</div>';
+          }
+
+          if (s4 && s4.output.recommendedContent && s4.output.recommendedContent.length > 0) {
+            contentEl.innerHTML = s4.output.recommendedContent.map(function(c) {
+              return '<div class="content-card">' +
+                '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
+                '<div class="content-card-type">' + escHtml(c.type || '') + '</div>' +
+                '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
+                '<div class="content-card-platform">' + escHtml(c.platform || '') + '</div>' +
+                '<div class="content-card-reason">' + escHtml(c.reason) + '</div>' +
+                '</div>';
+            }).join('');
+          } else {
+            contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
+              (isZh ? '暂无推荐内容。' : 'No recommendations yet.') + '</div>';
+          }
         } else {
-          contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-            (isZh ? '暂无推荐内容。' : 'No recommendations yet.') +
-            '</div>';
+          // Legacy fallback
+          var predictions = INTEREST_OS.predictions.getRecommendations(tags);
+          if (predictions.predictedTags && predictions.predictedTags.length > 0) {
+            predEl.innerHTML = predictions.predictedTags.map(function(p, i) {
+              var badgeColor = p.probability === '高' ? 'var(--accent-green)' : p.probability === '中高' ? 'var(--accent-2)' : 'var(--text-muted)';
+              return '<div class="prediction-item">' +
+                '<span class="prediction-rank">' + (i + 1) + '</span>' +
+                '<div class="prediction-body">' +
+                '<div class="prediction-name">' + escHtml(p.name) + '</div>' +
+                '<div class="prediction-reason">' + escHtml(p.reason) + '</div>' +
+                '</div>' +
+                '<span class="prediction-badge" style="border-color:' + badgeColor + ';color:' + badgeColor + '">' + p.probability + '</span>' +
+                '</div>';
+            }).join('');
+          } else {
+            predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
+              (isZh ? '数据不足以生成预测，建议增加更多观看记录。' : 'Not enough data for predictions.') + '</div>';
+          }
+          if (predictions.recommendedContent && predictions.recommendedContent.length > 0) {
+            contentEl.innerHTML = predictions.recommendedContent.map(function(c) {
+              return '<div class="content-card">' +
+                '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
+                '<div class="content-card-type">' + escHtml(c.type) + '</div>' +
+                '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
+                '<div class="content-card-platform">' + escHtml(c.platform) + '</div>' +
+                '<div class="content-card-reason">' + escHtml(c.reason) + '</div>' +
+                '</div>';
+            }).join('');
+          } else {
+            contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
+              (isZh ? '暂无推荐内容。' : 'No recommendations yet.') + '</div>';
+          }
         }
 
         // ── Section 6: 成长建议 ──
@@ -500,6 +659,70 @@
             '<div class="growth-suggestion">' + escHtml(a.suggestion) + '</div>' +
             '</div></div>';
         }).join('');
+      }
+
+      // ─── Pipeline Chain Renderer ───
+      function renderPipelineChain(stages) {
+        var chainEl = document.getElementById('pipelineChain');
+        var summaryEl = document.getElementById('pipelineSummaryText');
+
+        if (!stages || stages.length === 0) {
+          chainEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
+            '使用旧版分析引擎，请重新上传数据体验完整分析链路。' +
+            '</div>';
+          if (summaryEl) summaryEl.textContent = '';
+          return;
+        }
+
+        // Build chain visualization
+        var stageConfigs = [
+          { num: 1, icon: '🏷️', name: '兴趣分类', field: 'matchedCategories' },
+          { num: 2, icon: '📊', name: '兴趣权重', field: 'tags' },
+          { num: 3, icon: '👤', name: '人格生成', field: 'name' },
+          { num: 4, icon: '🔮', name: '预测生成', field: 'predictedTags' },
+          { num: 5, icon: '🧠', name: 'AI 分析', field: 'enhanced' }
+        ];
+
+        chainEl.innerHTML = '<div class="pipeline-visual">' +
+          stageConfigs.map(function(cfg) {
+            var stage = stages.find(function(s) { return s.stage === cfg.num; });
+            var active = !!stage;
+            var confidence = stage ? (stage.confidence || 0) : 0;
+            var outputSummary = '';
+
+            if (stage) {
+              if (cfg.num === 1 && stage.output.matchedCategories) {
+                outputSummary = stage.output.matchedCategories.length + ' 分类';
+              } else if (cfg.num === 2 && stage.output.tags) {
+                outputSummary = stage.output.tags.length + ' 标签';
+              } else if (cfg.num === 3 && stage.output.name) {
+                outputSummary = stage.output.name;
+              } else if (cfg.num === 4 && stage.output.predictedTags) {
+                outputSummary = stage.output.predictedTags.length + ' 预测';
+              } else if (cfg.num === 5) {
+                outputSummary = stage.output.enhanced ? 'AI 增强' : '关键词引擎';
+              }
+            }
+
+            return '<div class="pipe-stage' + (active ? ' active' : ' inactive') + '">' +
+              '<div class="pipe-stage-icon">' + cfg.icon + '</div>' +
+              '<div class="pipe-stage-info">' +
+              '<div class="pipe-stage-name">' + cfg.name + '</div>' +
+              '<div class="pipe-stage-output">' + escHtml(outputSummary) + '</div>' +
+              (active ? '<div class="pipe-stage-conf">' + confidence + '%</div>' : '<div class="pipe-stage-conf">—</div>') +
+              '</div>' +
+              (cfg.num < 5 ? '<div class="pipe-arrow">→</div>' : '') +
+              '</div>';
+          }).join('') + '</div>';
+
+        // Summary
+        var stageCount = stages.length;
+        var avgConf = Math.round(stages.reduce(function(s, st) { return s + (st.confidence || 0); }, 0) / stageCount);
+        var elapsed = profile.pipelineInfo ? profile.pipelineInfo.elapsed : 0;
+        if (summaryEl) {
+          summaryEl.textContent = (isZh ? '分析链路共 ' : 'Pipeline: ') + stageCount + (isZh ? ' 级, 平均置信度 ' : ' stages, avg confidence ') + avgConf + '%, ' +
+            (isZh ? '处理时间 ' : 'elapsed ') + elapsed + 'ms';
+        }
       }
 
       function escHtml(s) {

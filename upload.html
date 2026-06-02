@@ -235,6 +235,7 @@
   <script src="js/keywords.js?v=5"></script>
   <script src="js/personas.js?v=5"></script>
   <script src="js/parser.js?v=5"></script>
+  <script src="js/pipeline.js?v=1"></script>
   <script src="js/analyzer.js?v=5"></script>
   <script src="js/ai-analyzer.js?v=1"></script>
   <script src="js/router.js?v=5"></script>
@@ -370,19 +371,17 @@
     }, 300);
   });
 
-  // ===== ANALYSIS ENGINE SELECTION =====
+  // ===== DYNAMIC ANALYSIS PIPELINE (6 stages) =====
   function runAnalysis(titles, callback) {
     var useAI = document.getElementById("aiToggle") && document.getElementById("aiToggle").checked;
-    if (useAI) {
-      document.getElementById("loadingText").textContent = "AI 正在深度分析你的兴趣...";
-      INTEREST_OS.aiAnalyzer.analyze(titles, { lang: "zh" }).then(function(data) {
-        callback(data);
-      }).catch(function() {
-        callback(INTEREST_OS.analyzer.analyze(titles));
-      });
-    } else {
-      setTimeout(function() { callback(INTEREST_OS.analyzer.analyze(titles)); }, 100);
-    }
+    document.getElementById("loadingText").textContent = "运行分析链路...";
+
+    INTEREST_OS.pipeline.run(titles, { useAI: useAI, lang: "zh" }).then(function(profile) {
+      callback(profile);
+    }).catch(function(err) {
+      console.warn("Pipeline failed, falling back to keyword engine:", err.message);
+      callback(INTEREST_OS.analyzer.analyze(titles));
+    });
   }
 
   // ===== SHOW RESULT =====
