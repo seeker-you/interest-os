@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galaxy — Interest OS</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/custom-raw.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
@@ -288,13 +288,13 @@
 
       function renderView(view) {
         var container = document.getElementById('vizContainer');
-        if (currentView === 'radar') INTEREST_OS.radar.destroy();
-        if (currentView === 'galaxy') INTEREST_OS.galaxy.destroy();
+        try { if (currentView === 'radar' && INTEREST_OS.radar) INTEREST_OS.radar.destroy(); } catch(e) {}
+        try { if (currentView === 'galaxy' && INTEREST_OS.galaxy) INTEREST_OS.galaxy.destroy(); } catch(e) {}
         container.innerHTML = '';
         switch(view) {
-          case 'galaxy': INTEREST_OS.galaxy.init('#vizContainer', tags, { onNodeClick: showTagDetail }); break;
-          case 'tagcloud': INTEREST_OS.tagcloud.init('#vizContainer', tags, { onTagClick: showTagDetail }); break;
-          case 'radar': INTEREST_OS.radar.init('#vizContainer', tags); break;
+          case 'galaxy': if (INTEREST_OS.galaxy) INTEREST_OS.galaxy.init('#vizContainer', tags, { onNodeClick: showTagDetail }); break;
+          case 'tagcloud': if (INTEREST_OS.tagcloud) INTEREST_OS.tagcloud.init('#vizContainer', tags, { onTagClick: showTagDetail }); break;
+          case 'radar': if (INTEREST_OS.radar) INTEREST_OS.radar.init('#vizContainer', tags); break;
         }
         currentView = view;
       }
