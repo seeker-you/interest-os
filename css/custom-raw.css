@@ -1308,3 +1308,110 @@ textarea.input {
   .pipe-stage { min-width: auto; width: 100%; }
   .pipe-arrow { transform: rotate(90deg); padding: 2px 0; text-align: center; width: 100%; }
 }
+
+/* ============================================
+   Behavior Path Flowchart & Metrics (Section 2)
+   ============================================ */
+.behavior-path {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.behavior-path-title {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+}
+.behavior-flowchart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 48px;
+}
+.flow-step-icon {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  font-size: 0.9375rem;
+  transition: all 0.2s;
+}
+.flow-step.active .flow-step-icon {
+  border-color: rgba(0,229,255,0.3);
+  background: rgba(0,229,255,0.05);
+}
+.flow-step:last-child .flow-step-icon {
+  border-color: var(--accent);
+  background: rgba(0,229,255,0.08);
+}
+.flow-step-label {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 52px;
+}
+.flow-arrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0 2px;
+  flex-shrink: 0;
+  margin-bottom: 20px;
+}
+
+/* Behavior Metrics */
+.behavior-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.behavior-metric {
+  background: var(--bg);
+  padding: 14px 10px;
+  text-align: center;
+}
+.behavior-metric-value {
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.behavior-metric-label {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+}
+
+@media (max-width: 768px) {
+  .behavior-flowchart { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+  .flow-step { min-width: 42px; }
+  .flow-step-icon { width: 28px; height: 28px; font-size: 0.8125rem; }
+  .flow-step-label { font-size: 0.4375rem; max-width: 40px; }
+  .behavior-metrics { grid-template-columns: repeat(2, 1fr); }
+  .behavior-metric { padding: 10px 8px; }
+  .behavior-metric-value { font-size: 1rem; }
+}
+@media (max-width: 480px) {
+  .behavior-metrics { grid-template-columns: repeat(2, 1fr); }
+  .behavior-metric-value { font-size: 0.875rem; }
+}
