@@ -276,7 +276,7 @@
       }
       if (personaMiniDesc) {
         personaMiniDesc.textContent = isZh
-          ? '算法基于 ' + tags.length + ' 个兴趣标签计算出的算法人格'
+          ? 'Algorithm persona: ' + tags.length + ' interest tags'
           : 'Algorithm persona based on ' + tags.length + ' interest tags';
       }
 
@@ -410,9 +410,9 @@
             '<div class="persona-highlight-tagline">"' + escHtml(persona.tagline) + '"</div>' +
             '<div class="persona-highlight-desc">' + personaDesc + '</div>' +
             '<div class="persona-badge-row">' +
-            '<span class="persona-badge">' + (isZh ? '算法人格' : 'Persona') + '</span>' +
-            '<span class="persona-badge">' + (isZh ? '置信度: 高' : 'Confidence: High') + '</span>' +
-            '<span class="persona-badge">' + tags.length + ' ' + (isZh ? '个兴趣标签' : 'tags') + '</span>' +
+            '<span class="persona-badge">' + 'Persona' + '</span>' +
+            '<span class="persona-badge">' + 'Confidence: High' + '</span>' +
+            '<span class="persona-badge">' + tags.length + ' tags' + '</span>' +
             '</div>';
         }
 
@@ -436,15 +436,15 @@
         if (stages) {
           // Use pipeline stages for steps
           var stageLabels = [
-            { stage: 1, icon: '🏷️', title: '兴趣分类', desc: '关键词匹配 + 分类映射' },
-            { stage: 2, icon: '📊', title: '兴趣权重', desc: '频率统计 + 共现分析' },
-            { stage: 3, icon: '👤', title: '人格生成', desc: '分布分析 + 画像构建' },
-            { stage: 4, icon: '🔮', title: '预测生成', desc: '关联挖掘 + 趋势预测' }
+            { stage: 1, icon: '🏷️', title: 'Classification', desc: 'Keyword matching + category mapping' },
+            { stage: 2, icon: '📊', title: 'Weights', desc: 'Frequency + co-occurrence' },
+            { stage: 3, icon: '👤', title: 'Persona', desc: 'Distribution + profiling' },
+            { stage: 4, icon: '🔮', title: 'Prediction', desc: 'Relation mining + trends' }
           ];
           stepsEl.innerHTML = stageLabels.map(function(sl) {
             var s = stages.find(function(s) { return s.stage === sl.stage; });
             var confidence = s ? (s.confidence || 0) : 0;
-            var confLabel = confidence > 70 ? '高置信度' : confidence > 40 ? '中等置信度' : '低置信度';
+            var confLabel = confidence > 70 ? 'High' : confidence > 40 ? 'Medium' : 'Low';
             return '<div class="exp-step" data-step="' + sl.stage + '">' +
               '<span class="exp-step-icon">' + sl.icon + '</span>' +
               '<div class="exp-step-body">' +
@@ -460,10 +460,10 @@
             var s3 = stages.find(function(s) { return s.stage === 3; });
             var personaName = s3 ? s3.output.name : '--';
             findingsEl.innerHTML =
-              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '兴趣标签' : 'Tags') + '</div><div class="key-finding-value">' + tags.length + '</div></div>' +
-              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '算法人格' : 'Persona') + '</div><div class="key-finding-value">' + escHtml(personaName) + '</div></div>' +
-              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '茧房指数' : 'Echo') + '</div><div class="key-finding-value">' + (a2.echoChamberIndex || 0) + '%</div></div>' +
-              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '多样性' : 'Diversity') + '</div><div class="key-finding-value">' + (a2.diversityScore || 0) + '%</div></div>';
+              '<div class="key-finding"><div class="key-finding-label">' + 'Tags' + '</div><div class="key-finding-value">' + tags.length + '</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + 'Persona' + '</div><div class="key-finding-value">' + escHtml(personaName) + '</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + 'Echo Chamber' + '</div><div class="key-finding-value">' + (a2.echoChamberIndex || 0) + '%</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + 'Diversity' + '</div><div class="key-finding-value">' + (a2.diversityScore || 0) + '%</div></div>';
           }
         } else {
           // Legacy fallback
@@ -535,10 +535,10 @@
           var depthRatio = tags.length / Math.max(uniqueCats.length, 1);
           var favoriteRate = Math.min(82, Math.round(10 + depthRatio * 12));
           metricsEl.innerHTML =
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + totalRecords + '</div><div class="behavior-metric-label">' + (isZh ? '观看次数' : 'Views') + '</div></div>' +
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + stayRate + '%</div><div class="behavior-metric-label">' + (isZh ? '停留率' : 'Stay Rate') + '</div></div>' +
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + likeRate + '%</div><div class="behavior-metric-label">' + (isZh ? '点赞率' : 'Like Rate') + '</div></div>' +
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + favoriteRate + '%</div><div class="behavior-metric-label">' + (isZh ? '收藏率' : 'Favorite Rate') + '</div></div>';
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + totalRecords + '</div><div class="behavior-metric-label">' + 'Views' + '</div></div>' +
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + stayRate + '%</div><div class="behavior-metric-label">' + 'Stay Rate' + '</div></div>' +
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + likeRate + '%</div><div class="behavior-metric-label">' + 'Like Rate' + '</div></div>' +
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + favoriteRate + '%</div><div class="behavior-metric-label">' + 'Favorite Rate' + '</div></div>';
         }
 
         // Explanation summary — use pipeline summary if available
@@ -547,9 +547,9 @@
           var s2 = stages.find(function(s) { return s.stage === 2; });
           var s3 = stages.find(function(s) { return s.stage === 3; });
           var topTag = tags.sort(function(a,b){return b.weight-a.weight})[0];
-          var sumText = '算法通过 ' + (analysis.recordCount || tags.length * 3) + ' 条记录，经过 ' + stages.length + ' 级分析链路处理。';
-          if (topTag) sumText += ' 最强信号「' + topTag.name + '」(' + topTag.weight + '%)。';
-          if (s3 && s3.output.name) sumText += ' 判定算法人格为「' + s3.output.name + '」。';
+          var sumText = 'Analyzed ' + (analysis.recordCount || tags.length * 3) + ' records through ' + stages.length + '-stage pipeline.';
+          if (topTag) sumText += ' Top signal: ' + topTag.name + ' (' + topTag.weight + '%).';
+          if (s3 && s3.output.name) sumText += ' Persona: ' + s3.output.name + '.';
           summaryEl.textContent = sumText;
         } else {
           summaryEl.textContent = '';
@@ -571,7 +571,7 @@
           var d = stage2.output.distribution;
           extraEchoNote = '<div class="echo-meter-desc" style="margin-top:8px;border-left-color:var(--accent-2);background:var(--bg-elevated)">' +
             (isZh ? '权重分布: ' : 'Weight dist: ') + d.weightCount + (isZh ? ' 个标签, ' : ' tags, ') +
-            (d.spreadType === 'polarized' ? (isZh ? '集中度较高' : 'highly concentrated') : d.spreadType === 'moderate' ? (isZh ? '分布适中' : 'moderately spread') : (isZh ? '分布均衡' : 'evenly spread')) +
+            (d.spreadType === 'polarized' ? (isZh ? 'Concentrated' : 'highly concentrated') : d.spreadType === 'moderate' ? (isZh ? 'Moderate' : 'moderately spread') : (isZh ? 'Even' : 'evenly spread')) +
             '</div>';
         }
 
@@ -583,10 +583,10 @@
           '<div class="echo-meter-label" style="color:' + echoColor + '">' + echoIdx + '%</div>' +
           '</div>' +
           '<div class="echo-meter-scale">' +
-          '<span>' + (isZh ? '多元' : 'Diverse') + '</span>' +
-          '<span>' + (isZh ? '适中' : 'Balanced') + '</span>' +
-          '<span>' + (isZh ? '集中' : 'Focused') + '</span>' +
-          '<span>' + (isZh ? '茧房' : 'Echo') + '</span>' +
+          '<span>' + (isZh ? 'Diverse' : 'Diverse') + '</span>' +
+          '<span>' + 'Balanced' + '</span>' +
+          '<span>' + 'Focused' + '</span>' +
+          '<span>' + 'Echo Chamber' + '</span>' +
           '</div>' +
           '<div class="echo-meter-desc">' +
           '<strong style="color:' + echoColor + '">' + echoLabel + '</strong> — ' + echoDesc +
@@ -621,9 +621,9 @@
             var d = s2.output.distribution;
             var distEl = document.getElementById('weightDistribution');
             distEl.innerHTML =
-              '<div class="weight-model-cell"><div class="weight-model-val">' + d.weightCount + '</div><div class="weight-model-lbl">' + (isZh ? '标签数' : 'Tags') + '</div></div>' +
-              '<div class="weight-model-cell"><div class="weight-model-val">' + d.avgWeight + '%</div><div class="weight-model-lbl">' + (isZh ? '平均权重' : 'Avg Weight') + '</div></div>' +
-              '<div class="weight-model-cell"><div class="weight-model-val">' + (d.spreadType === 'polarized' ? (isZh ? '集中' : 'Focused') : d.spreadType === 'moderate' ? (isZh ? '均衡' : 'Balanced') : (isZh ? '分散' : 'Spread')) + '</div><div class="weight-model-lbl">' + (isZh ? '分布类型' : 'Pattern') + '</div></div>';
+              '<div class="weight-model-cell"><div class="weight-model-val">' + d.weightCount + '</div><div class="weight-model-lbl">' + 'Tags' + '</div></div>' +
+              '<div class="weight-model-cell"><div class="weight-model-val">' + d.avgWeight + '%</div><div class="weight-model-lbl">' + 'Avg Weight' + '</div></div>' +
+              '<div class="weight-model-cell"><div class="weight-model-val">' + (d.spreadType === 'polarized' ? 'Focused' : d.spreadType === 'moderate' ? (isZh ? '均衡' : 'Balanced') : (isZh ? '分散' : 'Spread')) + '</div><div class="weight-model-lbl">' + (isZh ? '分布类型' : 'Pattern') + '</div></div>';
           }
         } else {
           // Legacy fallback
@@ -642,9 +642,9 @@
           var distEl = document.getElementById('weightDistribution');
           var dist = weightModel.distribution;
           distEl.innerHTML =
-            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.span + '</div><div class="weight-model-lbl">' + (isZh ? '覆盖分类' : 'Categories') + '</div></div>' +
-            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.evenness + '%</div><div class="weight-model-lbl">' + (isZh ? '分布均匀度' : 'Evenness') + '</div></div>' +
-            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + (isZh ? '集中度' : 'Concentration') + '</div></div>';
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.span + '</div><div class="weight-model-lbl">' + 'Categories' + '</div></div>' +
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.evenness + '%</div><div class="weight-model-lbl">' + 'Evenness' + '</div></div>' +
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + 'Concentration' + '</div></div>';
         }
 
         } catch(e) { console.warn('[AM] Section 4 error:', e); }
@@ -659,7 +659,7 @@
           var s4 = stages.find(function(s) { return s.stage === 4; });
           if (s4 && s4.output.predictedTags && s4.output.predictedTags.length > 0) {
             predEl.innerHTML = s4.output.predictedTags.map(function(p, i) {
-              var badgeColor = p.probability === '高' ? 'var(--accent-green)' : p.probability === '中高' ? 'var(--accent-2)' : 'var(--text-muted)';
+              var badgeColor = p.probability === 'High' ? 'var(--accent-green)' : p.probability === 'Med-High' ? 'var(--accent-2)' : 'var(--text-muted)';
               return '<div class="prediction-item">' +
                 '<span class="prediction-rank">' + (i + 1) + '</span>' +
                 '<div class="prediction-body">' +
@@ -671,13 +671,13 @@
             }).join('');
           } else {
             predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              (isZh ? '数据不足以生成预测，建议增加更多观看记录。' : 'Not enough data for predictions.') + '</div>';
+              'Not enough data for predictions.' + '</div>';
           }
 
           if (s4 && s4.output.recommendedContent && s4.output.recommendedContent.length > 0) {
             contentEl.innerHTML = s4.output.recommendedContent.map(function(c) {
               return '<div class="content-card">' +
-                '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
+                '<div class="content-card-rank">#' + c.rank + ' Pick' + '</div>' +
                 '<div class="content-card-type">' + escHtml(c.type || '') + '</div>' +
                 '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
                 '<div class="content-card-platform">' + escHtml(c.platform || '') + '</div>' +
@@ -686,14 +686,14 @@
             }).join('');
           } else {
             contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              (isZh ? '暂无推荐内容。' : 'No recommendations yet.') + '</div>';
+              'No recommendations yet.' + '</div>';
           }
         } else {
           // Legacy fallback
           var predictions = INTEREST_OS.predictions.getRecommendations(tags);
           if (predictions.predictedTags && predictions.predictedTags.length > 0) {
             predEl.innerHTML = predictions.predictedTags.map(function(p, i) {
-              var badgeColor = p.probability === '高' ? 'var(--accent-green)' : p.probability === '中高' ? 'var(--accent-2)' : 'var(--text-muted)';
+              var badgeColor = p.probability === 'High' ? 'var(--accent-green)' : p.probability === 'Med-High' ? 'var(--accent-2)' : 'var(--text-muted)';
               return '<div class="prediction-item">' +
                 '<span class="prediction-rank">' + (i + 1) + '</span>' +
                 '<div class="prediction-body">' +
@@ -705,12 +705,12 @@
             }).join('');
           } else {
             predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              (isZh ? '数据不足以生成预测，建议增加更多观看记录。' : 'Not enough data for predictions.') + '</div>';
+              'Not enough data for predictions.' + '</div>';
           }
           if (predictions.recommendedContent && predictions.recommendedContent.length > 0) {
             contentEl.innerHTML = predictions.recommendedContent.map(function(c) {
               return '<div class="content-card">' +
-                '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
+                '<div class="content-card-rank">#' + c.rank + ' Pick' + '</div>' +
                 '<div class="content-card-type">' + escHtml(c.type) + '</div>' +
                 '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
                 '<div class="content-card-platform">' + escHtml(c.platform) + '</div>' +
@@ -719,7 +719,7 @@
             }).join('');
           } else {
             contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              (isZh ? '暂无推荐内容。' : 'No recommendations yet.') + '</div>';
+              'No recommendations yet.' + '</div>';
           }
         }
 
@@ -772,15 +772,15 @@
 
             if (stage) {
               if (cfg.num === 1 && stage.output.matchedCategories) {
-                outputSummary = stage.output.matchedCategories.length + ' 分类';
+                outputSummary = stage.output.matchedCategories.length + ' cats';
               } else if (cfg.num === 2 && stage.output.tags) {
-                outputSummary = stage.output.tags.length + ' 标签';
+                outputSummary = stage.output.tags.length + ' tags';
               } else if (cfg.num === 3 && stage.output.name) {
                 outputSummary = stage.output.name;
               } else if (cfg.num === 4 && stage.output.predictedTags) {
-                outputSummary = stage.output.predictedTags.length + ' 预测';
+                outputSummary = stage.output.predictedTags.length + ' pred';
               } else if (cfg.num === 5) {
-                outputSummary = stage.output.enhanced ? 'AI 增强' : '关键词引擎';
+                outputSummary = stage.output.enhanced ? 'AI Enhanced' : 'Keyword Engine';
               }
             }
 
@@ -800,8 +800,7 @@
         var avgConf = Math.round(stages.reduce(function(s, st) { return s + (st.confidence || 0); }, 0) / stageCount);
         var elapsed = profile.pipelineInfo ? profile.pipelineInfo.elapsed : 0;
         if (summaryEl) {
-          summaryEl.textContent = (isZh ? '分析链路共 ' : 'Pipeline: ') + stageCount + (isZh ? ' 级, 平均置信度 ' : ' stages, avg confidence ') + avgConf + '%, ' +
-            (isZh ? '处理时间 ' : 'elapsed ') + elapsed + 'ms';
+          summaryEl.textContent = 'Pipeline: ' + stageCount + ' stages, avg confidence ' + avgConf + '%, elapsed ' + elapsed + 'ms';
         }
       }
 
