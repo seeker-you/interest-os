@@ -1,11 +1,14 @@
 // personas.js - Persona Type Definitions
+// Bilingual: English default, Chinese via nameZh/taglineZh
 
 INTEREST_OS.personas = {
   types: [
     {
       id: "cyber_explorer",
-      name: "赛博探索者",
-      tagline: "用代码和像素丈量世界的数字游民",
+      name: "Cyber Explorer",
+      nameZh: "赛博探索者",
+      tagline: "A digital native, measuring the world in code and pixels",
+      taglineZh: "用代码和像素丈量世界的数字游民",
       colorStart: "#6366F1",
       colorEnd: "#8B5CF6",
       dominantCategories: ["科技/AI", "编程/开发"],
@@ -13,8 +16,10 @@ INTEREST_OS.personas = {
     },
     {
       id: "light_chaser",
-      name: "光影捕手",
-      tagline: "活在每一帧故事里的叙事旅人",
+      name: "Light Chaser",
+      nameZh: "光影捕手",
+      tagline: "A narrative traveler, living in every frame",
+      taglineZh: "活在每一帧故事里的叙事旅人",
       colorStart: "#EC4899",
       colorEnd: "#F97316",
       dominantCategories: ["影视/动漫"],
@@ -22,8 +27,10 @@ INTEREST_OS.personas = {
     },
     {
       id: "knowledge_nomad",
-      name: "知识游牧者",
-      tagline: "好奇心没有边界，大脑永远在路上",
+      name: "Knowledge Nomad",
+      nameZh: "知识游牧者",
+      tagline: "Curiosity without borders, mind always wandering",
+      taglineZh: "好奇心没有边界，大脑永远在路上",
       colorStart: "#10B981",
       colorEnd: "#22D3EE",
       dominantCategories: ["知识/教育"],
@@ -31,8 +38,10 @@ INTEREST_OS.personas = {
     },
     {
       id: "game_master",
-      name: "游戏大师",
-      tagline: "每一个Boss都是你最好的老师",
+      name: "Game Master",
+      nameZh: "游戏大师",
+      tagline: "Every boss fight is your best teacher",
+      taglineZh: "每一个Boss都是你最好的老师",
       colorStart: "#A855F7",
       colorEnd: "#6366F1",
       dominantCategories: ["游戏"],
@@ -40,8 +49,10 @@ INTEREST_OS.personas = {
     },
     {
       id: "trend_hunter",
-      name: "潮流猎手",
-      tagline: "永远在线，永远新鲜，永远在路上",
+      name: "Trend Hunter",
+      nameZh: "潮流猎手",
+      tagline: "Always online, always fresh, always ahead",
+      taglineZh: "永远在线，永远新鲜，永远在路上",
       colorStart: "#F43F5E",
       colorEnd: "#EC4899",
       dominantCategories: ["时尚/娱乐", "生活/日常"],
@@ -49,8 +60,10 @@ INTEREST_OS.personas = {
     },
     {
       id: "deep_diver",
-      name: "深度耕耘者",
-      tagline: "一厘米宽，一公里深的专注力量",
+      name: "Deep Diver",
+      nameZh: "深度耕耘者",
+      tagline: "One centimeter wide, one kilometer deep",
+      taglineZh: "一厘米宽，一公里深的专注力量",
       colorStart: "#F59E0B",
       colorEnd: "#EF4444",
       dominantCategories: [],
@@ -66,8 +79,27 @@ INTEREST_OS.personas = {
     }
   ],
 
-  // Determine persona from tags
-  determine(tags) {
+  // Get localized name
+  getLocalizedName(personaOrId, isZh) {
+    const p = typeof personaOrId === 'string'
+      ? this.types.find(t => t.id === personaOrId)
+      : personaOrId;
+    if (!p) return '--';
+    return isZh ? (p.nameZh || p.name) : p.name;
+  },
+
+  // Get localized tagline
+  getLocalizedTagline(personaOrId, isZh) {
+    const p = typeof personaOrId === 'string'
+      ? this.types.find(t => t.id === personaOrId)
+      : personaOrId;
+    if (!p) return '';
+    return isZh ? (p.taglineZh || p.tagline) : p.tagline;
+  },
+
+  // Determine persona from tags (returns localized object)
+  determine(tags, isZh) {
+    if (isZh === undefined) isZh = (window._i18n?.current === 'zh');
     // Calculate category weight distribution
     const catWeights = {};
     tags.forEach(t => {
@@ -97,6 +129,11 @@ INTEREST_OS.personas = {
       }
     }
 
-    return bestPersona || this.types[0];
+    const p = bestPersona || this.types[0];
+    return {
+      ...p,
+      name: isZh ? (p.nameZh || p.name) : p.name,
+      tagline: isZh ? (p.taglineZh || p.tagline) : p.tagline
+    };
   }
 };

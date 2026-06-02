@@ -73,6 +73,19 @@
     "help.bl_3": { zh: "粘贴到粘贴文本标签页", en: "Paste in Paste Text tab" },
 
     "graph.tag_placeholder": { zh: "点击星球查看详情", en: "Click a planet to see details" },
+    "graph.pipeline_title": { zh: "分析流水线", en: "Analysis Pipeline" },
+    "graph.persona_title": { zh: "算法眼中的你", en: "How the Algorithm Sees You" },
+    "graph.explanation_title": { zh: "算法为什么这样判断", en: "Why the Algorithm Judges You This Way" },
+    "graph.echo_title": { zh: "信息茧房指数", en: "Echo Chamber Index" },
+    "graph.weight_title": { zh: "兴趣权重模型", en: "Interest Weight Model" },
+    "graph.prediction_title": { zh: "算法预测", en: "Algorithm Prediction" },
+    "graph.growth_title": { zh: "成长建议", en: "Growth Advice" },
+    "graph.collapse": { zh: "点击折叠", en: "click to collapse" },
+    "graph.mirror_title": { zh: "算法镜像 · 深度分析", en: "ALGORITHM MIRROR · Deep Analysis" },
+    "graph.mbti_label": { zh: "算法 MBTI", en: "Algorithm MBTI" },
+    "graph.behavior_title": { zh: "行为路径 · 算法反馈循环", en: "Behavior Path · Algorithm Feedback Loop" },
+    "graph.prediction_desc": { zh: "基于你的兴趣分布，算法预测你接下来可能关注的内容：", en: "Based on your interest distribution, the algorithm predicts what you may focus on next:" },
+    "graph.recommended_desc": { zh: "算法推荐内容：", en: "Algorithm-recommended content:" },
     "graph.echo": { zh: "茧房指数", en: "Echo Chamber" },
     "graph.diversity": { zh: "多样性", en: "Diversity" },
     "graph.persona": { zh: "人格类型", en: "Persona" },
@@ -133,35 +146,17 @@
         el.textContent = text;
       }
     }
-    var btn = document.getElementById("langToggle");
-    if (btn) btn.textContent = current === "zh" ? "EN" : "中";
-    document.dispatchEvent(new CustomEvent("i18n:changed", { detail: { lang: current } }));
-  }
-
-  function setLang(lang) {
-    current = lang;
-    try { localStorage.setItem("interest_os_lang", lang); } catch(e) {}
-    applyAll();
-  }
-
-  function toggle() {
-    setLang(current === "zh" ? "en" : "zh");
+    document.dispatchEvent(new CustomEvent("i18n:changed", { detail: { lang: "en" } }));
   }
 
   // Init
   function init() {
-    try {
-      var saved = localStorage.getItem("interest_os_lang");
-      if (saved === "en" || saved === "zh") current = saved;
-    } catch(e) {}
     applyAll();
-    var btn = document.getElementById("langToggle");
-    if (btn) btn.onclick = toggle;
   }
 
   // Export
-  window._i18n = { t: t, setLang: setLang, toggle: toggle, init: init, current: current };
-  INTEREST_OS.i18n = { t: t, setLang: setLang, toggle: toggle, init: init };
+  window._i18n = { t: t, init: init, current: "en" };
+  INTEREST_OS.i18n = { t: t, init: init };
 
   // Run immediately since script is at bottom of body
   if (document.readyState === "loading") {

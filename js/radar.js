@@ -20,14 +20,16 @@ INTEREST_OS.radar = {
     });
 
     const categories = Object.keys(catWeights);
-    const values = categories.map(c => Math.min(100, catWeights[c]));
+    const isZh = (window._i18n?.current === 'zh');
+    const catLabels = categories.map(function(c) { return INTEREST_OS.utils.getCategoryName(c, isZh); });
+    const values = categories.map(function(c) { return Math.min(100, catWeights[c]); });
 
     this.chart = new Chart(ctx, {
       type: 'radar',
       data: {
-        labels: categories,
+        labels: catLabels,
         datasets: [{
-          label: '兴趣分布',
+          label: (window._i18n?.current === 'zh') ? '兴趣分布' : 'Interest Distribution',
           data: values,
           backgroundColor: 'rgba(99, 102, 241, 0.15)',
           borderColor: '#6366F1',

@@ -57,7 +57,7 @@ INTEREST_OS.router = {
       this.setData(demo);
       this.go('graph.html');
     } else {
-      alert('演示数据加载失败，请刷新后重试');
+      alert((window._i18n?.current === 'zh') ? '演示数据加载失败，请刷新后重试' : 'Demo data failed to load. Please refresh and try again.');
     }
   }
 };

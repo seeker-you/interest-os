@@ -8,9 +8,6 @@
   <link rel="stylesheet" href="css/custom-raw.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
   <style>
-    #langToggle{font-family:var(--font-mono);font-size:0.6875rem;font-weight:700;color:var(--accent);background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);padding:4px 10px;cursor:pointer;transition:all 0.15s;margin-left:8px}
-    #langToggle:hover{background:rgba(0,229,255,0.15)}
-    .file-selected{background:rgba(0,229,255,0.04)!important;border-color:var(--accent)!important}
     .file-name{font-family:var(--font-mono);font-size:0.875rem;color:var(--accent);margin-top:8px;word-break:break-all}
     .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle}
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -31,7 +28,6 @@
     <a href="index.html" class="nav-brand">&larr; interest_<span>os</span></a>
     <div style="display:flex;align-items:center;gap:8px">
       <span class="mono" style="font-size:0.75rem;color:var(--text-muted)">step 1/3</span><span style="font-family:var(--font-mono);font-size:0.625rem;color:#00FF88;background:rgba(0,255,136,0.1);padding:2px 8px;margin-left:6px">v4</span>
-      <button id="langToggle">EN</button>
     </div>
   </nav>
 
@@ -376,7 +372,7 @@
     var useAI = document.getElementById("aiToggle") && document.getElementById("aiToggle").checked;
     document.getElementById("loadingText").textContent = "Running analysis pipeline...";
 
-    INTEREST_OS.pipeline.run(titles, { useAI: useAI, lang: "zh" }).then(function(profile) {
+    INTEREST_OS.pipeline.run(titles, { useAI: useAI, lang: (window._i18n && window._i18n.current) || "en" }).then(function(profile) {
       callback(profile);
     }).catch(function(err) {
       console.warn("Pipeline failed, falling back to keyword engine:", err.message);

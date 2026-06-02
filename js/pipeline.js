@@ -105,7 +105,7 @@ INTEREST_OS.pipeline = {
     return {
       stage: 1,
       name: 'interest_classification',
-      label: '兴趣分类',
+      label: (window._i18n?.current === "zh") ? '兴趣分类' : 'Classification',
       icon: '🏷️',
       input: { titleCount: titles.length },
       output: {
@@ -118,14 +118,14 @@ INTEREST_OS.pipeline = {
       },
       insights: [
         coverage > 60
-          ? `覆盖 ${matchedCategories.length}/${allCategories.length} 个兴趣分类，兴趣范围广泛`
-          : `集中在 ${matchedCategories.length}/${allCategories.length} 个分类，属深度聚焦型`,
+          ? (window._i18n?.current === "zh") ? `覆盖 ${matchedCategories.length}/${allCategories.length} 个兴趣分类，兴趣范围广泛` : `${matchedCategories.length}/${allCategories.length} categories covered — broad interest range`
+          : (window._i18n?.current === "zh") ? `集中在 ${matchedCategories.length}/${allCategories.length} 个分类，属深度聚焦型` : `${matchedCategories.length}/${allCategories.length} categories — deep focus type`,
         categories.length > 0
-          ? `最强分类「${categories[0].name}」匹配 ${categories[0].matchCount} 次`
-          : '未匹配到任何分类',
+          ? (window._i18n?.current === "zh") ? `最强分类「${categories[0].name}」匹配 ${categories[0].matchCount} 次` : `Top category: ${INTEREST_OS.utils.getCategoryName(categories[0].name)} (${categories[0].matchCount} matches)`
+          : (window._i18n?.current === "zh") ? '未匹配到任何分类' : 'No categories matched',
         missingCategories.length > 0
-          ? `未涉及领域: ${missingCategories.slice(0, 3).join('、')}${missingCategories.length > 3 ? ' 等' : ''}`
-          : '覆盖所有兴趣分类'
+          ? (window._i18n?.current === "zh") ? `未涉及领域: ${missingCategories.slice(0, 3).join('、')}${missingCategories.length > 3 ? ' 等' : ''}` : `Untouched: ${missingCategories.slice(0, 3).join(', ')}${missingCategories.length > 3 ? '...' : ''}`
+          : (window._i18n?.current === "zh") ? '覆盖所有兴趣分类' : 'All categories covered'
       ],
       confidence: Math.min(100, Math.round(titles.length / 10 * matchedCategories.length))
     };
@@ -196,7 +196,7 @@ INTEREST_OS.pipeline = {
       return {
         tag: t.name,
         weight: t.weight,
-        reason: `在 ${totalTitles} 条记录中出现 ${matchedTitles} 次 (${(matchedTitles/totalTitles*100).toFixed(0)}%)`,
+        reason: (window._i18n?.current === "zh") ? `在 ${totalTitles} 条记录中出现 ${matchedTitles} 次 (${(matchedTitles/totalTitles*100).toFixed(0)}%)` : `Appeared ${matchedTitles} times out of ${totalTitles} (${(matchedTitles/totalTitles*100).toFixed(0)}%)`,
         confidence: t.confidence,
         category: t.category
       };
@@ -205,7 +205,7 @@ INTEREST_OS.pipeline = {
     return {
       stage: 2,
       name: 'interest_weight',
-      label: '兴趣权重',
+      label: (window._i18n?.current === "zh") ? '兴趣权重' : 'Weights',
       icon: '📊',
       input: { categories: stage1.output.matchedCategories, matchCount: stage1.output.matchedKeywords },
       output: {
@@ -214,7 +214,7 @@ INTEREST_OS.pipeline = {
         analysis: {
           diversityScore: Math.min(100, diversityScore),
           echoChamberIndex: Math.min(100, echoChamberIndex),
-          concentrationLevel: echoChamberIndex < 30 ? '低' : echoChamberIndex < 55 ? '中等' : echoChamberIndex < 80 ? '较高' : '极高',
+          concentrationLevel: echoChamberIndex < 30 ? ((window._i18n?.current === "zh") ? '低' : 'Low') : echoChamberIndex < 55 ? ((window._i18n?.current === "zh") ? '中等' : 'Medium') : echoChamberIndex < 80 ? ((window._i18n?.current === "zh") ? '较高' : 'High') : ((window._i18n?.current === "zh") ? '极高' : 'Extreme'),
           personaType: ''
         },
         distribution: {
@@ -224,15 +224,15 @@ INTEREST_OS.pipeline = {
           minWeight,
           variance: Math.round(variance),
           spreadType: variance > 800 ? 'polarized' : variance > 400 ? 'moderate' : 'balanced',
-          dominantCategory: Object.entries(catWeights).sort((a, b) => b[1] - a[1])[0]?.[0] || '未知'
+          dominantCategory: Object.entries(catWeights).sort((a, b) => b[1] - a[1])[0]?.[0] || ((window._i18n?.current === "zh") ? '未知' : 'Unknown')
         }
       },
       insights: [
-        `识别出 ${tags.length} 个兴趣标签，其中最高权重「${tags[0]?.name}」(${tags[0]?.weight}%)`,
-        `兴趣分布 ${variance > 800 ? '集中度较高，有明显主导兴趣' : variance > 400 ? '较为均衡' : '非常分散多元'}`,
+        (window._i18n?.current === "zh") ? `识别出 ${tags.length} 个兴趣标签，其中最高权重「${tags[0]?.name}」(${tags[0]?.weight}%)` : `${tags.length} tags identified, top weight: ${tags[0]?.name} (${tags[0]?.weight}%)`,
+        (window._i18n?.current === "zh") ? `兴趣分布 ${variance > 800 ? '集中度较高，有明显主导兴趣' : variance > 400 ? '较为均衡' : '非常分散多元'}` : `Distribution: ${variance > 800 ? 'highly concentrated with dominant interest' : variance > 400 ? 'moderately balanced' : 'widely diversified'}`,
         uniqueCategories.length <= 2
-          ? `仅覆盖 ${uniqueCategories.length} 个分类，建议拓宽内容范围`
-          : `覆盖 ${uniqueCategories.length} 个兴趣分类，多样性良好`
+          ? (window._i18n?.current === "zh") ? `仅覆盖 ${uniqueCategories.length} 个分类，建议拓宽内容范围` : `Only ${uniqueCategories.length} categories — consider broadening`
+          : (window._i18n?.current === "zh") ? `覆盖 ${uniqueCategories.length} 个兴趣分类，多样性良好` : `${uniqueCategories.length} categories — good diversity`
       ],
       confidence: Math.min(100, Math.round(titles.length / 5 + tags.length * 3))
     };
@@ -246,7 +246,7 @@ INTEREST_OS.pipeline = {
     const tagExplanations = stage2.output.tagExplanations;
 
     // Get base persona from personas.js
-    const basePersona = INTEREST_OS.personas.determine(tags);
+    const basePersona = INTEREST_OS.personas.determine(tags, (window._i18n?.current === 'zh'));
 
     // Calculate persona blend (primary + secondary influences)
     const catWeights = {};
@@ -272,24 +272,24 @@ INTEREST_OS.pipeline = {
     // Generate "persona evidence" — why we assigned this persona
     const evidence = [
       {
-        factor: '主导分类',
-        value: sortedCats[0]?.[0] || '未知',
+        factor: (window._i18n?.current === "zh") ? '主导分类' : 'Dominant Category',
+        value: (window._i18n?.current === "zh") ? (sortedCats[0]?.[0] || '未知') : (INTEREST_OS.utils.getCategoryName(sortedCats[0]?.[0]) || 'Unknown'),
         contribution: Math.round((sortedCats[0]?.[1] || 0) / total * 100) + '%'
       },
       {
-        factor: '最强兴趣标签',
-        value: topTag?.name || '未知',
+        factor: (window._i18n?.current === "zh") ? '最强兴趣标签' : 'Top Interest Tag',
+        value: topTag?.name || ((window._i18n?.current === "zh") ? '未知' : 'Unknown'),
         contribution: topTag?.weight + '%'
       },
       {
-        factor: '兴趣广度',
-        value: `${sortedCats.length} 个分类`,
-        contribution: dist.spreadType === 'polarized' ? '深度聚焦' : dist.spreadType === 'moderate' ? '适度集中' : '多元分散'
+        factor: (window._i18n?.current === "zh") ? '兴趣广度' : 'Interest Breadth',
+        value: (window._i18n?.current === "zh") ? `${sortedCats.length} 个分类` : `${sortedCats.length} categories`,
+        contribution: dist.spreadType === 'polarized' ? ((window._i18n?.current === "zh") ? '深度聚焦' : 'Deep Focus') : dist.spreadType === 'moderate' ? ((window._i18n?.current === "zh") ? '适度集中' : 'Moderate') : ((window._i18n?.current === "zh") ? '多元分散' : 'Diversified')
       },
       {
-        factor: '行为模式',
-        value: dist.variance > 800 ? '选择性关注' : '广泛涉猎',
-        contribution: dist.variance > 800 ? '高偏好驱动' : '好奇心驱动'
+        factor: (window._i18n?.current === "zh") ? '行为模式' : 'Behavior Pattern',
+        value: dist.variance > 800 ? ((window._i18n?.current === "zh") ? '选择性关注' : 'Selective Focus') : ((window._i18n?.current === "zh") ? '广泛涉猎' : 'Broad Exploration'),
+        contribution: dist.variance > 800 ? ((window._i18n?.current === "zh") ? '高偏好驱动' : 'Preference-Driven') : ((window._i18n?.current === "zh") ? '好奇心驱动' : 'Curiosity-Driven')
       }
     ];
 
@@ -299,7 +299,7 @@ INTEREST_OS.pipeline = {
     return {
       stage: 3,
       name: 'persona_generation',
-      label: '人格生成',
+      label: (window._i18n?.current === "zh") ? '人格生成' : 'Persona',
       icon: '👤',
       input: { tags: tags.map(t => ({ name: t.name, weight: t.weight, category: t.category })) },
       output: {
@@ -316,9 +316,9 @@ INTEREST_OS.pipeline = {
         topTags: top3Tags.map(t => ({ name: t.name, weight: t.weight }))
       },
       insights: [
-        `算法人格: ${basePersona.name}${secondaryCat ? ` (含 ${secondaryCat[0]} 倾向 ${secondaryShare}%)` : ''}`,
-        `最强信号: 「${topTag?.name}」(${topTag?.weight}%)`,
-        `你属于「${dist.spreadType === 'polarized' ? '深度聚焦型' : dist.spreadType === 'moderate' ? '适度均衡型' : '多元探索型'}」兴趣结构`
+        (window._i18n?.current === "zh") ? `算法人格: ${basePersona.name}${secondaryCat ? ` (含 ${secondaryCat[0]} 倾向 ${secondaryShare}%)` : ''}` : `Persona: ${basePersona.name}${secondaryCat ? ` (${INTEREST_OS.utils.getCategoryName(secondaryCat[0])} influence ${secondaryShare}%)` : ''}`,
+        (window._i18n?.current === "zh") ? `最强信号: 「${topTag?.name}」(${topTag?.weight}%)` : `Top signal: ${topTag?.name} (${topTag?.weight}%)`,
+        (window._i18n?.current === "zh") ? `你属于「${dist.spreadType === 'polarized' ? '深度聚焦型' : dist.spreadType === 'moderate' ? '适度均衡型' : '多元探索型'}」兴趣结构` : `Interest structure: ${dist.spreadType === 'polarized' ? 'Deep Focus' : dist.spreadType === 'moderate' ? 'Balanced' : 'Multi-disciplinary Explorer'}`
       ],
       confidence: Math.min(100, 50 + tags.length * 4 + (topTag ? topTag.weight / 2 : 0))
     };
@@ -353,7 +353,7 @@ INTEREST_OS.pipeline = {
             category: cat,
             basis: `interest_extension`,
             score: avgWeight * (0.5 + Math.random() * 0.3), // deterministic-ish score
-            reason: `你在「${cat}」已有 ${existingCatTags.length} 个标签 (平均权重 ${Math.round(avgWeight)}%)，算法预测你可能会延伸关注「${kw}」`
+            reason: (window._i18n?.current === "zh") ? `你在「${cat}」已有 ${existingCatTags.length} 个标签 (平均权重 ${Math.round(avgWeight)}%)，算法预测你可能会延伸关注「${kw}」` : `You have ${existingCatTags.length} tags in ${cat} (avg ${Math.round(avgWeight)}%). Algorithm predicts extension toward ${kw}`
           });
         }
       });
@@ -373,7 +373,7 @@ INTEREST_OS.pipeline = {
             category: adjCat,
             basis: `adjacent_category`,
             score: 30 + Math.random() * 20,
-            reason: `你的「${cat}」兴趣可能自然延伸到相邻的「${adjCat}」，算法推荐探索「${kw}」`
+            reason: (window._i18n?.current === "zh") ? `你的「${cat}」兴趣可能自然延伸到相邻的「${adjCat}」，算法推荐探索「${kw}」` : `Your ${cat} interest may extend to adjacent ${adjCat}. Algorithm suggests exploring ${kw}`
           });
         });
       }
@@ -386,7 +386,7 @@ INTEREST_OS.pipeline = {
             category: adjCat,
             basis: `adjacent_category`,
             score: 30 + Math.random() * 20,
-            reason: `你的「${cat}」兴趣可能自然延伸到相邻的「${adjCat}」，算法推荐探索「${kw}」`
+            reason: (window._i18n?.current === "zh") ? `你的「${cat}」兴趣可能自然延伸到相邻的「${adjCat}」，算法推荐探索「${kw}」` : `Your ${cat} interest may extend to adjacent ${adjCat}. Algorithm suggests exploring ${kw}`
           });
         });
       }
@@ -414,7 +414,7 @@ INTEREST_OS.pipeline = {
             category: `${catA} × ${catB}`,
             basis: `cross_category`,
             score: 25 + Math.random() * 15,
-            reason: `你同时关注「${catA}」和「${catB}」，交叉领域「${kw}」可能成为你的新兴趣点`
+            reason: (window._i18n?.current === "zh") ? `你同时关注「${catA}」和「${catB}」，交叉领域「${kw}」可能成为你的新兴趣点` : `You follow both ${catA} and ${catB}. The crossover ${kw} may become a new interest`
           });
         });
       });
@@ -443,7 +443,7 @@ INTEREST_OS.pipeline = {
     return {
       stage: 4,
       name: 'prediction_generation',
-      label: '预测生成',
+      label: (window._i18n?.current === "zh") ? '预测生成' : 'Prediction',
       icon: '🔮',
       input: {
         tagCount: tags.length,
@@ -455,7 +455,7 @@ INTEREST_OS.pipeline = {
           rank: i + 1,
           name: p.name,
           category: p.category,
-          probability: p.score > 60 ? '高' : p.score > 40 ? '中高' : '中',
+          probability: p.score > 60 ? ((window._i18n?.current === "zh") ? '高' : 'High') : p.score > 40 ? ((window._i18n?.current === "zh") ? '中高' : 'Med-High') : ((window._i18n?.current === "zh") ? '中' : 'Medium'),
           reason: p.reason,
           basis: p.basis
         })),
@@ -463,11 +463,11 @@ INTEREST_OS.pipeline = {
       },
       insights: [
         deduped.length > 0
-          ? `预测 ${deduped.length} 个可能的新兴趣标签，主要方向: ${deduped.slice(0, 3).map(p => p.name).join('、')}`
-          : '数据量不足以生成可靠预测',
-        `基于 ${tags.length} 个现有标签的关联分析得出`,
+          ? (window._i18n?.current === "zh") ? `预测 ${deduped.length} 个可能的新兴趣标签，主要方向: ${deduped.slice(0, 3).map(p => p.name).join('、')}` : `Predicting ${deduped.length} new interest tags: ${deduped.slice(0, 3).map(p => p.name).join(', ')}`
+          : (window._i18n?.current === "zh") ? '数据量不足以生成可靠预测' : 'Insufficient data for reliable predictions',
+        (window._i18n?.current === "zh") ? `基于 ${tags.length} 个现有标签的关联分析得出` : `Based on relation analysis of ${tags.length} existing tags`,
         crossPredictions.length > 0
-          ? `发现 ${catPairs?.length || 0} 个潜在的跨领域交叉点`
+          ? (window._i18n?.current === "zh") ? `发现 ${catPairs?.length || 0} 个潜在的跨领域交叉点` : `${catPairs?.length || 0} potential cross-domain intersections found`
           : undefined
       ].filter(Boolean),
       confidence: Math.min(100, Math.round(30 + tags.length * 5 + deduped.length * 3))
@@ -480,11 +480,11 @@ INTEREST_OS.pipeline = {
       return {
         stage: 5,
         name: 'ai_analysis',
-        label: 'AI 分析',
+        label: (window._i18n?.current === "zh") ? 'AI 分析' : 'AI Analysis',
         icon: '🧠',
         input: { titleCount: titles.length, tagCount: tags.length },
         output: { enhanced: false, reason: 'AI analyzer not available' },
-        insights: ['AI 分析模块不可用'],
+        insights: [(window._i18n?.current === "zh") ? 'AI 分析模块不可用' : 'AI analysis module unavailable'],
         confidence: 0
       };
     }
@@ -497,7 +497,7 @@ INTEREST_OS.pipeline = {
       return {
         stage: 5,
         name: 'ai_analysis',
-        label: 'AI 分析',
+        label: (window._i18n?.current === "zh") ? 'AI 分析' : 'AI Analysis',
         icon: '🧠',
         input: { titleCount: titles.length, tagCount: tags.length },
         output: {
@@ -507,19 +507,19 @@ INTEREST_OS.pipeline = {
           source: aiResult.meta?.source || 'keyword'
         },
         insights: isAI
-          ? ['AI 深度分析完成，标签提取更精准', aiResult.summary ? `AI 总结: ${aiResult.summary}` : undefined].filter(Boolean)
-          : ['AI 分析不可用，使用关键词引擎结果'],
+          ? [(window._i18n?.current === "zh") ? 'AI 深度分析完成，标签提取更精准' : 'AI deep analysis complete — tags extracted with higher precision', aiResult.summary ? `AI 总结: ${aiResult.summary}` : undefined].filter(Boolean)
+          : [(window._i18n?.current === "zh") ? 'AI 分析不可用，使用关键词引擎结果' : 'AI analysis unavailable — using keyword engine results'],
         confidence: isAI ? 90 : 50
       };
     } catch (e) {
       return {
         stage: 5,
         name: 'ai_analysis',
-        label: 'AI 分析',
+        label: (window._i18n?.current === "zh") ? 'AI 分析' : 'AI Analysis',
         icon: '🧠',
         input: { titleCount: titles.length, tagCount: tags.length },
         output: { enhanced: false, error: e.message },
-        insights: ['AI 分析失败，使用关键词引擎结果'],
+        insights: [(window._i18n?.current === "zh") ? 'AI 分析失败，使用关键词引擎结果' : 'AI analysis failed — using keyword engine results'],
         confidence: 50
       };
     }
@@ -561,29 +561,29 @@ INTEREST_OS.pipeline = {
   // ─── User-specific persona description ───
   _userSpecificPersonaDesc(basePersona, tags, dist, sortedCats, topTag, top3Tags) {
     const catNames = sortedCats.map(([c]) => c);
-    const dominantCat = catNames[0] || '未知';
+    const dominantCat = catNames[0] || ((window._i18n?.current === "zh") ? '未知' : 'Unknown');
     const secondaryCat = catNames[1] || null;
 
     // Build description from actual data
     const parts = [];
 
     if (topTag) {
-      parts.push(`算法从你的观看记录中最强烈地捕捉到的是「${topTag.name}」信号，权重 ${topTag.weight}%。这构成了算法判断你兴趣核心的首要依据。`);
+      parts.push((window._i18n?.current === "zh") ? `算法从你的观看记录中最强烈地捕捉到的是「${topTag.name}」信号，权重 ${topTag.weight}%。这构成了算法判断你兴趣核心的首要依据。` : `The algorithm most strongly detected ${topTag.name} (weight ${topTag.weight}%). This is the primary basis for your interest profile.`);
     }
 
     if (sortedCats.length > 0) {
       const primaryShare = Math.round((sortedCats[0]?.[1] || 0) / (tags.reduce((s, t) => s + t.weight, 0) || 1) * 100);
-      parts.push(`你的注意力有 ${primaryShare}% 集中在「${dominantCat}」领域。`);
+      parts.push((window._i18n?.current === "zh") ? `你的注意力有 ${primaryShare}% 集中在「${dominantCat}」领域。` : `${primaryShare}% of your attention is focused on ${INTEREST_OS.utils.getCategoryName(dominantCat)}.`);
       if (secondaryCat) {
         const secShare = Math.round((sortedCats[1]?.[1] || 0) / (tags.reduce((s, t) => s + t.weight, 0) || 1) * 100);
-        parts.push(`同时，算法注意到你对「${secondaryCat}」${secShare >= 20 ? '也有显著关注' : '有初步兴趣'} (${secShare}%)。`);
+        parts.push((window._i18n?.current === "zh") ? `同时，算法注意到你对「${secondaryCat}」${secShare >= 20 ? '也有显著关注' : '有初步兴趣'} (${secShare}%)。` : `The algorithm also notes ${secShare >= 20 ? 'significant interest' : 'initial interest'} in ${INTEREST_OS.utils.getCategoryName(secondaryCat)} (${secShare}%).`);
       }
     }
 
-    parts.push(`在算法眼中，你是一个${dist.spreadType === 'polarized' ? '深度聚焦、有明确偏好的' : dist.spreadType === 'moderate' ? '兴趣结构均衡的' : '涉猎广泛、多元开放的'}内容消费者。`);
+    parts.push((window._i18n?.current === "zh") ? `在算法眼中，你是一个${dist.spreadType === 'polarized' ? '深度聚焦、有明确偏好的' : dist.spreadType === 'moderate' ? '兴趣结构均衡的' : '涉猎广泛、多元开放的'}内容消费者。` : `In the algorithm\'s view, you are a ${dist.spreadType === 'polarized' ? 'deeply focused, strongly preferring' : dist.spreadType === 'moderate' ? 'structurally balanced' : 'broadly diversified, multi-disciplinary'} content consumer.`);
 
     if (top3Tags.length >= 2) {
-      parts.push(`你的兴趣图谱由「${top3Tags.map(t => t.name).join('」、「')}」等标签共同定义。`);
+      parts.push((window._i18n?.current === "zh") ? `你的兴趣图谱由「${top3Tags.map(t => t.name).join('」、「')}」等标签共同定义。` : `Your interest graph is defined by tags like ${top3Tags.map(t => t.name).join(', ')}.`);
     }
 
     return parts.join(' ');
@@ -593,12 +593,12 @@ INTEREST_OS.pipeline = {
   _personaVariant(basePersona, tags, sortedCats) {
     const dominantCat = sortedCats[0]?.[0] || '';
     const variantMap = {
-      cyber_explorer: dominantCat.includes('科技') ? '技术深耕者' : dominantCat.includes('编程') ? '代码艺术家' : '数字游民',
-      light_chaser: dominantCat.includes('影视') ? '银幕旅人' : '动漫鉴赏家',
-      knowledge_nomad: dominantCat.includes('科技') ? '科技求知者' : '人文探索者',
-      game_master: dominantCat.includes('游戏') ? '硬核玩家' : '游戏设计师',
-      trend_hunter: dominantCat.includes('时尚') ? '潮流引领者' : '娱乐观察家',
-      deep_diver: '专注深耕者'
+      cyber_explorer: dominantCat.includes('科技') ? ((window._i18n?.current === "zh") ? '技术深耕者' : 'Tech Deep Diver') : dominantCat.includes('编程') ? ((window._i18n?.current === "zh") ? '代码艺术家' : 'Code Artist') : ((window._i18n?.current === "zh") ? '数字游民' : 'Digital Nomad'),
+      light_chaser: dominantCat.includes('影视') ? ((window._i18n?.current === "zh") ? '银幕旅人' : 'Screen Traveler') : ((window._i18n?.current === "zh") ? '动漫鉴赏家' : 'Anime Connoisseur'),
+      knowledge_nomad: dominantCat.includes('科技') ? ((window._i18n?.current === "zh") ? '科技求知者' : 'Tech Seeker') : ((window._i18n?.current === "zh") ? '人文探索者' : 'Humanities Explorer'),
+      game_master: dominantCat.includes('游戏') ? ((window._i18n?.current === "zh") ? '硬核玩家' : 'Hardcore Gamer') : ((window._i18n?.current === "zh") ? '游戏设计师' : 'Game Designer'),
+      trend_hunter: dominantCat.includes('时尚') ? ((window._i18n?.current === "zh") ? '潮流引领者' : 'Trend Leader') : ((window._i18n?.current === "zh") ? '娱乐观察家' : 'Entertainment Watcher'),
+      deep_diver: (window._i18n?.current === "zh") ? '专注深耕者' : 'Deep Diver'
     };
     return variantMap[basePersona.id] || basePersona.name;
   },
@@ -614,12 +614,12 @@ INTEREST_OS.pipeline = {
 
     return predictedTags.map((p, i) => ({
       rank: i + 1,
-      title: `探索「${p.name}」— 基于你的 ${dominantCategory} 兴趣推荐`,
+      title: (window._i18n?.current === "zh") ? `探索「${p.name}」— 基于你的 ${dominantCategory} 兴趣推荐` : `Explore ${p.name} — recommended based on your ${INTEREST_OS.utils.getCategoryName(dominantCategory)} interest`,
       platform: p.basis === 'adjacent_category' ? 'YouTube' : p.basis === 'cross_category' ? 'Bilibili' : 'YouTube',
-      type: p.basis === 'interest_extension' ? '深度内容' : p.basis === 'cross_category' ? '跨界内容' : '探索内容',
+      type: p.basis === 'interest_extension' ? ((window._i18n?.current === "zh") ? '深度内容' : 'Deep Content') : p.basis === 'cross_category' ? ((window._i18n?.current === "zh") ? '跨界内容' : 'Cross-Domain') : ((window._i18n?.current === "zh") ? '探索内容' : 'Exploratory'),
       reason: topTag
-        ? `你对「${topTag.name}」(${topTag.weight}%) 的关注度较高，算法推荐关联方向「${p.name}」`
-        : `算法基于你的兴趣分布推荐拓展方向「${p.name}」`,
+        ? ((window._i18n?.current === "zh") ? `你对「${topTag.name}」(${topTag.weight}%) 的关注度较高，算法推荐关联方向「${p.name}」` : `Your high interest in ${topTag.name} (${topTag.weight}%) leads the algorithm to recommend ${p.name}`)
+        : ((window._i18n?.current === "zh") ? `算法基于你的兴趣分布推荐拓展方向「${p.name}」` : `The algorithm recommends exploring ${p.name} based on your interest distribution`),
       basis: p.basis,
       userBasis: userCatNames.slice(0, 2).join('/')
     }));
@@ -630,12 +630,12 @@ INTEREST_OS.pipeline = {
   _mergeSimilar(matchCounts, titles) {
     const merged = {};
     const synonymGroups = [
-      ['AI', '人工智能', 'ChatGPT', 'GPT'],
-      ['编程', '开发', '代码'],
-      ['前端', 'JavaScript', 'TypeScript'],
-      ['游戏', '主机', 'Steam'],
-      ['动漫', '动画', '番剧'],
-      ['电影', '影视', '影院']
+      ['AI', ((window._i18n?.current === "zh") ? '人工智能' : 'Artificial Intelligence'), 'ChatGPT', 'GPT'],
+      [((window._i18n?.current === "zh") ? '编程' : 'Programming'), ((window._i18n?.current === "zh") ? '开发' : 'Development'), ((window._i18n?.current === "zh") ? '代码' : 'Code')],
+      [((window._i18n?.current === "zh") ? '前端' : 'Frontend'), 'JavaScript', 'TypeScript'],
+      [((window._i18n?.current === "zh") ? '游戏' : 'Gaming'), ((window._i18n?.current === "zh") ? '主机' : 'Console'), 'Steam'],
+      [((window._i18n?.current === "zh") ? '动漫' : 'Anime'), ((window._i18n?.current === "zh") ? '动画' : 'Animation'), ((window._i18n?.current === "zh") ? '番剧' : 'Series')],
+      [((window._i18n?.current === "zh") ? '电影' : 'Movies'), ((window._i18n?.current === "zh") ? '影视' : 'Film & TV'), ((window._i18n?.current === "zh") ? '影院' : 'Cinema')]
     ];
     const processed = new Set();
 

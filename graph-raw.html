@@ -4,19 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galaxy — Interest OS</title>
-  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <script src="lib/d3.min.js"></script>
+  <script src="lib/chart.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/custom-raw.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230D0D0D'/><text x='6' y='22' font-size='18' font-weight='bold' fill='%2300E5FF' font-family='monospace'>IO</text></svg>">
   <style>
-    #langToggle {
-      font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
-      color: var(--accent); background: rgba(0,229,255,0.08);
-      border: 1px solid rgba(0,229,255,0.2);
-      padding: 4px 10px; cursor: pointer; transition: all 0.15s; margin-left: 8px;
-    }
-    #langToggle:hover { background: rgba(0,229,255,0.15); }
   </style>
 </head>
 <body>
@@ -30,7 +23,6 @@
       <a href="share-raw.html" class="btn btn-secondary btn-sm">
         <svg width="14" height="14"><use href="#icon-share"/></svg> <span data-i18n="nav.share">Share</span>
       </a>
-      <button id="langToggle">EN</button>
     </div>
   </nav>
 
@@ -52,11 +44,11 @@
           <div class="persona-mini-detail" id="personaMiniDesc"></div>
         </div>
         <div class="card" id="tagDetail" style="flex:1;overflow-y:auto;max-height:360px">
-          <p class="mono" style="font-size:0.75rem;color:var(--text-muted);text-align:center;padding:20px 0">Click a planet to see details</p>
+          <p class="mono" style="font-size:0.75rem;color:var(--text-muted);text-align:center;padding:20px 0" data-i18n="graph.tag_placeholder">Click a planet to see details</p>
         </div>
 
         <div class="card" id="mbtiCard">
-          <div class="mono" style="font-size:0.625rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Algorithm MBTI</div>
+          <div class="mono" style="font-size:0.625rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px" data-i18n="graph.mbti_label">Algorithm MBTI</div>
           <div style="display:flex;align-items:center;gap:8px">
             <span id="mbtiEmoji" style="font-size:1.5rem">--</span>
             <div>
@@ -87,7 +79,7 @@
         <button id="editBtn" class="btn btn-secondary" style="width:100%">
           <svg width="16" height="16"><use href="#icon-edit"/></svg> <span data-i18n="graph.edit_btn">Edit Tags</span>
         </button>
-        <a href="upload.html" class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:8px"><svg width="14" height="14"><use href="#icon-upload"/></svg> New Analysis</a>
+        <a href="upload.html" class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:8px"><svg width="14" height="14"><use href="#icon-upload"/></svg> <span data-i18n="graph.new_analysis">New Analysis</span></a>
 <a href="share-raw.html" class="btn btn-primary" style="width:100%">
           <svg width="16" height="16"><use href="#icon-share"/></svg> <span data-i18n="graph.share_btn">Generate Card</span>
         </a>
@@ -98,14 +90,14 @@
   <!-- === ALGORITHM MIRROR — INSIGHT DRAWER === -->
   <div class="insight-drawer" id="insightDrawer" style="max-width:1280px;margin-left:auto;margin-right:auto;padding:0 24px">
 
-    <div class="insight-drawer-title">ALGORITHM MIRROR · Deep Analysis</div>
+    <div class="insight-drawer-title" data-i18n="graph.mirror_title">ALGORITHM MIRROR · Deep Analysis</div>
 
     <!-- 0. Pipeline Chain -->
     <div class="insight-section" id="sectionPipeline">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="insight-section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
-        <span class="insight-section-title">Analysis Pipeline</span>
-        <span class="insight-section-sub" id="pipelineStatus">6 stages</span>
+        <span class="insight-section-title" data-i18n="graph.pipeline_title">Analysis Pipeline</span>
+        <span class="insight-section-sub" id="pipelineStatus"></span>
       </div>
       <div class="insight-section-body">
         <div id="pipelineChain" class="pipeline-chain"></div>
@@ -119,8 +111,8 @@
     <div class="insight-section" id="sectionPersona">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="insight-section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
-        <span class="insight-section-title">How the Algorithm Sees You</span>
-        <span class="insight-section-sub">click to collapse</span>
+        <span class="insight-section-title" data-i18n="graph.persona_title">How the Algorithm Sees You</span>
+        <span class="insight-section-sub" data-i18n="graph.collapse">click to collapse</span>
       </div>
       <div class="insight-section-body">
         <div id="personaInsightContent" class="persona-highlight"></div>
@@ -132,14 +124,14 @@
     <div class="insight-section" id="sectionExplanation">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="insight-section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-        <span class="insight-section-title">Why the Algorithm Judges You This Way</span>
-        <span class="insight-section-sub">click to collapse</span>
+        <span class="insight-section-title" data-i18n="graph.explanation_title">Why the Algorithm Judges You This Way</span>
+        <span class="insight-section-sub" data-i18n="graph.collapse">click to collapse</span>
       </div>
       <div class="insight-section-body">
         <div id="keyFindings" class="key-findings"></div>
         <div id="explanationSteps" class="explanation-steps"></div>
         <div class="behavior-path">
-          <div class="behavior-path-title">Behavior Path · Algorithm Feedback Loop</div>
+          <div class="behavior-path-title" data-i18n="graph.behavior_title">Behavior Path · Algorithm Feedback Loop</div>
           <div class="behavior-flowchart" id="behaviorFlowchart"></div>
         </div>
         <div class="behavior-metrics" id="behaviorMetrics"></div>
@@ -151,8 +143,8 @@
     <div class="insight-section" id="sectionEcho">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="insight-section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17a4 4 0 0 1 0-8"/><path d="M19 17a4 4 0 0 0 0-8"/><path d="M2 14a7 7 0 0 1 0-4"/><path d="M22 14a7 7 0 0 0 0-4"/><circle cx="12" cy="12" r="2"/></svg></span>
-        <span class="insight-section-title">Echo Chamber Index</span>
-        <span class="insight-section-sub">click to collapse</span>
+        <span class="insight-section-title" data-i18n="graph.echo_title">Echo Chamber Index</span>
+        <span class="insight-section-sub" data-i18n="graph.collapse">click to collapse</span>
       </div>
       <div class="insight-section-body">
         <div id="echoMeter" class="echo-meter"></div>
@@ -163,8 +155,8 @@
     <div class="insight-section" id="sectionWeight">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="insight-section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-        <span class="insight-section-title">Interest Weight Model</span>
-        <span class="insight-section-sub">click to collapse</span>
+        <span class="insight-section-title" data-i18n="graph.weight_title">Interest Weight Model</span>
+        <span class="insight-section-sub" data-i18n="graph.collapse">click to collapse</span>
       </div>
       <div class="insight-section-body">
         <div id="weightCategories" class="weight-cat-list"></div>
@@ -176,13 +168,13 @@
     <div class="insight-section" id="sectionPredictions">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="insight-section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="6"/><line x1="15" y1="2" x2="15" y2="6"/></svg></span>
-        <span class="insight-section-title">Algorithm Prediction</span>
-        <span class="insight-section-sub">click to collapse</span>
+        <span class="insight-section-title" data-i18n="graph.prediction_title">Algorithm Prediction</span>
+        <span class="insight-section-sub" data-i18n="graph.collapse">click to collapse</span>
       </div>
       <div class="insight-section-body">
-        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px">Based on your interest distribution, the algorithm predicts what you may focus on next:</p>
+        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px" data-i18n="graph.prediction_desc">Based on your interest distribution, the algorithm predicts what you may focus on next:</p>
         <div id="predictedTags" class="prediction-list" style="margin-bottom:16px"></div>
-        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px">Algorithm-recommended content:</p>
+        <p class="mono" style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px" data-i18n="graph.recommended_desc">Algorithm-recommended content:</p>
         <div id="recommendedContent" class="content-prediction"></div>
       </div>
     </div>
@@ -191,8 +183,8 @@
     <div class="insight-section" id="sectionGrowth">
       <div class="insight-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="insight-section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
-        <span class="insight-section-title">Growth Advice</span>
-        <span class="insight-section-sub">click to collapse</span>
+        <span class="insight-section-title" data-i18n="graph.growth_title">Growth Advice</span>
+        <span class="insight-section-sub" data-i18n="graph.collapse">click to collapse</span>
       </div>
       <div class="insight-section-body">
         <div id="growthAdvice" class="growth-list"></div>
@@ -240,9 +232,18 @@
   <script src="js/pipeline.js?v=1"></script>
   <script src="js/i18n.js?v=5"></script>
   <script>
+    window._profile = null;
+
     document.addEventListener('i18n:changed', function() {
-      // Re-render tag detail with new language
       if (window._lastTag) showTagDetail(window._lastTag);
+      var p = window._profile;
+      if (p) {
+        renderTopStats(p);
+        renderInsights(p);
+      }
+      // Update visualization labels
+      try { if (INTEREST_OS.galaxy) INTEREST_OS.galaxy.updateLabels(); } catch(e) {}
+      try { if (INTEREST_OS.radar && typeof currentView !== 'undefined' && currentView === 'radar') { INTEREST_OS.radar.destroy(); INTEREST_OS.radar.init('#vizContainer', tags); } } catch(e) {}
     });
 
     (function() {
@@ -254,6 +255,7 @@
         return;
       }
 
+      window._profile = profile;
       var tags = profile.tags.slice();
       var currentView = 'galaxy';
       window._lastTag = null;
@@ -263,33 +265,41 @@
       document.getElementById('diversityScore').textContent = (analysis.diversityScore || '--') + '%';
       document.getElementById('personaName').textContent = analysis.personaType || '--';
 
-      // Persona mini card in side panel
-      var personaMiniName = document.getElementById('personaMiniName');
-      var personaMiniTagline = document.getElementById('personaMiniTagline');
-      var personaMiniDesc = document.getElementById('personaMiniDesc');
-      if (personaMiniName) {
-        personaMiniName.textContent = analysis.personaType || '--';
-      }
-      if (personaMiniTagline) {
-        var p = INTEREST_OS.personas.determine(tags);
-        personaMiniTagline.textContent = '"' + p.tagline + '"';
-      }
-      if (personaMiniDesc) {
-        personaMiniDesc.textContent = isZh
-          ? 'Algorithm persona: ' + tags.length + ' interest tags'
-          : 'Algorithm persona based on ' + tags.length + ' interest tags';
+      // Init top stats (persona mini card, MBTI, echo insight)
+      function renderTopStats(p) {
+        var t = (p && p.tags) ? p.tags.slice() : tags;
+        var a = (p && p.analysis) || (profile.analysis || {});
+        var isZh = (window._i18n && window._i18n.current === "zh");
+
+        // Persona mini card in side panel
+        var personaMiniName = document.getElementById('personaMiniName');
+        var personaMiniTagline = document.getElementById('personaMiniTagline');
+        var personaMiniDesc = document.getElementById('personaMiniDesc');
+        if (personaMiniName) {
+          personaMiniName.textContent = a.personaType || '--';
+        }
+        if (personaMiniTagline) {
+          var personaObj = INTEREST_OS.personas.determine(t);
+          personaMiniTagline.textContent = '"' + personaObj.tagline + '"';
+        }
+        if (personaMiniDesc) {
+          personaMiniDesc.textContent = isZh
+            ? '算法人格：基于 ' + t.length + ' 个兴趣标签'
+            : 'Algorithm persona based on ' + t.length + ' interest tags';
+        }
+
+        // MBTI and insights
+        var mbti = INTEREST_OS.insights.getMBTI(t);
+        document.getElementById('mbtiEmoji').textContent = mbti.emoji;
+        document.getElementById('mbtiCode').textContent = mbti.code;
+        document.getElementById('mbtiName').textContent = isZh ? mbti.name : (mbti.nameEn || mbti.name);
+        document.getElementById('mbtiDesc').textContent = isZh ? mbti.descZh : mbti.descEn;
+        document.getElementById('echoInsight').textContent = INTEREST_OS.insights.getEchoChamberDesc(
+          a.echoChamberIndex || 50, isZh
+        );
       }
 
-      // Init MBTI and insights
-      var mbti = INTEREST_OS.insights.getMBTI(tags);
-      var isZh = (window._i18n && window._i18n.current === "zh");
-      document.getElementById('mbtiEmoji').textContent = mbti.emoji;
-      document.getElementById('mbtiCode').textContent = mbti.code;
-      document.getElementById('mbtiName').textContent = mbti.name;
-      document.getElementById('mbtiDesc').textContent = isZh ? mbti.descZh : mbti.descEn;
-      document.getElementById('echoInsight').textContent = INTEREST_OS.insights.getEchoChamberDesc(
-        analysis.echoChamberIndex || 50, isZh
-      );
+      renderTopStats(profile);
 
       function renderView(view) {
         var container = document.getElementById('vizContainer');
@@ -319,7 +329,7 @@
           relatedHtml = '<div><span class="text-xs" style="color:var(--text-muted)">' + t('graph.related') + '</span><div class="flex flex-wrap gap-1 mt-1">';
           tag.relatedTags.forEach(function(rid) {
             var rt = tags.find(function(t2) { return t2.id === rid; });
-            if (rt) relatedHtml += '<span class="tag text-xs">' + escHtml(rt.name) + '</span>';
+            if (rt) relatedHtml += '<span class="tag text-xs">' + escHtml(INTEREST_OS.utils.translateKeyword(rt.name)) + '</span>';
           });
           relatedHtml += '</div></div>';
         }
@@ -332,10 +342,10 @@
         el.innerHTML =
           '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
           '<span style="width:8px;height:8px;background:' + tag.color + ';box-shadow:0 0 10px ' + tag.color + '"></span>' +
-          '<h3 class="mono" style="font-size:1rem;font-weight:700">' + escHtml(tag.name) + '</h3></div>' +
+          '<h3 class="mono" style="font-size:1rem;font-weight:700">' + escHtml(INTEREST_OS.utils.translateKeyword(tag.name)) + '</h3></div>' +
           '<div style="display:flex;flex-direction:column;gap:10px;font-size:0.8125rem">' +
           '<div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">' + t('graph.weight') + '</span><span style="color:var(--accent);font-family:var(--font-mono);font-weight:700">' + tag.weight + '%</span></div>' +
-          '<div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">' + t('graph.category') + '</span><span style="color:var(--text-dim);font-family:var(--font-mono)">' + (tag.category || '-') + '</span></div>' +
+          '<div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">' + t('graph.category') + '</span><span style="color:var(--text-dim);font-family:var(--font-mono)">' + (INTEREST_OS.utils.getCategoryName(tag.category) || '-') + '</span></div>' +
           relatedHtml + srcHtml +
           (tag.isUserEdited ? '<div style="font-size:0.75rem;color:#FFB800;margin-top:4px">' + t('graph.edited') + '</div>' : '') +
           '</div>';
@@ -380,7 +390,7 @@
         } catch(e) { console.warn('[AM] init error:', e); }
 
         // ── Section 0: Pipeline Chain ──
-        try { renderPipelineChain(stages); } catch(e) { console.warn('[AM] Section 0 error:', e); }
+        try { renderPipelineChain(stages, isZh); } catch(e) { console.warn('[AM] Section 0 error:', e); }
 
         // ── Section 1: How the Algorithm Sees You ──
         try {
@@ -410,9 +420,9 @@
             '<div class="persona-highlight-tagline">"' + escHtml(persona.tagline) + '"</div>' +
             '<div class="persona-highlight-desc">' + personaDesc + '</div>' +
             '<div class="persona-badge-row">' +
-            '<span class="persona-badge">' + 'Persona' + '</span>' +
-            '<span class="persona-badge">' + 'Confidence: High' + '</span>' +
-            '<span class="persona-badge">' + tags.length + ' tags' + '</span>' +
+            '<span class="persona-badge">' + (isZh ? '人格' : 'Persona') + '</span>' +
+            '<span class="persona-badge">' + (isZh ? '置信度: 高' : 'Confidence: High') + '</span>' +
+            '<span class="persona-badge">' + tags.length + (isZh ? ' 标签' : ' tags') + '</span>' +
             '</div>';
         }
 
@@ -436,15 +446,15 @@
         if (stages) {
           // Use pipeline stages for steps
           var stageLabels = [
-            { stage: 1, icon: '🏷️', title: 'Classification', desc: 'Keyword matching + category mapping' },
-            { stage: 2, icon: '📊', title: 'Weights', desc: 'Frequency + co-occurrence' },
-            { stage: 3, icon: '👤', title: 'Persona', desc: 'Distribution + profiling' },
-            { stage: 4, icon: '🔮', title: 'Prediction', desc: 'Relation mining + trends' }
+            { stage: 1, icon: '🏷️', title: isZh ? '分类' : 'Classification', desc: isZh ? '关键词匹配 + 分类映射' : 'Keyword matching + category mapping' },
+            { stage: 2, icon: '📊', title: isZh ? '权重' : 'Weights', desc: isZh ? '频率 + 共现分析' : 'Frequency + co-occurrence' },
+            { stage: 3, icon: '👤', title: isZh ? '人格' : 'Persona', desc: isZh ? '分布 + 画像' : 'Distribution + profiling' },
+            { stage: 4, icon: '🔮', title: isZh ? '预测' : 'Prediction', desc: isZh ? '关系挖掘 + 趋势' : 'Relation mining + trends' }
           ];
           stepsEl.innerHTML = stageLabels.map(function(sl) {
             var s = stages.find(function(s) { return s.stage === sl.stage; });
             var confidence = s ? (s.confidence || 0) : 0;
-            var confLabel = confidence > 70 ? 'High' : confidence > 40 ? 'Medium' : 'Low';
+            var confLabel = confidence > 70 ? (isZh ? '高' : 'High') : confidence > 40 ? (isZh ? '中' : 'Medium') : (isZh ? '低' : 'Low');
             return '<div class="exp-step" data-step="' + sl.stage + '">' +
               '<span class="exp-step-icon">' + sl.icon + '</span>' +
               '<div class="exp-step-body">' +
@@ -460,10 +470,10 @@
             var s3 = stages.find(function(s) { return s.stage === 3; });
             var personaName = s3 ? s3.output.name : '--';
             findingsEl.innerHTML =
-              '<div class="key-finding"><div class="key-finding-label">' + 'Tags' + '</div><div class="key-finding-value">' + tags.length + '</div></div>' +
-              '<div class="key-finding"><div class="key-finding-label">' + 'Persona' + '</div><div class="key-finding-value">' + escHtml(personaName) + '</div></div>' +
-              '<div class="key-finding"><div class="key-finding-label">' + 'Echo Chamber' + '</div><div class="key-finding-value">' + (a2.echoChamberIndex || 0) + '%</div></div>' +
-              '<div class="key-finding"><div class="key-finding-label">' + 'Diversity' + '</div><div class="key-finding-value">' + (a2.diversityScore || 0) + '%</div></div>';
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '标签数' : 'Tags') + '</div><div class="key-finding-value">' + tags.length + '</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '人格' : 'Persona') + '</div><div class="key-finding-value">' + escHtml(personaName) + '</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '茧房指数' : 'Echo Chamber') + '</div><div class="key-finding-value">' + (a2.echoChamberIndex || 0) + '%</div></div>' +
+              '<div class="key-finding"><div class="key-finding-label">' + (isZh ? '多样性' : 'Diversity') + '</div><div class="key-finding-value">' + (a2.diversityScore || 0) + '%</div></div>';
           }
         } else {
           // Legacy fallback
@@ -502,13 +512,13 @@
             };
           }
           var flowSteps = [
-            { icon: 'play', label: 'Watch' },
-            { icon: 'pause', label: 'Stay' },
-            { icon: 'thumbs-up', label: 'Like' },
-            { icon: 'bookmark', label: 'Favorite' },
-            { icon: 'search', label: 'Search' },
-            { icon: 'trending', label: 'Weight Up' },
-            { icon: 'refresh', label: 'Recommend More' }
+            { icon: 'play', label: isZh ? '观看' : 'Watch' },
+            { icon: 'pause', label: isZh ? '停留' : 'Stay' },
+            { icon: 'thumbs-up', label: isZh ? '点赞' : 'Like' },
+            { icon: 'bookmark', label: isZh ? '收藏' : 'Favorite' },
+            { icon: 'search', label: isZh ? '搜索' : 'Search' },
+            { icon: 'trending', label: isZh ? '加权' : 'Weight Up' },
+            { icon: 'refresh', label: isZh ? '推荐更多' : 'Recommend More' }
           ];
           flowEl.innerHTML = flowSteps.map(function(s, i) {
             var iconSvg = window._iconMap && window._iconMap[s.icon] ? window._iconMap[s.icon] : s.icon;
@@ -535,10 +545,10 @@
           var depthRatio = tags.length / Math.max(uniqueCats.length, 1);
           var favoriteRate = Math.min(82, Math.round(10 + depthRatio * 12));
           metricsEl.innerHTML =
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + totalRecords + '</div><div class="behavior-metric-label">' + 'Views' + '</div></div>' +
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + stayRate + '%</div><div class="behavior-metric-label">' + 'Stay Rate' + '</div></div>' +
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + likeRate + '%</div><div class="behavior-metric-label">' + 'Like Rate' + '</div></div>' +
-            '<div class="behavior-metric"><div class="behavior-metric-value">' + favoriteRate + '%</div><div class="behavior-metric-label">' + 'Favorite Rate' + '</div></div>';
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + totalRecords + '</div><div class="behavior-metric-label">' + (isZh ? '观看数' : 'Views') + '</div></div>' +
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + stayRate + '%</div><div class="behavior-metric-label">' + (isZh ? '停留率' : 'Stay Rate') + '</div></div>' +
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + likeRate + '%</div><div class="behavior-metric-label">' + (isZh ? '点赞率' : 'Like Rate') + '</div></div>' +
+            '<div class="behavior-metric"><div class="behavior-metric-value">' + favoriteRate + '%</div><div class="behavior-metric-label">' + (isZh ? '收藏率' : 'Favorite Rate') + '</div></div>';
         }
 
         // Explanation summary — use pipeline summary if available
@@ -547,9 +557,9 @@
           var s2 = stages.find(function(s) { return s.stage === 2; });
           var s3 = stages.find(function(s) { return s.stage === 3; });
           var topTag = tags.sort(function(a,b){return b.weight-a.weight})[0];
-          var sumText = 'Analyzed ' + (analysis.recordCount || tags.length * 3) + ' records through ' + stages.length + '-stage pipeline.';
-          if (topTag) sumText += ' Top signal: ' + topTag.name + ' (' + topTag.weight + '%).';
-          if (s3 && s3.output.name) sumText += ' Persona: ' + s3.output.name + '.';
+          var sumText = (isZh ? '分析了 ' : 'Analyzed ') + (analysis.recordCount || tags.length * 3) + (isZh ? ' 条记录，经过 ' : ' records through ') + stages.length + (isZh ? ' 阶段流水线。' : '-stage pipeline.');
+          if (topTag) sumText += (isZh ? ' 最强信号: ' : ' Top signal: ') + topTag.name + ' (' + topTag.weight + '%).';
+          if (s3 && s3.output.name) sumText += (isZh ? ' 人格: ' : ' Persona: ') + s3.output.name + '.';
           summaryEl.textContent = sumText;
         } else {
           summaryEl.textContent = '';
@@ -571,7 +581,7 @@
           var d = stage2.output.distribution;
           extraEchoNote = '<div class="echo-meter-desc" style="margin-top:8px;border-left-color:var(--accent-2);background:var(--bg-elevated)">' +
             (isZh ? '权重分布: ' : 'Weight dist: ') + d.weightCount + (isZh ? ' 个标签, ' : ' tags, ') +
-            (d.spreadType === 'polarized' ? (isZh ? 'Concentrated' : 'highly concentrated') : d.spreadType === 'moderate' ? (isZh ? 'Moderate' : 'moderately spread') : (isZh ? 'Even' : 'evenly spread')) +
+            (d.spreadType === 'polarized' ? (isZh ? '高度集中' : 'highly concentrated') : d.spreadType === 'moderate' ? (isZh ? '中等分散' : 'moderately spread') : (isZh ? '均匀分布' : 'evenly spread')) +
             '</div>';
         }
 
@@ -583,10 +593,10 @@
           '<div class="echo-meter-label" style="color:' + echoColor + '">' + echoIdx + '%</div>' +
           '</div>' +
           '<div class="echo-meter-scale">' +
-          '<span>' + (isZh ? 'Diverse' : 'Diverse') + '</span>' +
-          '<span>' + 'Balanced' + '</span>' +
-          '<span>' + 'Focused' + '</span>' +
-          '<span>' + 'Echo Chamber' + '</span>' +
+          '<span>' + (isZh ? '多元化' : 'Diverse') + '</span>' +
+          '<span>' + (isZh ? '均衡' : 'Balanced') + '</span>' +
+          '<span>' + (isZh ? '专注' : 'Focused') + '</span>' +
+          '<span>' + (isZh ? '信息茧房' : 'Echo Chamber') + '</span>' +
           '</div>' +
           '<div class="echo-meter-desc">' +
           '<strong style="color:' + echoColor + '">' + echoLabel + '</strong> — ' + echoDesc +
@@ -609,7 +619,7 @@
             catEl.innerHTML = s1.output.categories.map(function(c, i) {
               var pct = Math.round(c.matchCount / totalWeight * 100);
               return '<div class="weight-cat-row">' +
-                '<span class="weight-cat-name">' + escHtml(c.name) + '</span>' +
+                '<span class="weight-cat-name">' + escHtml(INTEREST_OS.utils.getCategoryName(c.name)) + '</span>' +
                 '<span class="weight-cat-track"><span class="weight-cat-fill" style="width:' + pct + '%;background:' + (catColors[i % catColors.length]) + '"></span></span>' +
                 '<span class="weight-cat-pct">' + pct + '%</span>' +
                 '<span class="weight-cat-count">' + c.keywordCount + '</span>' +
@@ -621,9 +631,9 @@
             var d = s2.output.distribution;
             var distEl = document.getElementById('weightDistribution');
             distEl.innerHTML =
-              '<div class="weight-model-cell"><div class="weight-model-val">' + d.weightCount + '</div><div class="weight-model-lbl">' + 'Tags' + '</div></div>' +
-              '<div class="weight-model-cell"><div class="weight-model-val">' + d.avgWeight + '%</div><div class="weight-model-lbl">' + 'Avg Weight' + '</div></div>' +
-              '<div class="weight-model-cell"><div class="weight-model-val">' + (d.spreadType === 'polarized' ? 'Focused' : d.spreadType === 'moderate' ? (isZh ? '均衡' : 'Balanced') : (isZh ? '分散' : 'Spread')) + '</div><div class="weight-model-lbl">' + (isZh ? '分布类型' : 'Pattern') + '</div></div>';
+              '<div class="weight-model-cell"><div class="weight-model-val">' + d.weightCount + '</div><div class="weight-model-lbl">' + (isZh ? '标签数' : 'Tags') + '</div></div>' +
+              '<div class="weight-model-cell"><div class="weight-model-val">' + d.avgWeight + '%</div><div class="weight-model-lbl">' + (isZh ? '平均权重' : 'Avg Weight') + '</div></div>' +
+              '<div class="weight-model-cell"><div class="weight-model-val">' + (d.spreadType === 'polarized' ? (isZh ? '集中' : 'Focused') : d.spreadType === 'moderate' ? (isZh ? '均衡' : 'Balanced') : (isZh ? '分散' : 'Spread')) + '</div><div class="weight-model-lbl">' + (isZh ? '分布类型' : 'Pattern') + '</div></div>';
           }
         } else {
           // Legacy fallback
@@ -632,7 +642,7 @@
           catEl.innerHTML = weightModel.categories.map(function(c, i) {
             var pct = Math.round(c.totalWeight / weightModel.totalWeight * 100);
             return '<div class="weight-cat-row">' +
-              '<span class="weight-cat-name">' + escHtml(c.name) + '</span>' +
+              '<span class="weight-cat-name">' + escHtml(INTEREST_OS.utils.getCategoryName(c.name)) + '</span>' +
               '<span class="weight-cat-track"><span class="weight-cat-fill" style="width:' + pct + '%;background:' + (catColors[i % catColors.length]) + '"></span></span>' +
               '<span class="weight-cat-pct">' + pct + '%</span>' +
               '<span class="weight-cat-count">' + c.tagCount + '</span>' +
@@ -642,9 +652,9 @@
           var distEl = document.getElementById('weightDistribution');
           var dist = weightModel.distribution;
           distEl.innerHTML =
-            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.span + '</div><div class="weight-model-lbl">' + 'Categories' + '</div></div>' +
-            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.evenness + '%</div><div class="weight-model-lbl">' + 'Evenness' + '</div></div>' +
-            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + 'Concentration' + '</div></div>';
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.span + '</div><div class="weight-model-lbl">' + (isZh ? '分类数' : 'Categories') + '</div></div>' +
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.evenness + '%</div><div class="weight-model-lbl">' + (isZh ? '均匀度' : 'Evenness') + '</div></div>' +
+            '<div class="weight-model-cell"><div class="weight-model-val">' + dist.concentration + '%</div><div class="weight-model-lbl">' + (isZh ? '集中度' : 'Concentration') + '</div></div>';
         }
 
         } catch(e) { console.warn('[AM] Section 4 error:', e); }
@@ -663,7 +673,7 @@
               return '<div class="prediction-item">' +
                 '<span class="prediction-rank">' + (i + 1) + '</span>' +
                 '<div class="prediction-body">' +
-                '<div class="prediction-name">' + escHtml(p.name) + '</div>' +
+                '<div class="prediction-name">' + escHtml(INTEREST_OS.utils.translateKeyword(p.name)) + '</div>' +
                 '<div class="prediction-reason">' + escHtml(p.reason) + '</div>' +
                 '</div>' +
                 '<span class="prediction-badge" style="border-color:' + badgeColor + ';color:' + badgeColor + '">' + p.probability + '</span>' +
@@ -671,13 +681,13 @@
             }).join('');
           } else {
             predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              'Not enough data for predictions.' + '</div>';
+              (isZh ? '数据不足以进行预测。' : 'Not enough data for predictions.') + '</div>';
           }
 
           if (s4 && s4.output.recommendedContent && s4.output.recommendedContent.length > 0) {
             contentEl.innerHTML = s4.output.recommendedContent.map(function(c) {
               return '<div class="content-card">' +
-                '<div class="content-card-rank">#' + c.rank + ' Pick' + '</div>' +
+                '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
                 '<div class="content-card-type">' + escHtml(c.type || '') + '</div>' +
                 '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
                 '<div class="content-card-platform">' + escHtml(c.platform || '') + '</div>' +
@@ -686,7 +696,7 @@
             }).join('');
           } else {
             contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              'No recommendations yet.' + '</div>';
+              (isZh ? '暂无推荐内容。' : 'No recommendations yet.') + '</div>';
           }
         } else {
           // Legacy fallback
@@ -697,7 +707,7 @@
               return '<div class="prediction-item">' +
                 '<span class="prediction-rank">' + (i + 1) + '</span>' +
                 '<div class="prediction-body">' +
-                '<div class="prediction-name">' + escHtml(p.name) + '</div>' +
+                '<div class="prediction-name">' + escHtml(INTEREST_OS.utils.translateKeyword(p.name)) + '</div>' +
                 '<div class="prediction-reason">' + escHtml(p.reason) + '</div>' +
                 '</div>' +
                 '<span class="prediction-badge" style="border-color:' + badgeColor + ';color:' + badgeColor + '">' + p.probability + '</span>' +
@@ -705,12 +715,12 @@
             }).join('');
           } else {
             predEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              'Not enough data for predictions.' + '</div>';
+              (isZh ? '数据不足以进行预测。' : 'Not enough data for predictions.') + '</div>';
           }
           if (predictions.recommendedContent && predictions.recommendedContent.length > 0) {
             contentEl.innerHTML = predictions.recommendedContent.map(function(c) {
               return '<div class="content-card">' +
-                '<div class="content-card-rank">#' + c.rank + ' Pick' + '</div>' +
+                '<div class="content-card-rank">#' + c.rank + ' ' + (isZh ? '推荐' : 'Pick') + '</div>' +
                 '<div class="content-card-type">' + escHtml(c.type) + '</div>' +
                 '<div class="content-card-title">' + escHtml(c.title) + '</div>' +
                 '<div class="content-card-platform">' + escHtml(c.platform) + '</div>' +
@@ -719,7 +729,7 @@
             }).join('');
           } else {
             contentEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-              'No recommendations yet.' + '</div>';
+              (isZh ? '暂无推荐内容。' : 'No recommendations yet.') + '</div>';
           }
         }
 
@@ -742,25 +752,27 @@
       }
 
       // ─── Pipeline Chain Renderer ───
-      function renderPipelineChain(stages) {
+      function renderPipelineChain(stages, isZh) {
         var chainEl = document.getElementById('pipelineChain');
         var summaryEl = document.getElementById('pipelineSummaryText');
+        var statusEl = document.getElementById('pipelineStatus');
 
         if (!stages || stages.length === 0) {
           chainEl.innerHTML = '<div class="mono" style="font-size:0.75rem;color:var(--text-muted);padding:14px">' +
-            'Using legacy engine. Re-upload for full pipeline.' +
+            (isZh ? '使用传统引擎。重新上传以启用完整流水线。' : 'Using legacy engine. Re-upload for full pipeline.') +
             '</div>';
           if (summaryEl) summaryEl.textContent = '';
+          if (statusEl) statusEl.textContent = isZh ? '传统引擎' : 'Legacy Engine';
           return;
         }
 
         // Build chain visualization
         var stageConfigs = [
-          { num: 1, icon: '🏷️', name: 'Classification', field: 'matchedCategories' },
-          { num: 2, icon: '📊', name: 'Weights', field: 'tags' },
-          { num: 3, icon: '👤', name: 'Persona', field: 'name' },
-          { num: 4, icon: '🔮', name: 'Prediction', field: 'predictedTags' },
-          { num: 5, icon: '🧠', name: 'AI Analysis', field: 'enhanced' }
+          { num: 1, icon: '🏷️', name: isZh ? '分类' : 'Classification', field: 'matchedCategories' },
+          { num: 2, icon: '📊', name: isZh ? '权重' : 'Weights', field: 'tags' },
+          { num: 3, icon: '👤', name: isZh ? '人格' : 'Persona', field: 'name' },
+          { num: 4, icon: '🔮', name: isZh ? '预测' : 'Prediction', field: 'predictedTags' },
+          { num: 5, icon: '🧠', name: isZh ? 'AI分析' : 'AI Analysis', field: 'enhanced' }
         ];
 
         chainEl.innerHTML = '<div class="pipeline-visual">' +
@@ -772,15 +784,15 @@
 
             if (stage) {
               if (cfg.num === 1 && stage.output.matchedCategories) {
-                outputSummary = stage.output.matchedCategories.length + ' cats';
+                outputSummary = stage.output.matchedCategories.length + (isZh ? ' 类' : ' cats');
               } else if (cfg.num === 2 && stage.output.tags) {
-                outputSummary = stage.output.tags.length + ' tags';
+                outputSummary = stage.output.tags.length + (isZh ? ' 标签' : ' tags');
               } else if (cfg.num === 3 && stage.output.name) {
                 outputSummary = stage.output.name;
               } else if (cfg.num === 4 && stage.output.predictedTags) {
-                outputSummary = stage.output.predictedTags.length + ' pred';
+                outputSummary = stage.output.predictedTags.length + (isZh ? ' 预测' : ' pred');
               } else if (cfg.num === 5) {
-                outputSummary = stage.output.enhanced ? 'AI Enhanced' : 'Keyword Engine';
+                outputSummary = stage.output.enhanced ? (isZh ? 'AI增强' : 'AI Enhanced') : (isZh ? '关键词引擎' : 'Keyword Engine');
               }
             }
 
@@ -800,7 +812,10 @@
         var avgConf = Math.round(stages.reduce(function(s, st) { return s + (st.confidence || 0); }, 0) / stageCount);
         var elapsed = profile.pipelineInfo ? profile.pipelineInfo.elapsed : 0;
         if (summaryEl) {
-          summaryEl.textContent = 'Pipeline: ' + stageCount + ' stages, avg confidence ' + avgConf + '%, elapsed ' + elapsed + 'ms';
+          summaryEl.textContent = (isZh ? '流水线: ' : 'Pipeline: ') + stageCount + (isZh ? ' 阶段, 平均置信度 ' : ' stages, avg confidence ') + avgConf + '%, ' + (isZh ? '耗时 ' : 'elapsed ') + elapsed + 'ms';
+        }
+        if (statusEl) {
+          statusEl.textContent = stageCount + (isZh ? ' 阶段流水线' : '-stage pipeline');
         }
       }
 

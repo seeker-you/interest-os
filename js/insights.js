@@ -27,49 +27,49 @@ INTEREST_OS.insights = {
 
     var types = [
       {
-        code: "INTP", name: "逻辑学家", emoji: "🧠",
+        code: "INTP", name: "逻辑学家", nameEn: "Logician", emoji: "🧠",
         descZh: "你是一个被纯粹好奇心驱动的思考者。算法眼中的你沉迷于抽象概念和技术原理，对世界的运作方式有着近乎偏执的探索欲。你可能是那个深夜还在看技术论文的人。",
         descEn: "A pure curiosity-driven thinker. The algorithm sees you as someone obsessed with abstract concepts and technical principles, with an almost compulsive need to understand how things work.",
         match: ai + dev
       },
       {
-        code: "INTJ", name: "建筑师", emoji: "🏗️",
+        code: "INTJ", name: "建筑师", nameEn: "Architect", emoji: "🏗️",
         descZh: "你是算法世界里的战略家。你的兴趣高度集中在技术和商业的交叉点上——你不仅想知道技术如何运作，更想知道如何用它改变世界。你的观看记录暴露了你的野心。",
         descEn: "A strategist in the algorithm's world. Your interests sit at the intersection of tech and business — you want to know how tech works AND how to change the world with it.",
         match: (ai + dev + biz) / 1.5
       },
       {
-        code: "ENTP", name: "辩论家", emoji: "⚡",
+        code: "ENTP", name: "辩论家", nameEn: "Debater", emoji: "⚡",
         descZh: "你是数字世界的探险家。你的兴趣广泛跳跃，从游戏到科技到哲学，算法难以将你归类。你享受在不同领域之间建立意想不到的连接。",
         descEn: "An explorer of the digital world. Your interests jump wildly from gaming to tech to philosophy — the algorithm struggles to categorize you. You enjoy making unexpected connections.",
         match: (game + dev + edu) / 1.5
       },
       {
-        code: "ENFP", name: "竞选者", emoji: "🎨",
+        code: "ENFP", name: "竞选者", nameEn: "Campaigner", emoji: "🎨",
         descZh: "你是算法宇宙中的创意火花。影视、音乐、艺术构成了你的精神世界。你的观看记录像一部五彩斑斓的灵感日记，算法看到了你对美和故事的敏感。",
         descEn: "A creative spark in the algorithm's universe. Film, music, and art form your inner world. Your watch history reads like a colorful diary of inspiration.",
         match: media + music + fashion
       },
       {
-        code: "ISTP", name: "鉴赏家", emoji: "🎮",
+        code: "ISTP", name: "鉴赏家", nameEn: "Virtuoso", emoji: "🎮",
         descZh: "你是算法世界里的实战派。游戏和动手实践占据了你的大部分注意力。你不喜欢空谈理论，更愿意通过实际操作来理解事物。每个Boss都是你的老师。",
         descEn: "A hands-on practitioner in the algorithm's world. Gaming dominates your attention. You prefer learning by doing — every boss fight is a lesson.",
         match: game
       },
       {
-        code: "INFJ", name: "提倡者", emoji: "🔮",
+        code: "INFJ", name: "提倡者", nameEn: "Advocate", emoji: "🔮",
         descZh: "你是算法眼中的深度观察者。你对哲学、心理学和人类处境的兴趣远超常人。你的观看记录透露出一种安静但坚定的探索——你想理解人类本身。",
         descEn: "A deep observer in the algorithm's eyes. Your interest in philosophy, psychology, and the human condition sets you apart. Your history reveals a quiet but determined exploration.",
         match: edu
       },
       {
-        code: "ESTP", name: "企业家", emoji: "💼",
+        code: "ESTP", name: "企业家", nameEn: "Entrepreneur", emoji: "💼",
         descZh: "你是算法眼中的行动派。商业、财经和创业内容占据了你的注意力。你不满足于消费内容，你更想知道如何创造价值。算法看到了一个未来的建造者。",
         descEn: "A doer in the algorithm's eyes. Business, finance, and entrepreneurship dominate your feed. You don't just consume — you want to create value.",
         match: biz + sport
       },
       {
-        code: "ISFP", name: "探险家", emoji: "🌸",
+        code: "ISFP", name: "探险家", nameEn: "Adventurer", emoji: "🌸",
         descZh: "你是算法世界里的生活美学家。美食、旅行、摄影、日常Vlog构成了你的数字足迹。你追求的是体验本身，而不是抽象的分析。",
         descEn: "A lifestyle aesthete in the algorithm's world. Food, travel, photography, and daily vlogs make up your digital footprint. You chase experiences, not abstractions.",
         match: life + fashion + music

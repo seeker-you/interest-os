@@ -51,8 +51,8 @@
       const top = sorted[0];
       observations.push({
         icon: '🎯',
-        label: '最强烈的兴趣信号',
-        detail: `「${top.name}」在 ${top.weight}% 的观看记录中出现或关联，是算法识别到的最强兴趣信号。`,
+        label: (window._i18n?.current === "zh") ? '最强烈的兴趣信号' : 'Strongest Interest Signal',
+        detail: (window._i18n?.current === "zh") ? `「${top.name}」在 ${top.weight}% 的观看记录中出现或关联，是算法识别到的最强兴趣信号。` : `${top.name} appears in ${top.weight}% of your watch history — the strongest interest signal detected.`,
         data: `Top: ${top.name} (${top.weight}%)`
       });
     }
@@ -62,15 +62,15 @@
     if (categories.length <= 2) {
       observations.push({
         icon: '⚠',
-        label: '兴趣集中度提示',
-        detail: `你的兴趣集中在 ${categories.length} 个分类（大多数人 3-5 个），算法认为你是一个深度聚焦型用户。`,
+        label: (window._i18n?.current === "zh") ? '兴趣集中度提示' : 'Interest Concentration',
+        detail: (window._i18n?.current === "zh") ? `你的兴趣集中在 ${categories.length} 个分类（大多数人 3-5 个），算法认为你是一个深度聚焦型用户。` : `Your interests span ${categories.length} categories (most people have 3-5). The algorithm sees you as a deep-focus user.`,
         data: `${categories.length} categories`
       });
     } else {
       observations.push({
         icon: '🌈',
-        label: '兴趣多样性',
-        detail: `你的兴趣覆盖 ${categories.length} 个分类，算法认为你是一个多元探索型用户。`,
+        label: (window._i18n?.current === "zh") ? '兴趣多样性' : 'Interest Diversity',
+        detail: (window._i18n?.current === "zh") ? `你的兴趣覆盖 ${categories.length} 个分类，算法认为你是一个多元探索型用户。` : `Your interests span ${categories.length} categories. The algorithm sees you as a multi-disciplinary explorer.`,
         data: `${categories.length} categories`
       });
     }
@@ -80,15 +80,15 @@
     if (echoIndex > 60) {
       observations.push({
         icon: '🔮',
-        label: '算法预测行为',
-        detail: `基于 ${echoIndex}% 的茧房指数，算法预测你未来 70% 以上的推荐内容将来自当前主导领域。`,
+        label: (window._i18n?.current === "zh") ? '算法预测行为' : 'Algorithm Prediction',
+        detail: (window._i18n?.current === "zh") ? `基于 ${echoIndex}% 的茧房指数，算法预测你未来 70% 以上的推荐内容将来自当前主导领域。` : `With an echo index of ${echoIndex}%, the algorithm predicts 70%+ of future recommendations will come from your dominant domain.`,
         data: `Echo: ${echoIndex}%`
       });
     } else {
       observations.push({
         icon: '🔮',
-        label: '算法预测行为',
-        detail: `算法认为你的信息摄入较为均衡，推荐内容将呈现多元化分布。`,
+        label: (window._i18n?.current === "zh") ? '算法预测行为' : 'Algorithm Prediction',
+        detail: (window._i18n?.current === "zh") ? `算法认为你的信息摄入较为均衡，推荐内容将呈现多元化分布。` : `Your information intake is well-balanced. Recommendations will show diverse distribution.`,
         data: `Echo: ${echoIndex}%`
       });
     }
@@ -102,15 +102,15 @@
     if (variance > 800) {
       observations.push({
         icon: '📈',
-        label: '兴趣分布模式',
-        detail: `你的兴趣权重差异较大（最高 ${maxWeight}% vs 平均 ${Math.round(avgWeight)}%），算法判断你是一个有明显偏好的用户。`,
+        label: (window._i18n?.current === "zh") ? '兴趣分布模式' : 'Interest Distribution',
+        detail: (window._i18n?.current === "zh") ? `你的兴趣权重差异较大（最高 ${maxWeight}% vs 平均 ${Math.round(avgWeight)}%），算法判断你是一个有明显偏好的用户。` : `Your interest weights vary significantly (max ${maxWeight}% vs avg ${Math.round(avgWeight)}%). The algorithm sees you as a user with strong preferences.`,
         data: `High variance`
       });
     } else {
       observations.push({
         icon: '📈',
-        label: '兴趣分布模式',
-        detail: `你的兴趣权重分布较为均匀，算法判断你是一个兴趣广泛且均衡的用户。`,
+        label: (window._i18n?.current === "zh") ? '兴趣分布模式' : 'Interest Distribution',
+        detail: (window._i18n?.current === "zh") ? `你的兴趣权重分布较为均匀，算法判断你是一个兴趣广泛且均衡的用户。` : `Your interest weights are evenly distributed. The algorithm sees you as a broad and balanced user.`,
         data: `Low variance`
       });
     }

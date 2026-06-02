@@ -127,13 +127,13 @@ INTEREST_OS.galaxy = {
     // Planet circles
     this.nodeElements.append('circle')
       .attr('r', d => d.radius)
-      .attr('fill', d => url(#grad-))
+      .attr('fill', d => `url(#grad-${d.id})`)
       .attr('filter', 'url(#starGlow)')
       .attr('opacity', 0.85);
 
     // Labels
     this.nodeElements.append('text')
-      .text(d => d.name)
+      .text(d => INTEREST_OS.utils.translateKeyword(d.name))
       .attr('text-anchor', 'middle')
       .attr('dy', d => d.radius + 16)
       .attr('fill', '#A1A1AA')
@@ -195,7 +195,7 @@ INTEREST_OS.galaxy = {
       .attr('x2', d => d.target.x)
       .attr('y2', d => d.target.y);
 
-    this.nodeElements.attr('transform', d => 	ranslate(,));
+    this.nodeElements.attr('transform', d => `translate(${d.x},${d.y})`);
   },
 
   _highlightNode(node) {
@@ -214,6 +214,14 @@ INTEREST_OS.galaxy = {
         .attr('r', Math.random() * 1.2 + 0.3)
         .attr('fill', 'rgba(255,255,255,' + (Math.random() * 0.3 + 0.1) + ')')
         .attr('opacity', Math.random() * 0.6 + 0.2);
+    }
+  },
+
+  // Update labels when language changes (update in place, no re-render)
+  updateLabels() {
+    if (this.nodeElements) {
+      this.nodeElements.select('text')
+        .text(d => INTEREST_OS.utils.translateKeyword(d.name));
     }
   },
 

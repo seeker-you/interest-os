@@ -14,18 +14,19 @@ INTEREST_OS.editor = {
     if (document.querySelector('.edit-overlay')) return;
     const overlay = document.createElement('div');
     overlay.className = 'edit-overlay';
+    const isZh = (window._i18n?.current === 'zh');
     overlay.innerHTML = `
       <div class="edit-panel glass glass-xl">
-        <h3>✏️ 编辑兴趣标签</h3>
+        <h3>✏️ ${isZh ? '编辑兴趣标签' : 'Edit Tags'}</h3>
         <div class="edit-list"></div>
         <div class="edit-add-row">
-          <input type="text" class="glass-input add-tag-name" placeholder="新标签名称" />
-          <input type="number" class="glass-input add-tag-weight" placeholder="权重" min="1" max="100" style="width:80px" />
-          <button class="btn btn-primary btn-sm add-tag-btn">添加</button>
+          <input type="text" class="glass-input add-tag-name" placeholder="${isZh ? '新标签名称' : 'New tag name'}" />
+          <input type="number" class="glass-input add-tag-weight" placeholder="${isZh ? '权重' : 'Weight'}" min="1" max="100" style="width:80px" />
+          <button class="btn btn-primary btn-sm add-tag-btn">${isZh ? '添加' : 'Add'}</button>
         </div>
         <div class="flex-center gap-2">
-          <button class="btn btn-primary save-btn">保存</button>
-          <button class="btn btn-secondary cancel-btn">取消</button>
+          <button class="btn btn-primary save-btn">${isZh ? '保存' : 'Save'}</button>
+          <button class="btn btn-secondary cancel-btn">${isZh ? '取消' : 'Cancel'}</button>
         </div>
       </div>
     `;
@@ -62,7 +63,7 @@ INTEREST_OS.editor = {
         <span class="edit-row-weight">
           <input type="number" value="${t.weight}" min="0" max="100" data-field="weight" />
         </span>
-        <button class="edit-row-delete" title="删除">✕</button>
+        <button class="edit-row-delete" title="${(window._i18n?.current === 'zh') ? '删除' : 'Delete'}">✕</button>
       </div>
     `).join('');
 
@@ -105,7 +106,7 @@ INTEREST_OS.editor = {
       id: INTEREST_OS.utils.uid(),
       name,
       weight: Math.min(100, Math.max(1, weight)),
-      category: '其他',
+      category: (window._i18n?.current === 'zh') ? '其他' : 'Other',
       color: colors[Math.floor(Math.random() * colors.length)],
       relatedTags: [],
       sourceTitles: [],

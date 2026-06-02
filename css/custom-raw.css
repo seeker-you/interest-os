@@ -355,6 +355,9 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; }
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--accent);
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 .stat-cell .stat-lbl {
   font-family: var(--font-mono);
@@ -537,7 +540,6 @@ textarea.input {
   .nav-brand { font-size: 0.8125rem; }
   .nav-links { gap: 2px; }
   .nav-link { font-size: 0.6875rem; padding: 4px 8px; }
-  #langToggle { font-size: 0.625rem !important; padding: 3px 8px !important; margin-left: 4px !important; }
 
   .hero-section { padding: 40px 0 24px; }
   .hero-title { font-size: clamp(1.5rem, 7vw, 2rem) !important; }
