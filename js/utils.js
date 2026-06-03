@@ -310,9 +310,8 @@ INTEREST_OS.userProfile = {
   },
 
   edit: function() {
-    var body = document.getElementById('userProfileBody');
-    var done = document.getElementById('userProfileDone');
-    if (body) body.style.display = '';
-    if (done) done.style.display = 'none';
+    // Re-show the profile modal
+    var modal = document.getElementById('profileModal');
+    if (modal) modal.style.display = '';
   }
 };

@@ -12,95 +12,53 @@ INTEREST_OS.pipeline = {
     const stages = [];
     const startTime = Date.now();
 
-    // Stage 1: 兴趣分类 — keyword matching + category assignment
-    const stage1 = this._classify(titles);
-    stages.push(stage1);
+    try {
+      // Stage 1: 兴趣分类 — keyword matching + category assignment
+      const stage1 = this._classify(titles);
+      stages.push(stage1);
 
-    // Stage 2: 兴趣权重 — frequency-based weighting + co-occurrence
-    const stage2 = this._weight(stage1, titles);
-    stages.push(stage2);
+      // Stage 2: 兴趣权重 — frequency-based weighting + co-occurrence
+      const stage2 = this._weight(stage1, titles);
+      stages.push(stage2);
 
-    // Stage 3: 人格生成 — data-driven persona (not template)
-    const stage3 = this._generatePersona(stage2, titles);
-    stages.push(stage3);
+      // Stage 3: 人格生成 — data-driven persona (not template)
+      const stage3 = this._generatePersona(stage2, titles);
+      stages.push(stage3);
 
-    // Stage 4: 预测生成 — data-driven predictions
-    const stage4 = this._predict(stage2, stage3);
-    stages.push(stage4);
+      // Stage 4: 预测生成 — data-driven predictions
+      const stage4 = this._predict(stage2, stage3);
+      stages.push(stage4);
 
-    // Stage 5: AI 分析 (optional enhancement)
-    let stage5 = null;
-    if (options.useAI) {
-      stage5 = await this._aiEnhance(titles, stage2.tags, options);
-      stages.push(stage5);
+      // Stage 5: AI 分析 (optional enhancement)
+      let stage5 = null;
+      if (options.useAI) {
+        var rawCategoryWeights = stage2.output.categoryWeights || {};
+        stage5 = await this._aiEnhance(titles, stage2.output.tags || [], rawCategoryWeights, stage3, options);
+        stages.push(stage5);
+      }
+
+      // Compile final profile
+      const profile = this._compile({
+        stages,
+        titles,
+        elapsed: Date.now() - startTime
+      });
+
+      return profile;
+    } catch(err) {
+      console.error('[pipeline] run error at stage ' + stages.length + ':', err);
+      console.error('[pipeline] titles:', typeof titles, Array.isArray(titles) ? 'array[' + titles.length + ']' : 'not array');
+      throw err;
     }
-
-    // Compile final profile
-    const profile = this._compile({
-      stages,
-      titles,
-      elapsed: Date.now() - startTime
-    });
-
-    return profile;
   },
 
   // ─── Stage 1: 兴趣分类 (Interest Classification) ───
+  // Uses the 18-category classifier engine
   _classify(titles) {
-    const keywordMap = INTEREST_OS.keywords;
-    const matchCounts = {};
-    const titleMatches = {};  // category + keyword → titles[]
-    const perCategoryCounts = {};
-
-    // Initialize category counts
-    Object.keys(keywordMap).forEach(cat => {
-      perCategoryCounts[cat] = { total: 0, keywords: {}, titleCount: 0 };
-    });
-
-    // Match each keyword against each title
-    for (const [category, keywords] of Object.entries(keywordMap)) {
-      for (const kw of keywords) {
-        const tagId = category + '::' + kw;
-        let count = 0;
-        const matchedTitles = [];
-
-        for (const title of titles) {
-          if (title.toLowerCase().includes(kw.toLowerCase())) {
-            count++;
-            matchedTitles.push(title);
-          }
-        }
-
-        if (count > 0) {
-          matchCounts[tagId] = { count, category, keyword: kw, titles: matchedTitles.slice(0, 5) };
-          perCategoryCounts[category].total += count;
-          perCategoryCounts[category].keywords[kw] = count;
-          perCategoryCounts[category].titleCount++;
-        }
-      }
-    }
-
-    // Category analysis
-    const totalMatched = Object.values(matchCounts).reduce((s, m) => s + m.count, 0) || 1;
-    const categories = Object.entries(perCategoryCounts)
-      .map(([name, data]) => ({
-        name,
-        matchCount: data.total,
-        keywordCount: Object.keys(data.keywords).length,
-        titleMatchRatio: Math.round(data.total / titles.length * 100),
-        share: Math.round(data.total / totalMatched * 100),
-        topKeywords: Object.entries(data.keywords)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([kw, cnt]) => ({ keyword: kw, count: cnt }))
-      }))
-      .filter(c => c.matchCount > 0)
-      .sort((a, b) => b.matchCount - a.matchCount);
-
-    const matchedCategories = categories.map(c => c.name);
-    const allCategories = Object.keys(keywordMap);
-    const missingCategories = allCategories.filter(c => !matchedCategories.includes(c));
-    const coverage = Math.round(matchedCategories.length / allCategories.length * 100);
+    const classifier = INTEREST_OS.classifier;
+    const result = classifier.classify(titles);
+    const allCatNames = Object.keys(classifier.categories);
+    const matchedNames = result.results.map(function(r) { return r.name; });
 
     return {
       stage: 1,
@@ -109,94 +67,86 @@ INTEREST_OS.pipeline = {
       icon: '🏷️',
       input: { titleCount: titles.length },
       output: {
-        matchedKeywords: Object.keys(matchCounts).length,
-        matchedCategories,
-        categories,
-        missingCategories,
-        coverage,
-        rawMatches: matchCounts
+        matchedKeywords: result.totalMatches,
+        matchedCategories: matchedNames,
+        categories: result.results,
+        missingCategories: allCatNames.filter(function(c) { return matchedNames.indexOf(c) === -1; }),
+        coverage: Math.round(matchedNames.length / allCatNames.length * 100),
+        rawMatches: {}
       },
+      classifierResult: result,  // pass full result to stage 2
       insights: [
-        coverage > 60
-          ? (window._i18n?.current === "zh") ? `覆盖 ${matchedCategories.length}/${allCategories.length} 个兴趣分类，兴趣范围广泛` : `${matchedCategories.length}/${allCategories.length} categories covered — broad interest range`
-          : (window._i18n?.current === "zh") ? `集中在 ${matchedCategories.length}/${allCategories.length} 个分类，属深度聚焦型` : `${matchedCategories.length}/${allCategories.length} categories — deep focus type`,
-        categories.length > 0
-          ? (window._i18n?.current === "zh") ? `最强分类「${categories[0].name}」匹配 ${categories[0].matchCount} 次` : `Top category: ${INTEREST_OS.utils.getCategoryName(categories[0].name)} (${categories[0].matchCount} matches)`
+        result.matchRate > 50
+          ? (window._i18n?.current === "zh") ? `覆盖 ${matchedNames.length}/${allCatNames.length} 个兴趣分类，匹配率 ${result.matchRate}%` : `${matchedNames.length}/${allCatNames.length} categories covered, ${result.matchRate}% match rate`
+          : (window._i18n?.current === "zh") ? `匹配 ${matchedNames.length}/${allCatNames.length} 个分类（${result.matchRate}%），可尝试提供更多数据` : `${matchedNames.length}/${allCatNames.length} categories matched (${result.matchRate}%), try adding more data`,
+        result.results.length > 0
+          ? (window._i18n?.current === "zh") ? `最高分类「${result.results[0].name}」占比 ${result.results[0].weight}%` : `Top category: ${result.results[0].nameEn || result.results[0].name} (${result.results[0].weight}%)`
           : (window._i18n?.current === "zh") ? '未匹配到任何分类' : 'No categories matched',
-        missingCategories.length > 0
-          ? (window._i18n?.current === "zh") ? `未涉及领域: ${missingCategories.slice(0, 3).join('、')}${missingCategories.length > 3 ? ' 等' : ''}` : `Untouched: ${missingCategories.slice(0, 3).join(', ')}${missingCategories.length > 3 ? '...' : ''}`
-          : (window._i18n?.current === "zh") ? '覆盖所有兴趣分类' : 'All categories covered'
+        (window._i18n?.current === "zh") ? `共匹配 ${result.totalMatches} 个关键词，涉及 ${result.matchedTitleCount}/${result.totalTitles} 条记录` : `${result.totalMatches} keyword matches across ${result.matchedTitleCount}/${result.totalTitles} records`
       ],
-      confidence: Math.min(100, Math.round(titles.length / 10 * matchedCategories.length))
+      confidence: Math.min(100, Math.round(titles.length / 10 * matchedNames.length))
     };
   },
 
   // ─── Stage 2: 兴趣权重 (Interest Weighting) ───
   _weight(stage1, titles) {
-    const matchCounts = stage1.output.rawMatches;
-    const merged = this._mergeSimilar(matchCounts, titles);
-    const totalTitles = titles.length || 1;
-    const allCategories = stage1.output.categories.map(c => c.name);
-    const catColorMap = {};
+    const classifierResult = stage1.classifierResult;
+    const isZh = window._i18n?.current === "zh";
 
-    // Assign consistent colors per category
-    const palette = ['#00E5FF','#00FF88','#FFB800','#FF4D6A','#3B82F6','#A855F7','#EC4899','#14B8A6','#F97316','#84CC16'];
-    allCategories.forEach((cat, i) => { catColorMap[cat] = palette[i % palette.length]; });
-
-    let tags = Object.values(merged)
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 15)
-      .map((m, i) => {
-        const weight = Math.round(m.count / totalTitles * 100);
-        return {
+    // Create tags from classifier category weights
+    const palette = ['#00E5FF','#00FF88','#FFB800','#FF4D6A','#3B82F6','#A855F7','#EC4899','#14B8A6','#F97316','#84CC16','#6366f1','#22c55e','#eab308','#f43f5e','#d946ef','#06b6d4','#f97316','#10b981'];
+    var tags = [];
+    (classifierResult.results || []).forEach(function(r, i) {
+      if (r.weight > 0) {
+        tags.push({
           id: INTEREST_OS.utils.uid(),
-          name: m.name,
-          weight,
-          category: m.category,
-          color: catColorMap[m.category] || palette[i % palette.length],
+          name: r.nameEn || r.name,
+          weight: r.weight,
+          category: r.personaCategory,
+          color: palette[i % palette.length],
           relatedTags: [],
-          sourceTitles: m.titles.slice(0, 5),
-          matchCount: m.count,
-          totalTitles: totalTitles,
-          frequency: (m.count / totalTitles * 100).toFixed(1) + '%',
-          confidence: m.count >= 5 ? 'high' : m.count >= 2 ? 'medium' : 'low',
-          isUserEdited: false
-        };
-      });
-
-    // Calculate co-occurrence relationships
-    tags = this._calculateRelations(tags, titles, totalTitles);
-
-    // Normalize weights to sum to ~100
-    tags = INTEREST_OS.utils.normalizeWeights(tags);
-
-    // Category-level aggregation
-    const catWeights = {};
-    tags.forEach(t => {
-      catWeights[t.category] = (catWeights[t.category] || 0) + t.weight;
+          sourceTitles: [],
+          matchCount: r.matchCount,
+          totalTitles: classifierResult.totalTitles || 1,
+          frequency: (classifierResult.totalTitles > 0 ? Math.round(r.matchCount / classifierResult.totalTitles * 100) : 0) + '%',
+          confidence: r.matchCount >= 5 ? 'high' : r.matchCount >= 2 ? 'medium' : 'low',
+          isUserEdited: false,
+          _originalCategory: r.name
+        });
+      }
     });
 
     // Calculate distribution metrics
-    const weights = tags.map(t => t.weight);
-    const avgWeight = weights.reduce((a, b) => a + b, 0) / weights.length || 1;
-    const maxWeight = Math.max(...weights);
-    const minWeight = Math.min(...weights);
-    const variance = weights.reduce((sum, w) => sum + Math.pow(w - avgWeight, 2), 0) / weights.length;
+    const weights = tags.map(function(t) { return t.weight; });
+    const avgWeight = weights.length > 0 ? weights.reduce(function(a, b) { return a + b; }, 0) / weights.length : 0;
+    const maxWeight = weights.length > 0 ? Math.max.apply(null, weights) : 0;
+    const minWeight = weights.length > 0 ? Math.min.apply(null, weights) : 0;
+    const variance = weights.length > 0
+      ? weights.reduce(function(sum, w) { return sum + Math.pow(w - avgWeight, 2); }, 0) / weights.length
+      : 0;
     const maxCatWeight = this._maxCategoryWeight(tags);
 
     // Diversity & echo chamber
-    const totalCategories = Object.keys(INTEREST_OS.keywords).length;
-    const uniqueCategories = [...new Set(tags.map(t => t.category))];
-    const diversityScore = Math.round(uniqueCategories.length / Math.min(totalCategories, 10) * 100);
+    const uniqueCategories = [...new Set(tags.map(function(t) { return t.category; }))];
+    const personaCatCount = Object.keys(INTEREST_OS.classifier.personaCategoryMap).length;
+    const uniquePersonaCats = [...new Set(tags.map(function(t) { return t._originalCategory; }))];
+    const diversityScore = Math.round(uniquePersonaCats.length / Math.min(Object.keys(INTEREST_OS.classifier.categories).length, 12) * 100);
     const echoChamberIndex = Math.min(100, Math.round(maxCatWeight * 1.5));
 
-    // Per-tag explanations
-    const tagExplanations = tags.map(t => {
-      const matchedTitles = t.matchCount || 1;
+    // Category-level aggregation (by persona category)
+    const catWeights = {};
+    tags.forEach(function(t) {
+      catWeights[t.category] = (catWeights[t.category] || 0) + t.weight;
+    });
+
+    // Per-tag explanations (category-based, not keyword-based)
+    const tagExplanations = tags.map(function(t) {
       return {
         tag: t.name,
         weight: t.weight,
-        reason: (window._i18n?.current === "zh") ? `在 ${totalTitles} 条记录中出现 ${matchedTitles} 次 (${(matchedTitles/totalTitles*100).toFixed(0)}%)` : `Appeared ${matchedTitles} times out of ${totalTitles} (${(matchedTitles/totalTitles*100).toFixed(0)}%)`,
+        reason: isZh
+          ? ('在 ' + classifierResult.totalTitles + ' 条记录中，『' + (t._originalCategory || t.category) + '』类匹配 ' + t.matchCount + ' 次')
+          : ('Category "' + (t._originalCategory || t.category) + '" matched ' + t.matchCount + ' times across ' + classifierResult.totalTitles + ' records'),
         confidence: t.confidence,
         category: t.category
       };
@@ -205,34 +155,44 @@ INTEREST_OS.pipeline = {
     return {
       stage: 2,
       name: 'interest_weight',
-      label: (window._i18n?.current === "zh") ? '兴趣权重' : 'Weights',
+      label: isZh ? '兴趣权重' : 'Weights',
       icon: '📊',
-      input: { categories: stage1.output.matchedCategories, matchCount: stage1.output.matchedKeywords },
+      input: {
+        categories: classifierResult.results.map(function(r) { return r.name; }),
+        matchCount: classifierResult.totalMatches
+      },
       output: {
-        tags,
-        tagExplanations,
+        tags: tags,
+        tagExplanations: tagExplanations,
+        categoryWeights: classifierResult.categoryWeights, // { "美食": 68, "游戏": 12, ... }
         analysis: {
           diversityScore: Math.min(100, diversityScore),
           echoChamberIndex: Math.min(100, echoChamberIndex),
-          concentrationLevel: echoChamberIndex < 30 ? ((window._i18n?.current === "zh") ? '低' : 'Low') : echoChamberIndex < 55 ? ((window._i18n?.current === "zh") ? '中等' : 'Medium') : echoChamberIndex < 80 ? ((window._i18n?.current === "zh") ? '较高' : 'High') : ((window._i18n?.current === "zh") ? '极高' : 'Extreme'),
+          concentrationLevel: echoChamberIndex < 30 ? (isZh ? '低' : 'Low') : echoChamberIndex < 55 ? (isZh ? '中等' : 'Medium') : echoChamberIndex < 80 ? (isZh ? '较高' : 'High') : (isZh ? '极高' : 'Extreme'),
           personaType: ''
         },
         distribution: {
           weightCount: tags.length,
           avgWeight: Math.round(avgWeight),
-          maxWeight,
-          minWeight,
+          maxWeight: maxWeight,
+          minWeight: minWeight,
           variance: Math.round(variance),
           spreadType: variance > 800 ? 'polarized' : variance > 400 ? 'moderate' : 'balanced',
-          dominantCategory: Object.entries(catWeights).sort((a, b) => b[1] - a[1])[0]?.[0] || ((window._i18n?.current === "zh") ? '未知' : 'Unknown')
+          dominantCategory: Object.keys(catWeights).length > 0
+            ? Object.entries(catWeights).sort(function(a, b) { return b[1] - a[1]; })[0][0]
+            : (isZh ? '未知' : 'Unknown')
         }
       },
       insights: [
-        (window._i18n?.current === "zh") ? `识别出 ${tags.length} 个兴趣标签，其中最高权重「${tags[0]?.name}」(${tags[0]?.weight}%)` : `${tags.length} tags identified, top weight: ${tags[0]?.name} (${tags[0]?.weight}%)`,
-        (window._i18n?.current === "zh") ? `兴趣分布 ${variance > 800 ? '集中度较高，有明显主导兴趣' : variance > 400 ? '较为均衡' : '非常分散多元'}` : `Distribution: ${variance > 800 ? 'highly concentrated with dominant interest' : variance > 400 ? 'moderately balanced' : 'widely diversified'}`,
-        uniqueCategories.length <= 2
-          ? (window._i18n?.current === "zh") ? `仅覆盖 ${uniqueCategories.length} 个分类，建议拓宽内容范围` : `Only ${uniqueCategories.length} categories — consider broadening`
-          : (window._i18n?.current === "zh") ? `覆盖 ${uniqueCategories.length} 个兴趣分类，多样性良好` : `${uniqueCategories.length} categories — good diversity`
+        isZh
+          ? '识别出 ' + tags.length + ' 个兴趣分类，最高占比「' + (tags[0]?.name || '') + '」(' + (tags[0]?.weight || 0) + '%)'
+          : (tags.length + ' categories identified, top: "' + (tags[0]?.name || '') + '" (' + (tags[0]?.weight || 0) + '%)'),
+        isZh
+          ? '兴趣分布 ' + (variance > 800 ? '集中度较高，有明显主导兴趣' : variance > 400 ? '较为均衡' : '非常分散多元')
+          : 'Distribution: ' + (variance > 800 ? 'highly concentrated' : variance > 400 ? 'moderately balanced' : 'widely diversified'),
+        uniquePersonaCats.length <= 2
+          ? (isZh ? '仅覆盖 ' + uniquePersonaCats.length + ' 个分类，建议拓宽内容范围' : 'Only ' + uniquePersonaCats.length + ' categories — consider broadening')
+          : (isZh ? '覆盖 ' + uniquePersonaCats.length + ' 个兴趣分类，多样性良好' : uniquePersonaCats.length + ' categories — good diversity')
       ],
       confidence: Math.min(100, Math.round(titles.length / 5 + tags.length * 3))
     };
@@ -474,52 +434,87 @@ INTEREST_OS.pipeline = {
     };
   },
 
-  // ─── Stage 5: AI Enhancement (optional) ───
-  async _aiEnhance(titles, tags, options) {
+  // ─── Stage 5: AI Explanation (only explains keyword results, never creates them) ───
+  async _aiEnhance(titles, tags, rawCategoryWeights, stage3, options) {
+    var tagCount = (tags && tags.length) || 0;
     if (!INTEREST_OS.aiAnalyzer) {
       return {
         stage: 5,
-        name: 'ai_analysis',
-        label: (window._i18n?.current === "zh") ? 'AI 分析' : 'AI Analysis',
+        name: 'ai_summary',
+        label: (window._i18n?.current === "zh") ? 'AI 解释' : 'AI Summary',
         icon: '🧠',
-        input: { titleCount: titles.length, tagCount: tags.length },
+        input: { titleCount: titles.length, tagCount: tagCount },
         output: { enhanced: false, reason: 'AI analyzer not available' },
-        insights: [(window._i18n?.current === "zh") ? 'AI 分析模块不可用' : 'AI analysis module unavailable'],
+        insights: [(window._i18n?.current === "zh") ? 'AI 解释模块不可用' : 'AI summary module unavailable'],
         confidence: 0
       };
     }
 
     const lang = options.lang || 'zh';
+
+    // Build persona-category aggregated weights
+    var personaCatWeights = {};
+    (tags || []).forEach(function(t) {
+      personaCatWeights[t.category] = (personaCatWeights[t.category] || 0) + (t.weight || 0);
+    });
+
+    // Keyword engine results (AI will ONLY explain these, not modify)
+    var keywordPersona = { name: '', tagline: '' };
+    if (stage3 && stage3.output) {
+      keywordPersona.name = stage3.output.name || '';
+      keywordPersona.tagline = stage3.output.tagline || '';
+    }
+
+    // Format the 18-category breakdown for AI
+    var classifier = INTEREST_OS.classifier;
+    var categoryBreakdown = Object.keys(rawCategoryWeights)
+      .filter(function(c) { return rawCategoryWeights[c] > 0; })
+      .sort(function(a, b) { return rawCategoryWeights[b] - rawCategoryWeights[a]; })
+      .map(function(c) {
+        var nameEn = (classifier && classifier.categoryNamesEn && classifier.categoryNamesEn[c]) || c;
+        return '  "' + (lang === 'zh' ? c : nameEn) + '": ' + rawCategoryWeights[c] + '%';
+      }).join('\n');
+
     try {
-      const aiResult = await INTEREST_OS.aiAnalyzer.analyze(titles, { lang });
+      const aiResult = await INTEREST_OS.aiAnalyzer.analyze(titles, {
+        lang: lang,
+        keywordTags: tags || [],
+        keywordCategories: personaCatWeights,
+        keywordPersona: keywordPersona,
+        categoryBreakdown: categoryBreakdown,
+        keywordAnalysis: {
+          diversityScore: tags.length > 0 ? Math.round([...new Set(tags.map(t => t.category))].length / 10 * 100) : 0,
+          echoChamberIndex: 50
+        }
+      });
       const isAI = aiResult.meta?.source === 'ai-analyzed';
 
       return {
         stage: 5,
         name: 'ai_analysis',
-        label: (window._i18n?.current === "zh") ? 'AI 分析' : 'AI Analysis',
+        label: (window._i18n?.current === "zh") ? 'AI 解释' : 'AI Summary',
         icon: '🧠',
-        input: { titleCount: titles.length, tagCount: tags.length },
+        input: { titleCount: titles.length, tagCount: tagCount },
         output: {
           enhanced: isAI,
-          aiTags: isAI ? aiResult.tags?.length || 0 : 0,
+          aiTags: tagCount,
           summary: aiResult.summary || '',
-          source: aiResult.meta?.source || 'keyword'
+          source: 'ai-explained'
         },
         insights: isAI
-          ? [(window._i18n?.current === "zh") ? 'AI 深度分析完成，标签提取更精准' : 'AI deep analysis complete — tags extracted with higher precision', aiResult.summary ? `AI 总结: ${aiResult.summary}` : undefined].filter(Boolean)
-          : [(window._i18n?.current === "zh") ? 'AI 分析不可用，使用关键词引擎结果' : 'AI analysis unavailable — using keyword engine results'],
-        confidence: isAI ? 90 : 50
+          ? [aiResult.summary ? (window._i18n?.current === "zh") ? 'AI 解读: ' + aiResult.summary : 'AI insight: ' + aiResult.summary : '', (window._i18n?.current === "zh") ? 'AI 解释基于关键词引擎的统计结果，不改变原始分析。' : 'AI explains keyword engine results, does not override them.'].filter(Boolean)
+          : [(window._i18n?.current === "zh") ? 'AI 解释不可用，使用关键词引擎结果' : 'AI explanation unavailable — using keyword engine results'],
+        confidence: isAI ? 80 : 50
       };
     } catch (e) {
       return {
         stage: 5,
         name: 'ai_analysis',
-        label: (window._i18n?.current === "zh") ? 'AI 分析' : 'AI Analysis',
+        label: (window._i18n?.current === "zh") ? 'AI 解释' : 'AI Summary',
         icon: '🧠',
-        input: { titleCount: titles.length, tagCount: tags.length },
+        input: { titleCount: titles.length, tagCount: tagCount },
         output: { enhanced: false, error: e.message },
-        insights: [(window._i18n?.current === "zh") ? 'AI 分析失败，使用关键词引擎结果' : 'AI analysis failed — using keyword engine results'],
+        insights: [(window._i18n?.current === "zh") ? 'AI 解释失败，使用关键词引擎结果' : 'AI explanation failed — using keyword engine results'],
         confidence: 50
       };
     }
@@ -539,7 +534,7 @@ INTEREST_OS.pipeline = {
 
     return {
       meta: {
-        source: stage5?.output?.enhanced ? 'ai-analyzed' : 'analyzed',
+        source: stage5?.output?.source || 'analyzed',
         recordCount: titles.length || 0,
         dateRange: { start: '', end: '' },
         generatedAt: new Date().toISOString()
@@ -590,15 +585,36 @@ INTEREST_OS.pipeline = {
   },
 
   // ─── Persona variant based on actual data ───
+  // Rules 5-6: If food or travel is the top raw category, generate corresponding variant
   _personaVariant(basePersona, tags, sortedCats) {
     const dominantCat = sortedCats[0]?.[0] || '';
+    const isZh = window._i18n?.current === "zh";
+
+    // Check raw 18-category dominance (via _originalCategory on tags)
+    var rawCatWeights = {};
+    (tags || []).forEach(function(t) {
+      var orig = t._originalCategory || '';
+      if (orig) rawCatWeights[orig] = (rawCatWeights[orig] || 0) + (t.weight || 0);
+    });
+    var sortedRaw = Object.entries(rawCatWeights).sort(function(a, b) { return b[1] - a[1]; });
+    var topRawCat = sortedRaw[0]?.[0] || '';
+
+    // Rule 5: 如果美食占比最高，优先使用美食人格
+    if (topRawCat === '美食') {
+      return isZh ? '美食探索家' : 'Food Explorer';
+    }
+    // Rule 6: 如果旅游占比最高，优先使用旅游人格
+    if (topRawCat === '旅游') {
+      return isZh ? '旅行家' : 'Traveler';
+    }
+
     const variantMap = {
-      cyber_explorer: dominantCat.includes('科技') ? ((window._i18n?.current === "zh") ? '技术深耕者' : 'Tech Deep Diver') : dominantCat.includes('编程') ? ((window._i18n?.current === "zh") ? '代码艺术家' : 'Code Artist') : ((window._i18n?.current === "zh") ? '数字游民' : 'Digital Nomad'),
-      light_chaser: dominantCat.includes('影视') ? ((window._i18n?.current === "zh") ? '银幕旅人' : 'Screen Traveler') : ((window._i18n?.current === "zh") ? '动漫鉴赏家' : 'Anime Connoisseur'),
-      knowledge_nomad: dominantCat.includes('科技') ? ((window._i18n?.current === "zh") ? '科技求知者' : 'Tech Seeker') : ((window._i18n?.current === "zh") ? '人文探索者' : 'Humanities Explorer'),
-      game_master: dominantCat.includes('游戏') ? ((window._i18n?.current === "zh") ? '硬核玩家' : 'Hardcore Gamer') : ((window._i18n?.current === "zh") ? '游戏设计师' : 'Game Designer'),
-      trend_hunter: dominantCat.includes('时尚') ? ((window._i18n?.current === "zh") ? '潮流引领者' : 'Trend Leader') : ((window._i18n?.current === "zh") ? '娱乐观察家' : 'Entertainment Watcher'),
-      deep_diver: (window._i18n?.current === "zh") ? '专注深耕者' : 'Deep Diver'
+      cyber_explorer: dominantCat.includes('科技') ? (isZh ? '技术深耕者' : 'Tech Deep Diver') : dominantCat.includes('编程') ? (isZh ? '代码艺术家' : 'Code Artist') : (isZh ? '数字游民' : 'Digital Nomad'),
+      light_chaser: dominantCat.includes('影视') ? (isZh ? '银幕旅人' : 'Screen Traveler') : (isZh ? '动漫鉴赏家' : 'Anime Connoisseur'),
+      knowledge_nomad: dominantCat.includes('科技') ? (isZh ? '科技求知者' : 'Tech Seeker') : (isZh ? '人文探索者' : 'Humanities Explorer'),
+      game_master: dominantCat.includes('游戏') ? (isZh ? '硬核玩家' : 'Hardcore Gamer') : (isZh ? '游戏设计师' : 'Game Designer'),
+      trend_hunter: dominantCat.includes('时尚') ? (isZh ? '潮流引领者' : 'Trend Leader') : (isZh ? '娱乐观察家' : 'Entertainment Watcher'),
+      deep_diver: isZh ? '专注深耕者' : 'Deep Diver'
     };
     return variantMap[basePersona.id] || basePersona.name;
   },
