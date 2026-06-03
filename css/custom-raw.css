@@ -504,6 +504,49 @@ textarea.input {
 }
 .edit-row-del:hover { color: var(--accent-3); }
 
+/* ---- Ranking System ---- */
+.ranking-section { display: flex; flex-direction: column; gap: 16px; }
+.ranking-summary { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--bg-elevated); border: 1px solid var(--border); }
+.ranking-tier-badge { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 72px; height: 72px; border: 2px solid; border-radius: 50%; flex-shrink: 0; }
+.ranking-tier-letter { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 700; line-height: 1; }
+.ranking-tier-label { font-family: var(--font-mono); font-size: 0.5rem; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+.ranking-summary-text { display: flex; flex-direction: column; gap: 4px; }
+.ranking-diversity { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg); border: 1px solid var(--border); }
+.ranking-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ranking-cat-list { display: flex; flex-direction: column; gap: 6px; }
+.ranking-cat-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: var(--bg); border: 1px solid transparent; }
+.ranking-cat-row:hover { border-color: var(--border); }
+.ranking-cat-info { display: flex; flex-direction: column; min-width: 120px; gap: 1px; }
+.ranking-cat-name { font-size: 0.6875rem; color: var(--text); }
+.ranking-cat-weight { font-size: 0.5625rem; color: var(--text-muted); }
+.ranking-cat-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.ranking-cat-bar { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.ranking-cat-tier { font-size: 0.8125rem; font-weight: 700; width: 18px; text-align: center; }
+.ranking-cat-pct { font-size: 0.5625rem; width: 36px; text-align: right; }
+
+/* ---- Similar Users ---- */
+.similar-users-section { display: flex; flex-direction: column; gap: 10px; }
+.similar-user-card { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border); animation: fade-in 0.3s ease forwards; opacity: 0; }
+.similar-user-card:hover { border-color: var(--border-active); }
+.similar-user-header { display: flex; align-items: center; gap: 10px; }
+.similar-user-avatar { font-size: 1.5rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--bg-elevated); border: 1px solid var(--border); flex-shrink: 0; }
+.similar-user-info { display: flex; flex-direction: column; flex: 1; gap: 2px; }
+.similar-user-name { font-size: 0.8125rem; font-weight: 600; color: var(--text); }
+.similar-user-persona { font-size: 0.625rem; color: var(--text-dim); }
+.similar-user-match { display: flex; flex-direction: column; align-items: center; }
+.similar-user-desc { padding: 4px 0; }
+.similar-user-shared { padding-top: 4px; border-top: 1px solid var(--border); }
+
+/* ---- Timeline ---- */
+.timeline-section { display: flex; flex-direction: column; gap: 12px; }
+.timeline-chart-wrap { width: 100%; height: 220px; padding: 8px; background: var(--bg); border: 1px solid var(--border); }
+.timeline-periods { display: flex; gap: 8px; flex-wrap: wrap; }
+.timeline-period { flex: 1; min-width: 140px; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.timeline-period-header { display: flex; justify-content: space-between; align-items: center; }
+.timeline-period-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.timeline-tag { font-family: var(--font-mono); font-size: 0.5625rem; padding: 2px 6px; border: 1px solid transparent; background: rgba(255,255,255,0.03); }
+.timeline-trend { font-size: 0.6875rem; display: flex; gap: 16px; flex-wrap: wrap; padding: 8px 12px; background: var(--bg); border: 1px solid var(--border); }
+
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }

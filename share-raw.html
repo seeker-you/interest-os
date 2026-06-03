@@ -123,7 +123,7 @@
 
       document.getElementById('displayPersona').textContent = persona.name;
       var mbti = INTEREST_OS.insights.getMBTI(profile.tags);
-      document.getElementById('mbtiBadge').textContent = mbti.code + ' ' + mbti.emoji + ' ' + mbti.name;
+      document.getElementById('mbtiBadge').textContent = mbti.code + ' ' + mbti.emoji + ' ' + (mbti.nameEn || mbti.name);
 
       var mc = document.getElementById('miniCanvas');
       if (mc) {
