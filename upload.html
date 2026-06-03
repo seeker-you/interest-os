@@ -34,7 +34,37 @@
   <main class="container" style="max-width:720px">
     <div class="hero-label">// import_watch_history</div>
     <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:8px">Upload Your Data</h2>
-    <p class="text-dim mono" style="font-size:0.8125rem;margin-bottom:32px">Any platform: YouTube, Bilibili, TikTok, Douyin. Drop a file or paste titles.</p>
+    <p class="text-dim mono" style="font-size:0.8125rem;margin-bottom:24px">Any platform: YouTube, Bilibili, TikTok, Douyin. Drop a file or paste titles.</p>
+
+    <!-- ===== USER PROFILE SETUP ===== -->
+    <div class="user-profile-card" id="userProfileCard">
+      <div class="user-profile-header">
+        <div class="user-profile-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Your Profile <span style="font-weight:400;color:var(--text-muted);font-size:0.6875rem">(optional)</span>
+        </div>
+        <div id="userProfileDone" class="user-profile-done" style="display:none" onclick="INTEREST_OS.userProfile.edit()">
+          <span class="user-profile-done-avatar" id="doneAvatar">🧑‍💻</span>
+          <span class="user-profile-done-name" id="doneName">User</span>
+          <span class="user-profile-done-edit">[edit]</span>
+        </div>
+      </div>
+      <div class="user-profile-body" id="userProfileBody">
+        <div class="user-profile-row">
+          <span class="user-profile-label">Username</span>
+          <input type="text" class="user-profile-input" id="usernameInput" placeholder="e.g. Alex Chen" maxlength="20" autocomplete="off">
+        </div>
+        <div class="user-profile-row">
+          <span class="user-profile-label">Avatar</span>
+          <div class="user-profile-avatars" id="avatarPicker"></div>
+        </div>
+        <div class="user-profile-actions">
+          <button class="btn btn-primary btn-sm" id="saveProfileBtn">Save Profile</button>
+          <button class="user-profile-skip" id="skipProfileBtn">Skip — I'll stay anonymous</button>
+          <span class="user-profile-saved" id="profileSavedMsg" style="display:none">✓ Saved</span>
+        </div>
+      </div>
+    </div>
 
     <!-- ===== DEMO BANNER ===== -->
     <div class="demo-banner" id="demoBanner">
@@ -651,6 +681,71 @@
       document.getElementById('guideContent').innerHTML = guideData[this.dataset.platform];
     });
   });
+
+  // ===== User Profile Setup =====
+  (function() {
+    var avatars = INTEREST_OS.userProfile.AVATARS;
+    var picker = document.getElementById('avatarPicker');
+    if (!picker) return;
+    var selectedAvatar = avatars[0];
+    var usernameInput = document.getElementById('usernameInput');
+    var body = document.getElementById('userProfileBody');
+    var done = document.getElementById('userProfileDone');
+    var savedMsg = document.getElementById('profileSavedMsg');
+
+    // Populate avatar picker
+    avatars.forEach(function(a) {
+      var el = document.createElement('div');
+      el.className = 'user-profile-avatar-opt' + (a === avatars[0] ? ' selected' : '');
+      el.textContent = a;
+      el.dataset.avatar = a;
+      el.onclick = function() {
+        picker.querySelectorAll('.user-profile-avatar-opt').forEach(function(e) { e.classList.remove('selected'); });
+        el.classList.add('selected');
+        selectedAvatar = a;
+      };
+      picker.appendChild(el);
+    });
+
+    function loadProfile() {
+      var p = INTEREST_OS.userProfile.load();
+      if (p) {
+        usernameInput.value = p.username || '';
+        selectedAvatar = p.avatar || avatars[0];
+        picker.querySelectorAll('.user-profile-avatar-opt').forEach(function(el) {
+          el.classList.toggle('selected', el.dataset.avatar === selectedAvatar);
+        });
+        if (p.skipped) {
+          body.style.display = 'none';
+          done.style.display = 'none';
+        } else {
+          body.style.display = 'none';
+          done.style.display = '';
+          document.getElementById('doneAvatar').textContent = selectedAvatar;
+          document.getElementById('doneName').textContent = p.username || 'Anonymous';
+        }
+      }
+    }
+
+    document.getElementById('saveProfileBtn').addEventListener('click', function() {
+      var name = usernameInput.value.trim() || 'Anonymous';
+      INTEREST_OS.userProfile.save({ username: name, avatar: selectedAvatar, skipped: false });
+      body.style.display = 'none';
+      done.style.display = '';
+      document.getElementById('doneAvatar').textContent = selectedAvatar;
+      document.getElementById('doneName').textContent = name;
+      savedMsg.style.display = '';
+      setTimeout(function() { savedMsg.style.display = 'none'; }, 2000);
+    });
+
+    document.getElementById('skipProfileBtn').addEventListener('click', function() {
+      INTEREST_OS.userProfile.save({ username: 'Anonymous', avatar: '🧑‍💻', skipped: true });
+      body.style.display = 'none';
+      done.style.display = 'none';
+    });
+
+    loadProfile();
+  })();
 })();
   </script>
 </body>

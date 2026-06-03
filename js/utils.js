@@ -288,3 +288,31 @@ INTEREST_OS.utils = {
     return kw;
   }
 };
+
+// User Profile Manager (used across all pages)
+INTEREST_OS.userProfile = {
+  USER_KEY: 'interest_os_user',
+  AVATARS: ['🧑‍💻', '👨‍💻', '👩‍💻', '🎮', '🎨', '🚀', '🧠', '🎧', '📸', '🌌', '⚡', '🦊'],
+
+  load: function() {
+    try { var raw = localStorage.getItem(this.USER_KEY); return raw ? JSON.parse(raw) : null; }
+    catch(e) { return null; }
+  },
+
+  save: function(data) {
+    try { localStorage.setItem(this.USER_KEY, JSON.stringify(data)); return true; }
+    catch(e) { return false; }
+  },
+
+  get: function() {
+    var p = this.load();
+    return p || { username: 'Anonymous', avatar: '🧑‍💻' };
+  },
+
+  edit: function() {
+    var body = document.getElementById('userProfileBody');
+    var done = document.getElementById('userProfileDone');
+    if (body) body.style.display = '';
+    if (done) done.style.display = 'none';
+  }
+};

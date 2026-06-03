@@ -488,9 +488,18 @@ INTEREST_OS.social = {
     const isZh = window._i18n?.current === 'zh';
     const catNames = INTEREST_OS.utils.categoryNames;
 
-    // Overall tier badge
+    // Load user profile
+    const userProfile = (INTEREST_OS.userProfile && INTEREST_OS.userProfile.get)
+      ? INTEREST_OS.userProfile.get()
+      : { username: 'Anonymous', avatar: '🧑‍💻' };
+
+    // Overall tier badge with user info
     const overallHTML = `
       <div class="ranking-summary">
+        <div class="ranking-user-info">
+          <div class="ranking-user-avatar">${userProfile.avatar}</div>
+          <span class="ranking-user-name">${userProfile.username}</span>
+        </div>
         <div class="ranking-tier-badge" style="background:${ranking.overall.color}20;border-color:${ranking.overall.color}">
           <span class="ranking-tier-letter" style="color:${ranking.overall.color}">${ranking.overall.tier}</span>
           <span class="ranking-tier-label">${ranking.overall.label}</span>
